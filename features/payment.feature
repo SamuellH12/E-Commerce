@@ -62,3 +62,16 @@ When o usuário seleciona a opção “Atualizar” o cartão “Cartão de pain
 And o usuário preenche o apelido “Cartão de pai”, o nome “Wilson F Torres”, o código “623513”, o vencimento “03/30” e o cvc “123”
 Then o usuário está na página de "Atualização de cartão"
 And o sistema emite um alerta de “dados incorretos”
+
+Scenario 10 algoritmo de validação dos cartões cadastrados
+Given o usuário está na página “Cadastro de cartão”
+When o usuário preenche o apelido “Cartão de painho”, o nome “Wilson F Torres”, o código “5112345678998766”, o vencimento “08/32” e o cvc “123”
+And o usuário seleciona a opção “Cadastrar” com sucesso
+Then o cartão é validado
+And o cartão é salvo com a figura do tipo “MasterCard” ou “Visa”
+
+Scenario 11: requisito não funcional de segurança de cadastro de cartão
+Given o usuário está na página “Cadastro de cartão”
+When o usuário preenche o apelido “Cartão de painho”, o nome “Wilson F Torres”, o código “5112345678998766”, o vencimento “08/32” e o cvc “123”
+And o usuário seleciona a opção “Cadastrar” com sucesso
+Then o número do cartão salvo está protegido como “************9855” por questões de segurança
