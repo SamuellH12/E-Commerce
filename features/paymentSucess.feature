@@ -47,3 +47,4 @@ Given o usuário está na página “Cadastro de cartão”
 When o usuário preenche o apelido “Cartão de painho”, o nome “Wilson F Torres”, o código “5112345678998766”, o vencimento “08/32” e o cvc “123”
 And o usuário seleciona a opção “Cadastrar” com sucesso
 Then o número do cartão salvo está protegido como “************9855” por questões de segurança
+And o usuário está na página "Pagamento"
