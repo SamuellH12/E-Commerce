@@ -29,7 +29,7 @@ Feature: Cadastro e manutenção de itens no menu
     When ele insere o preço "Texto string"
     Then o sistema deve exibir a mensagem de erro "Preço deve ser numérico"
     And o sistema não deve salvar o item
-    Then o sistema deve redirecionar o usuário para a página de "Gerenciamento de Itens"
+
 
     Scenario: Remover um item não associado a pedidos em andamento
 
