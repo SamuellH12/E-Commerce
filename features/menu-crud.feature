@@ -8,6 +8,7 @@ Feature: Cadastro e manutenção de itens no menu
     And ele anexa uma imagem representativa em "img item"
     Then o sistema deve validar os dados inseridos
     And o item deve ser exibido na lista de itens cadastrados
+    Then o sistema deve redirecionar o usuário para a página de "Gerenciamento de Itens"
 
 
 
