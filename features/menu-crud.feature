@@ -39,3 +39,4 @@ Feature: Cadastro e manutenção de itens no menu
     When ele solicita a exclusão do item
     Then o sistema deve exibir a mensagem de confirmação "Você tem certeza que deseja excluir esse item?"
     And após a confirmação, o sistema deve remover o item da lista de itens
+    Then o sistema deve exibir a mensagem "Item excluído com sucesso"
