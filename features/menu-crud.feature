@@ -29,3 +29,12 @@ Feature: Cadastro e manutenção de itens no menu
     Then o sistema deve exibir a mensagem de erro "Preço deve ser numérico"
     And o sistema não deve salvar o item
     Then o sistema deve redirecionar o usuário para a página de "Gerenciamento de Itens"
+
+    Scenario: Remover um item não associado a pedidos em andamento
+
+    Given o usuário "Breninho" com e-mail "breninho@gmail.com" está logado no sistema com acesso de "administrador"
+    And o usuário está na página de "Gerenciamento de Itens"
+    And o item "Redmi Note 13 pro" não está associado a pedidos em andamento
+    When ele solicita a exclusão do item
+    Then o sistema deve exibir a mensagem de confirmação "Você tem certeza que deseja excluir esse item?"
+    And após a confirmação, o sistema deve remover o item da lista de itens
