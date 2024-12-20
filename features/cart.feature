@@ -52,3 +52,11 @@ Cenario: Remover um item do carrinho
  E o usuário seleciona a opção de "Remover item"
  Entao aparece uma mensagem indicando "Álgebra Linear por J. L. Boldrini" foi removido do carrinho
  E o usuário está na página de "Carrinho de Compras"
+
+Cenario: Adicionar um item novo ao carrinho de compras com sucesso
+ Dado o usuário "Lucas" está na página do produto "Álgebra Linear por J. L. Boldrini"
+ E o produto "Álgebra Linear por J. L. Boldrini" não está no carrinho
+ Quando o usuário seleciona a opção "adicionar ao carrinho"
+ E o usuário seleciona a opção "1 unidade"
+ Entao o usuário está na página de "Carrinho de Compras"
+ E o usuário consegue ver "Álgebra Linear por J. L. Boldrini" com "1 unidade" no carrinho
