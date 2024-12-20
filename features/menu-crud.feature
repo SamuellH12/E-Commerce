@@ -11,3 +11,11 @@ Feature: Cadastro e manutenção de itens no menu
 
 
 
+    Scenario: Impedir a exclusão de um item associado a pedidos em andamento
+
+    Given o usuário “Breninho” com e-mail “breninho@gmail.com” está logado no sistema com acesso de “administrador”
+    And o usuário está na página de "Gerenciamento de Itens"
+    And o item "Redmi Note 13 pro" está associado a pedidos em andamento
+    When ele solicita a exclusão do item da lista "Lista de itens"
+    Then o sistema deve exibir a mensagem de erro "Itens associados com pedidos não podem ser excluídos"
+    And o item "Redmi Note 13 pro" deve permanecer na lista "Lista de itens"
