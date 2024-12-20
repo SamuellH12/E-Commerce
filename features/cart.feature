@@ -35,4 +35,5 @@ Cenario: Finalizar a compra do carrinho de compras falha
  Quando o usuário seleciona a opção "Finalizar compra"
  Entao  aparece uma mensagem indicando "não foi possível finalizar compra", juntamente com a justificativa "Álgebra Linear por J. L. Boldrini - 99 unidades ultrapassa a quantidade em estoque"
  E o usuário está na página de "Carrinho de Compras"
+ E apenas os produtos "Álgebra Linear por J. L. Boldrini" com "99 unidades", "Computador Positivo" com "1 unidade", e "Teclado RGB Multilaser" com "1 unidade" estão dentro do carrinho 
  
