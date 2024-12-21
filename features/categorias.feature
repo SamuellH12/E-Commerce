@@ -48,3 +48,13 @@ AND o usuário seleciona a opção “salvar alterações”
 Then aparece uma mensagem de confirmação
 AND o usuário está na página “item” com o item “lenovo ideaped S145”
 AND o usuário consegue ver a lista de “Categorias” somente com “Notebooks”
+
+Cenário: Remover Categoria de um item
+Given o usuário “Eduardo” com e-mail “eduardocesb@gmail.com” está logado no sistema com acesso de administrador.
+AND o usuário está na página “editar item” com o item “lenovo ideaped S145”
+AND o usuário consegue ver a lista de “Categorias” somente com “Notebooks” e “Casa”
+When o usuário seleciona a opção “Remover <Casa>”
+AND o usuário seleciona a opção “salvar alterações”
+Then aparece uma mensagem de confirmação
+AND o usuário está na página “item” com o item “lenovo ideaped S145”
+AND o usuário consegue ver a lista de “Categorias” somente com “Notebooks”
