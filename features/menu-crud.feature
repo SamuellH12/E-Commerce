@@ -20,6 +20,7 @@ Feature: Cadastro e manutenção de itens no menu
     When ele solicita a exclusão do item da lista "Lista de itens"
     Then o sistema deve exibir a mensagem de erro "Itens associados com pedidos não podem ser excluídos"
     And o item "Redmi Note 13 pro" deve permanecer na lista "Lista de itens"
+    Then o sistema deve redirecionar o usuário para a página de "Gerenciamento de Itens"
 
 
     Scenario: Adicionar um item com dados inválidos
