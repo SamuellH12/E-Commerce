@@ -32,8 +32,9 @@ AND o usuário consegue ver a lista de “Departamentos” somente com “Eletr�
 Cenário 6: Cadastro de Categoria sem sucesso com nome repetido
 Given o usuário “Eduardo” com e-mail “eduardocesb@gmail.com” está logado no sistema com acesso de administrador.
 AND o usuário está na página “Departamentos e Categorias”
-AND o usuário consegue ver a lista de “Categorias” somente com “Notebooks” e “Sofás”
+AND o usuário consegue ver a lista de “Categorias” somente com “Notebooks” e “Sofas”
 When o usuário seleciona a opção “Adicionar Categoria”
 AND o usuário tenta cadastrar a Categoria com nome “Notebooks” e seleciona o departamento “Eletrônicos”
 Then o sistema deve exibir a mensagem de erro "categoria com nome repetido"
-AND o usuário consegue ver a lista de “Categorias” somente com “Notebooks” e “Sofás”
+AND o usuário consegue ver a lista de “Categorias” somente com “Notebooks” e “Sofas”
+
