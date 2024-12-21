@@ -29,7 +29,7 @@ AND o usuário tenta cadastrar o Departamento com nome “Esportes!*%”
 Then o sistema deve exibir a mensagem de erro "nome com caracteres inválidos"
 AND o usuário consegue ver a lista de “Departamentos” somente com “Eletrônicos” e “Casa”
 
-Cenário 6: Cadastro de Categoria sem sucesso com nome repetido
+Cenário: Cadastro de Categoria sem sucesso com nome repetido
 Given o usuário “Eduardo” com e-mail “eduardocesb@gmail.com” está logado no sistema com acesso de administrador.
 AND o usuário está na página “Departamentos e Categorias”
 AND o usuário consegue ver a lista de “Categorias” somente com “Notebooks” e “Sofás”
@@ -37,3 +37,14 @@ When o usuário seleciona a opção “Adicionar Categoria”
 AND o usuário tenta cadastrar a Categoria com nome “Notebooks” e seleciona o departamento “Eletrônicos”
 Then o sistema deve exibir a mensagem de erro "categoria com nome repetido"
 AND o usuário consegue ver a lista de “Categorias” somente com “Notebooks” e “Sofás”
+
+Cenário: Adicionar Categoria a um item
+Given o usuário “Eduardo” com e-mail “eduardocesb@gmail.com” está logado no sistema com acesso de administrador.
+AND o usuário está na página “editar item” com o item “lenovo ideaped S145”
+AND o usuário consegue ver a lista de “Categorias” vazia
+When o usuário seleciona a opção “Adicionar Categoria ao item”
+AND o usuário seleciona a categoria “Notebooks” 
+AND o usuário seleciona a opção “salvar alterações”
+Then aparece uma mensagem de confirmação
+AND o usuário está na página “item” com o item “lenovo ideaped S145”
+AND o usuário consegue ver a lista de “Categorias” somente com “Notebooks”
