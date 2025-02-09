@@ -1,7 +1,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import supabase from "./db";
+import { productRouter } from "./routes/product-routes";
 
 dotenv.config();
 
@@ -9,13 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get("/products", async (req: express.Request, res: express.Response) => {
-  const { data, error } = await supabase.from("products").select("*");
-
-  if (error) res.status(500).json(error);
-
-  res.json(data);
-});
+app.use("/products", cors(), productRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
