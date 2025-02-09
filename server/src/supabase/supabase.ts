@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
+import { Database } from "./database.types";
 
 dotenv.config();
 
@@ -10,6 +11,6 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error("Missing Supabase URL or API key");
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
 export default supabase;
