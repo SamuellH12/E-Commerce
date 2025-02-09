@@ -36,7 +36,7 @@ export async function createCard(req: Request, res: Response) {
   const encryptedNumber = encryptData(card.code);
   const encryptedExpiration = encryptData(card.expiration);
 
-  const { data, error } = await supabase.from("cards").insert({
+  const { error } = await supabase.from("cards").insert({
     nickname: card.nickname,
     name: card.name,
     expiration: encryptedExpiration.encryptedData,
@@ -49,7 +49,7 @@ export async function createCard(req: Request, res: Response) {
 
   if (error) res.status(500).json(error);
 
-  res.json(data);
+  res.send("Card created successfully");
 }
 
 export async function parseCard(
