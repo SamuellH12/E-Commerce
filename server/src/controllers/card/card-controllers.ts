@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import supabase from "../../supabase/supabase";
-import { cardSchema, CardType } from "./schema/card-schemas";
+import { CardType } from "./schema/card-schemas";
 import { cardTypeValidation, encryptData } from "./utils/card-utils";
 
 export async function getAllCards(req: Request, res: Response) {
@@ -33,18 +33,4 @@ export async function createCard(req: Request, res: Response) {
   if (error) res.status(500).json(error);
 
   res.send("Card created successfully");
-}
-
-export async function parseCardSchema(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    cardSchema.parse(req.body);
-
-    next();
-  } catch (error: any) {
-    res.status(400).json({ error: error.errors });
-  }
 }
