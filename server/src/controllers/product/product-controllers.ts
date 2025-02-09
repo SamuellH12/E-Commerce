@@ -8,3 +8,5 @@ export async function getAllProducts(req: Request, res: Response) {
 
   res.json(data);
 }
+
+// todo: integrar com BD

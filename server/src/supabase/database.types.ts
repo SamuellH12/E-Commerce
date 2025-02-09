@@ -87,6 +87,44 @@ export type Database = {
         }
         Relationships: []
       }
+      "products-history": {
+        Row: {
+          created_at: string
+          destination: string | null
+          id: number
+          order_data: string | null
+          product_id: string | null
+          status: Database["public"]["Enums"]["OrderStatus"] | null
+          value: number | null
+        }
+        Insert: {
+          created_at?: string
+          destination?: string | null
+          id?: number
+          order_data?: string | null
+          product_id?: string | null
+          status?: Database["public"]["Enums"]["OrderStatus"] | null
+          value?: number | null
+        }
+        Update: {
+          created_at?: string
+          destination?: string | null
+          id?: number
+          order_data?: string | null
+          product_id?: string | null
+          status?: Database["public"]["Enums"]["OrderStatus"] | null
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products-history_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -95,7 +133,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      OrderStatus:
+        | "pending"
+        | "failed"
+        | "returned"
+        | "processing"
+        | "canceled"
+        | "shipped"
+        | "delivered"
     }
     CompositeTypes: {
       [_ in never]: never
