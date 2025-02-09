@@ -5,7 +5,7 @@ import {
   cardDateValidation,
   cardTypeValidation,
   encryptData,
-} from "./utils/new-card";
+} from "./utils/card-utils";
 
 export async function getAllCards(req: Request, res: Response) {
   const { data, error } = await supabase.from("cards").select("*");
@@ -49,7 +49,7 @@ export async function createCard(req: Request, res: Response) {
 
   if (error) res.status(500).json(error);
 
-  res.status(200).json(data);
+  res.json(data);
 }
 
 export async function parseCard(
@@ -65,33 +65,3 @@ export async function parseCard(
     res.status(400).json({ error: error.errors });
   }
 }
-// export const createCard: FastifyPluginAsyncZod = async (app) => {
-//   app.post(
-//     "/new_card",
-//     {
-//       schema: {
-//         body: cardSchema,
-//       },
-//     },
-//     async (request, response) => {
-//       const card = request.body;
-
-//       // validate card
-//       let validation = validacaoTipoCartao(card.code);
-//       if (validation === "invalid") {
-//         response.status(400).send("Invalid card number");
-//         return;
-//       }
-//       const cardType = validation;
-
-//       validation = validacaoDataCartao(card.expiration);
-//       if (validation === "invalid") {
-//         response.status(400).send("Invalid expiration date");
-//         return;
-//       }
-
-//       // Create card
-//       response.send(newCard({ ...card, cardType: cardType }));
-//     }
-//   );
-// };
