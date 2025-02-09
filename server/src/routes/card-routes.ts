@@ -1,10 +1,9 @@
 import { Router } from "express";
+import { createCard, getAllCards } from "../controllers/card/card-controllers";
 import {
-  createCard,
-  getAllCards,
   parseCardSchema,
-} from "../controllers/card/card-controllers";
-import { validateCard } from "../controllers/card/utils/card-utils";
+  validateCard,
+} from "../controllers/card/utils/card-utils";
 
 const cardRouter = Router();
 

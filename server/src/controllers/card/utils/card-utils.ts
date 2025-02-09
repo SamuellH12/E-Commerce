@@ -103,7 +103,7 @@ export function validateCard(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-export async function parseCard(
+export async function parseCardSchema(
   req: Request,
   res: Response,
   next: NextFunction
