@@ -48,6 +48,75 @@ export type Database = {
         }
         Relationships: []
       }
+      "order-history": {
+        Row: {
+          created_at: string
+          destination: string | null
+          order_data: string | null
+          order_id: number
+          status: Database["public"]["Enums"]["OrderStatus"] | null
+          total_value: number | null
+        }
+        Insert: {
+          created_at?: string
+          destination?: string | null
+          order_data?: string | null
+          order_id?: number
+          status?: Database["public"]["Enums"]["OrderStatus"] | null
+          total_value?: number | null
+        }
+        Update: {
+          created_at?: string
+          destination?: string | null
+          order_data?: string | null
+          order_id?: number
+          status?: Database["public"]["Enums"]["OrderStatus"] | null
+          total_value?: number | null
+        }
+        Relationships: []
+      }
+      "product-order-history": {
+        Row: {
+          amount: number | null
+          created_at: string
+          id: number
+          order_id: number | null
+          price_paid: number | null
+          product_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          id?: number
+          order_id?: number | null
+          price_paid?: number | null
+          product_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          id?: number
+          order_id?: number | null
+          price_paid?: number | null
+          product_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product-order-history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "order-history"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "product-order-history_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category_id: number | null
@@ -86,44 +155,6 @@ export type Database = {
           update_at?: string | null
         }
         Relationships: []
-      }
-      "products-history": {
-        Row: {
-          created_at: string
-          destination: string | null
-          id: number
-          order_data: string | null
-          product_id: string | null
-          status: Database["public"]["Enums"]["OrderStatus"] | null
-          value: number | null
-        }
-        Insert: {
-          created_at?: string
-          destination?: string | null
-          id?: number
-          order_data?: string | null
-          product_id?: string | null
-          status?: Database["public"]["Enums"]["OrderStatus"] | null
-          value?: number | null
-        }
-        Update: {
-          created_at?: string
-          destination?: string | null
-          id?: number
-          order_data?: string | null
-          product_id?: string | null
-          status?: Database["public"]["Enums"]["OrderStatus"] | null
-          value?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "products-history_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
       }
     }
     Views: {
