@@ -3,6 +3,7 @@ import {
   createCard,
   deleteCard,
   getAllCards,
+  updateCard,
 } from '../controllers/card/card-controllers'
 import {
   parseCardSchema,
@@ -16,4 +17,6 @@ const cardRouter = Router()
 cardRouter.get('/', getAllCards)
 cardRouter.post('/new', parseCardSchema, validateCard, createCard)
 cardRouter.delete('/:id', deleteCard)
+cardRouter.put('/:id', parseCardSchema, validateCard, updateCard)
+
 export { cardRouter }
