@@ -1,43 +1,97 @@
-import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { z } from "zod";
-import newCard, {
-  validacaoDataCartao,
-  validacaoTipoCartao,
-} from "../../controllers/card/utils/new-card";
+import { NextFunction, Request, Response } from "express";
+import supabase from "../../supabase/supabase";
+import { cardSchema, CardType } from "./schema/card-schemas";
+import {
+  cardDateValidation,
+  cardTypeValidation,
+  encryptData,
+} from "./utils/new-card";
 
-export const createCardRoute: FastifyPluginAsyncZod = async (app) => {
-  app.post(
-    "/new_card",
-    {
-      schema: {
-        body: z.object({
-          nickname: z.string(),
-          name: z.string().nonempty(),
-          code: z.string().min(13).max(16),
-          expiration: z.string().min(7).max(7),
-          cvc: z.string().min(3).max(3),
-        }),
-      },
-    },
-    async (request, response) => {
-      const card = request.body;
+export async function getAllCards(req: Request, res: Response) {
+  const { data, error } = await supabase.from("cards").select("*");
 
-      // validate card
-      let validation = validacaoTipoCartao(card.code);
-      if (validation === "invalid") {
-        response.status(400).send("Invalid card number");
-        return;
-      }
-      const cardType = validation;
+  if (error) res.status(500).json(error);
 
-      validation = validacaoDataCartao(card.expiration);
-      if (validation === "invalid") {
-        response.status(400).send("Invalid expiration date");
-        return;
-      }
+  res.json(data);
+}
 
-      // Create card
-      response.send(newCard({ ...card, cardType: cardType }));
-    }
-  );
-};
+export async function createCard(req: Request, res: Response) {
+  const card: CardType = req.body;
+
+  // validate card
+  const typeResult = cardTypeValidation(card.code);
+  if (typeResult === "invalid") {
+    res.status(400).send("Invalid card number");
+    return;
+  }
+
+  const dateResult = cardDateValidation(card.expiration);
+  if (dateResult === "invalid") {
+    res.status(400).send("Invalid expiration date");
+    return;
+  }
+
+  // Create card
+
+  const encryptedNumber = encryptData(card.code);
+  const encryptedExpiration = encryptData(card.expiration);
+
+  const { data, error } = await supabase.from("cards").insert({
+    nickname: card.nickname,
+    name: card.name,
+    expiration: encryptedExpiration.encryptedData,
+    code: encryptedNumber.encryptedData,
+    card_type: typeResult,
+    code_last4: card.code.substring(card.code.length - 4),
+    code_iv: encryptedNumber.iv,
+    expiration_iv: encryptedExpiration.iv,
+  });
+
+  if (error) res.status(500).json(error);
+
+  res.status(200).json(data);
+}
+
+export async function parseCard(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    cardSchema.parse(req.body);
+
+    next();
+  } catch (error: any) {
+    res.status(400).json({ error: error.errors });
+  }
+}
+// export const createCard: FastifyPluginAsyncZod = async (app) => {
+//   app.post(
+//     "/new_card",
+//     {
+//       schema: {
+//         body: cardSchema,
+//       },
+//     },
+//     async (request, response) => {
+//       const card = request.body;
+
+//       // validate card
+//       let validation = validacaoTipoCartao(card.code);
+//       if (validation === "invalid") {
+//         response.status(400).send("Invalid card number");
+//         return;
+//       }
+//       const cardType = validation;
+
+//       validation = validacaoDataCartao(card.expiration);
+//       if (validation === "invalid") {
+//         response.status(400).send("Invalid expiration date");
+//         return;
+//       }
+
+//       // Create card
+//       response.send(newCard({ ...card, cardType: cardType }));
+//     }
+//   );
+// };

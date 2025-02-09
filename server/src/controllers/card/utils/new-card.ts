@@ -6,7 +6,7 @@ const ENCRYPTION_KEY = crypto.randomBytes(32);
 const IV_LENGTH = 16; // Tamanho do IV (16 bytes para AES)
 
 // Função para criptografar
-function encryptData(cardData: string): {
+export function encryptData(cardData: string): {
   iv: string;
   encryptedData: string;
 } {
@@ -20,7 +20,7 @@ function encryptData(cardData: string): {
   };
 }
 
-export function validacaoTipoCartao(numero: string): string {
+export function cardTypeValidation(numero: string): string {
   const tamanho = numero.length;
 
   const verificador = Number(numero[tamanho - 1]);
@@ -57,7 +57,7 @@ export function validacaoTipoCartao(numero: string): string {
   }
 }
 
-export function validacaoDataCartao(data: string): string {
+export function cardDateValidation(data: string): string {
   const dataAtual = new Date();
   const anoAtual = dataAtual.getFullYear();
   const mesAtual = dataAtual.getMonth() + 1;
@@ -72,7 +72,7 @@ export function validacaoDataCartao(data: string): string {
 }
 
 // Função para descriptografar
-function decryptCardData(encryptedData: string, iv: string): string {
+export function decryptCardData(encryptedData: string, iv: string): string {
   const decipher = crypto.createDecipheriv(
     "aes-256-cbc",
     ENCRYPTION_KEY,
