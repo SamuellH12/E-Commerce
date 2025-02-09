@@ -12,7 +12,7 @@ app.use(cors());
 app.get("/products", async (req: express.Request, res: express.Response) => {
   const { data, error } = await supabase.from("products").select("*");
 
-  if (error) res.json(error);
+  if (error) res.status(500).json(error);
 
   res.json(data);
 });
