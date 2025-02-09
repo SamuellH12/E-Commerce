@@ -1,5 +1,7 @@
 import crypto from "crypto";
+import { NextFunction, Request, Response } from "express";
 import supabase from "../../../supabase/supabase";
+import { cardSchema, CardType } from "../schema/card-schemas";
 
 // Chave de criptografia (deve ter 32 bytes para AES-256)
 const ENCRYPTION_KEY = crypto.randomBytes(32);
@@ -116,4 +118,37 @@ export default async function newCard({
   console.log(response);
 
   return response;
+}
+
+export function validateCard(req: Request, res: Response, next: NextFunction) {
+  const card: CardType = req.body;
+
+  // validate card
+  const typeResult = cardTypeValidation(card.code);
+  if (typeResult === "invalid") {
+    res.status(400).send("Invalid card number");
+    return;
+  }
+
+  const dateResult = cardDateValidation(card.expiration);
+  if (dateResult === "invalid") {
+    res.status(400).send("Invalid expiration date");
+    return;
+  }
+
+  next();
+}
+
+export async function parseCard(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    cardSchema.parse(req.body);
+
+    next();
+  } catch (error: any) {
+    res.status(400).json({ error: error.errors });
+  }
 }

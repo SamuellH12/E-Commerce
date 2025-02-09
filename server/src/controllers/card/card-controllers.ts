@@ -1,11 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import supabase from "../../supabase/supabase";
 import { cardSchema, CardType } from "./schema/card-schemas";
-import {
-  cardDateValidation,
-  cardTypeValidation,
-  encryptData,
-} from "./utils/card-utils";
+import { cardTypeValidation, encryptData } from "./utils/card-utils";
 
 export async function getAllCards(req: Request, res: Response) {
   const { data, error } = await supabase.from("cards").select("*");
@@ -18,20 +14,7 @@ export async function getAllCards(req: Request, res: Response) {
 export async function createCard(req: Request, res: Response) {
   const card: CardType = req.body;
 
-  // validate card
-  const typeResult = cardTypeValidation(card.code);
-  if (typeResult === "invalid") {
-    res.status(400).send("Invalid card number");
-    return;
-  }
-
-  const dateResult = cardDateValidation(card.expiration);
-  if (dateResult === "invalid") {
-    res.status(400).send("Invalid expiration date");
-    return;
-  }
-
-  // Create card
+  const cardType = cardTypeValidation(card.code);
 
   const encryptedNumber = encryptData(card.code);
   const encryptedExpiration = encryptData(card.expiration);
@@ -41,7 +24,7 @@ export async function createCard(req: Request, res: Response) {
     name: card.name,
     expiration: encryptedExpiration.encryptedData,
     code: encryptedNumber.encryptedData,
-    card_type: typeResult,
+    card_type: cardType,
     code_last4: card.code.substring(card.code.length - 4),
     code_iv: encryptedNumber.iv,
     expiration_iv: encryptedExpiration.iv,
@@ -52,7 +35,7 @@ export async function createCard(req: Request, res: Response) {
   res.send("Card created successfully");
 }
 
-export async function parseCard(
+export async function parseCardSchema(
   req: Request,
   res: Response,
   next: NextFunction
