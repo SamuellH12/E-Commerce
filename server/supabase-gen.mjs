@@ -13,7 +13,7 @@ if (!projectId) {
 }
 
 // Construct the command
-const command = `npx supabase gen types typescript --project-id ${projectId} --schema public > src/types/database.types.ts`;
+const command = `npx supabase gen types typescript --project-id ${projectId} --schema public > src/supabase/database.types.ts`;
 
 // Execute the command
 exec(command, (error, stdout, stderr) => {
