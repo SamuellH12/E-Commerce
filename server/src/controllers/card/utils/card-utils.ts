@@ -1,6 +1,5 @@
 import crypto from "crypto";
 import { NextFunction, Request, Response } from "express";
-import supabase from "../../../supabase/supabase";
 import { cardSchema, CardType } from "../schema/card-schemas";
 
 // Chave de criptografia (deve ter 32 bytes para AES-256)
@@ -83,41 +82,6 @@ export function decryptCardData(encryptedData: string, iv: string): string {
   let decrypted = decipher.update(encryptedData, "hex", "utf8");
   decrypted += decipher.final("utf8");
   return decrypted;
-}
-
-interface NewCardInput {
-  nickname: string;
-  name: string;
-  code: string;
-  expiration: string;
-  cardType: string;
-}
-
-export default async function newCard({
-  nickname,
-  name,
-  code,
-  expiration,
-  cardType,
-}: NewCardInput) {
-  // Uso
-  const encryptedNumber = encryptData(code);
-  const encryptedExpiration = encryptData(expiration);
-
-  const response = await supabase.from("cards").insert({
-    nickname: nickname,
-    name: name,
-    expiration: encryptedExpiration.encryptedData,
-    code: encryptedNumber.encryptedData,
-    card_type: cardType,
-    code_last4: code.substring(code.length - 4),
-    code_iv: encryptedNumber.iv,
-    expiration_iv: encryptedExpiration.iv,
-  });
-
-  console.log(response);
-
-  return response;
 }
 
 export function validateCard(req: Request, res: Response, next: NextFunction) {
