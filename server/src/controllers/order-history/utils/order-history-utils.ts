@@ -1,5 +1,5 @@
 import supabase from "../../../supabase/supabase";
-import { orderHistorySchema } from "../schema/orderHistory-schema";
+import { orderHistorySchema } from "../schema/order-history-schema";
 
 // Função para buscar o histórico de pedidos
 export const fetchOrderHistory = async () => {

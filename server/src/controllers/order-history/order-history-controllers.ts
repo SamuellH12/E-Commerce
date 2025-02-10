@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { fetchOrderHistory } from "./utils/orderHistory-utils";
+import { fetchOrderHistory } from "./utils/order-history-utils";
 
 export const getOrderHistory = async (req: Request, res: Response) => {
   try {

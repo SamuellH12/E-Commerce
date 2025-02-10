@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { fetchProductOrderHistoryByOrderId } from "./utils/productOrderHistory-utils";
+import { fetchProductOrderHistoryByOrderId } from "./utils/product-order-history-utils";
 
 export const getProductOrderHistory = async (req: Request, res: Response) => {
     try {

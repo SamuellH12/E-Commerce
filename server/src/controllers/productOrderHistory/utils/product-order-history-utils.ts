@@ -1,5 +1,5 @@
 import supabase from "../../../supabase/supabase";
-import { ProductOrderHistory, productOrderHistorySchema } from "../schemas/productOrderHistory-schema";
+import { ProductOrderHistory, productOrderHistorySchema } from "../schemas/product-order-history-schema";
 
 
 // Função para buscar os itens de um pedido específico
