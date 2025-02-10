@@ -108,6 +108,6 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  "include": ["src/**/*", "cucumber.ts"], // Inclui os arquivos TypeScript do projeto
+  "include": ["src/**/*", "../cucumber.TScucumber.ts"], // Inclui os arquivos TypeScript do projeto
   "exclude": ["node_modules"] // Exclui a pasta `node_modules`
 }
