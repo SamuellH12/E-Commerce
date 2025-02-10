@@ -1,13 +1,19 @@
 import { Request, Response } from "express";
-import { fetchOrderHistory } from "./utils/order-history-utils";
+
+import supabase from "../../supabase/supabase";
+
 
 export const getOrderHistory = async (req: Request, res: Response) => {
   try {
 
-    // Usa a função utilitária para buscar os dados
-    //const orderHistory = await fetchOrderHistory();
-    // Retorna os dados como JSON
-    //res.status(200).json(orderHistory);
+    
+    const { data, error } = await supabase
+     .from("order-history")
+     .select("*");
+     
+     if(error) throw error;
+     
+     res.json(data)
     
   } catch (error) {
     console.error("Erro inesperado:", error);
