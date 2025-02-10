@@ -4,7 +4,6 @@ import { getProductOrderHistory } from "../controllers/productOrderHistory/produ
 
 const productOrderHistoryRouter = Router();
 
-// Define a rota GET para buscar os itens de um pedido
 productOrderHistoryRouter.get("/", getProductOrderHistory);
 
 export { productOrderHistoryRouter };
