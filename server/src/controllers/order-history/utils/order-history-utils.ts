@@ -12,9 +12,6 @@ export const fetchOrderHistory = async () => {
       throw new Error(`Erro ao buscar histórico de pedidos: ${error.message}`);
     }
 
-    // Valida os dados usando o esquema
-    const validatedData = data.map((item) => orderHistorySchema.parse(item));
-    return validatedData;
   } catch (error) {
     console.error(error);
     throw error;
