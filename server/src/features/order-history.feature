@@ -3,6 +3,33 @@ Feature: Histórico de Pedidos
   Quero acessar e interagir com o histórico de pedidos
   Para visualizar informações e realizar ações relacionadas a pedidos realizados
 
+  # Cenário de Serviço: Recuperar Pedidos do Usuário
+  Scenario: Recuperar todos os pedidos de um usuário
+    Given o usuário atual possui pedidos registrados
+    When o sistema consulta os pedidos do usuário atual
+    Then o sistema retorna os seguintes pedidos:
+      | order_id | order_data | destination | status    | total_value |
+      | 1        | 2023-10-01 | Rua A, 123  | delivered | 550         |
+      | 2        | 2023-09-25 | Rua B, 456  | shipped   | 200         |
+      | 3        | 2023-09-20 | Rua C, 789  | pending   | 150         |
+
+  # Cenário de Serviço: Ordenar Pedidos por Data Mais Recente
+  Scenario: Ordenar pedidos pela data mais recente
+    Given existem pedidos registrados no sistema
+    When o sistema ordena os pedidos pela data mais recente
+    Then o sistema retorna os seguintes pedidos:
+      | order_id | order_data | destination | status    | total_value |
+      | 1        | 2023-10-01 | Rua A, 123  | delivered | 550         |
+      | 2        | 2023-09-25 | Rua B, 456  | shipped   | 200         |
+      | 3        | 2023-09-20 | Rua C, 789  | pending   | 150         |
+
+  # Cenário de Serviço: Lidar com Erros ao Carregar Pedidos
+  Scenario: Exibir mensagem de erro quando ocorre falha ao carregar pedidos
+    Given ocorre um erro ao acessar os pedidos
+    When o sistema tenta carregar os pedidos
+    Then o sistema retorna a mensagem de erro "Erro ao carregar pedidos. Tente novamente mais tarde."
+    And o código de status HTTP retornado é "500"
+
   Scenario: Acessar Histórico de Pedidos
   Given o usuário está na página "Menu Principal"
   When clica no botão "Histórico de Pedidos"
@@ -15,7 +42,7 @@ Feature: Histórico de Pedidos
 
   Scenario: Visualizar itens comprados em um pedido
   Given o usuário está na página "Histórico de Pedidos"
-  When clica no pedido com ID "pedido1"
+  When clica no pedido com ID "1"
   Then o sistema exibe os itens do pedido com os seguintes detalhes:
     | id | created_at                | order_id | product_id                  | price_paid | amount |
     | 1  | 2025-02-09T18:43:41.634825+00:00 | 1        | ae5abaa3-fd1b-4f74-85bd-45fbcebeb3db | 500       | 1      |
@@ -47,12 +74,13 @@ Feature: Histórico de Pedidos
   Scenario: Exibir mensagem em caso de erro ao carregar pedidos
   Given o usuário está na página "Histórico de Pedidos"
   When ocorre um erro ao carregar os pedidos do usuário com ID "usuario123"
-  Then o sistema exibe a mensagem "Erro ao carregar pedidos. Tente novamente mais tarde."
+  Then o sistema exibe a mensagem de erro "Erro ao carregar pedidos. Tente novamente mais tarde."
   And redireciona o usuário para a página "Menu Principal"
 
   Scenario: Exibir mensagem quando não houver pedidos no histórico
-  Given o usuário está na página "Histórico de Pedidos"
-  And não existem pedidos registrados para o usuário com ID "usuarioSemPedidos"
+  Given o usuário atual não possui pedidos registrados
   When o sistema tenta carregar os pedidos
-  Then o sistema exibe a mensagem "Você ainda não realizou nenhum pedido."
-  And o usuário permanece na página "Histórico de Pedidos"
+  Then o sistema exibe a mensagem de aviso "Você ainda não realizou nenhum pedido."
+  
+
+  
