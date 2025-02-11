@@ -7,6 +7,31 @@ export type Json =
   | Json[]
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string
+          query?: string
+          variables?: Json
+          extensions?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       cards: {
@@ -48,6 +73,30 @@ export type Database = {
         }
         Relationships: []
       }
+      coupons: {
+        Row: {
+          codename: string
+          created_at: string
+          expiration_date: string | null
+          id: number
+          percentage: number
+        }
+        Insert: {
+          codename?: string
+          created_at?: string
+          expiration_date?: string | null
+          id?: number
+          percentage?: number
+        }
+        Update: {
+          codename?: string
+          created_at?: string
+          expiration_date?: string | null
+          id?: number
+          percentage?: number
+        }
+        Relationships: []
+      }
       "order-history": {
         Row: {
           created_at: string
@@ -80,6 +129,7 @@ export type Database = {
           amount: number | null
           created_at: string
           id: number
+          is_active: boolean | null
           order_id: number | null
           price_paid: number | null
           product_id: string | null
@@ -88,6 +138,7 @@ export type Database = {
           amount?: number | null
           created_at?: string
           id?: number
+          is_active?: boolean | null
           order_id?: number | null
           price_paid?: number | null
           product_id?: string | null
@@ -96,6 +147,7 @@ export type Database = {
           amount?: number | null
           created_at?: string
           id?: number
+          is_active?: boolean | null
           order_id?: number | null
           price_paid?: number | null
           product_id?: string | null
