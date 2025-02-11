@@ -27,6 +27,7 @@
     "supabase": "^2.9.6"
   },
   "devDependencies": {
+
     "@cucumber/cucumber": "^11.2.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
