@@ -7,31 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       cards: {
@@ -94,6 +69,48 @@ export type Database = {
           expiration_date?: string | null
           id?: number
           percentage?: number
+        }
+        Relationships: []
+      }
+      coupons_test: {
+        Row: {
+          codename: string
+          created_at: string
+          expiration_date: string | null
+          id: number
+          percentage: number
+        }
+        Insert: {
+          codename?: string
+          created_at?: string
+          expiration_date?: string | null
+          id?: number
+          percentage?: number
+        }
+        Update: {
+          codename?: string
+          created_at?: string
+          expiration_date?: string | null
+          id?: number
+          percentage?: number
+        }
+        Relationships: []
+      }
+      departments: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
         }
         Relationships: []
       }
@@ -205,6 +222,24 @@ export type Database = {
           price?: number | null
           stock_quantity?: number | null
           update_at?: string | null
+        }
+        Relationships: []
+      }
+      "shopping-cart": {
+        Row: {
+          amount: number
+          product_id: string[]
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          product_id: string[]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          product_id?: string[]
+          user_id?: string
         }
         Relationships: []
       }
