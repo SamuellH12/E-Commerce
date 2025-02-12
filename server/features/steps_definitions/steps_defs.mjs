@@ -53,6 +53,8 @@ When(
       cvc: string5,
     });
 
+    this.cardId = response.data.id;
+
     expect(response.status).to.equal(200);
   }
 );
@@ -70,12 +72,15 @@ Then(
 
     await axios.get("http://localhost:3000/cards").then((response) => {
       const cards = response.data;
-      const card = cards.find((card) => card.nickname === string);
+      const card = cards.find((card) => card.id === this.cardId);
 
+      expect(card.nickname).to.equal(string);
       expect(card.name).to.equal(string2);
       expect(card.code_last4).to.equal(string3);
       expect(card.card_type).to.equal(string4);
     });
+
+    axios.delete(`http://localhost:3000/cards/${this.cardId}`);
   }
 );
 
