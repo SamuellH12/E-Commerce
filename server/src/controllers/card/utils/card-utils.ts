@@ -38,7 +38,7 @@ export function cardTypeValidation(numero: string): string {
     alternar = !alternar
   }
 
-  if (soma % 10 !== 0) return 'invalido' // Se falhar no Luhn, é inválido
+  if (soma % 10 !== 0) return 'invalid' // Se falhar no Luhn, é inválido
 
   // Verificação do tipo de cartão
   const prefixo2 = numero.substring(0, 2)
@@ -58,7 +58,7 @@ export function cardTypeValidation(numero: string): string {
     if (numero[0] === '4') return 'VISA'
   }
 
-  return 'invalido'
+  return 'invalid'
 }
 
 export function cardDateValidation(data: string): string {
