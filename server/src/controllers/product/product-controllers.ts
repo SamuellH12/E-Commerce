@@ -24,14 +24,18 @@ export async function getProduct(req: Request, res: Response) {
   res.json(data?.[0] ?? null);
 }
 export async function createProduct(req: Request, res: Response) {
-  const { error } = await supabase.from("products").insert(req.body);
+  const { error, data } = await supabase
+    .from("products")
+    .insert(req.body)
+    .select();
+  console.log("error", error);
 
   if (error) {
     res.status(400).json(error);
     return;
   }
 
-  res.send("Product created successfully");
+  res.send(data?.[0] ?? null);
 }
 export async function updateProduct(req: Request, res: Response) {
   const id: string = req.params.productId;
