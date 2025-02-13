@@ -24,7 +24,6 @@ const ProductOrderCard: React.FC<ProductOrderCardProps> = ({
       <p><strong>ID do Produto:</strong> {productId}</p>
       <p><strong>Valor Pago:</strong> R$ {pricePaid}</p>
       <p><strong>Quantidade:</strong> {amount}</p>
-      
     </div>
   );
 };

@@ -2,17 +2,14 @@ import { Given, When, Then, setWorldConstructor } from "@cucumber/cucumber";
 import { expect } from "chai";
 import axios from "axios";
 
-// Definição da classe CustomWorld
 class CustomWorld {
   orders: any[] = [];
   orderItems: any[] = [];
   errorMessage: string | undefined;
 }
 
-// Configurar o mundo personalizado
 setWorldConstructor(CustomWorld);
 
-// Interface para os pedidos
 interface Order {
   order_id: number;
   created_at: string;
@@ -22,7 +19,6 @@ interface Order {
   total_value: number;
 }
 
-// Interface para os itens de pedido
 interface OrderItem {
   id: number;
   created_at: string;
@@ -93,7 +89,6 @@ Then("o sistema retorna todos os pedidos:", function (dataTable) {
 });
 
 // Cenário 3: Recuperar os 3 pedidos mais recentes do usuário
-// Cenário 3: Recuperar os 3 pedidos mais recentes do usuário
 Given("o usuário atual possui pedidos registrados", function () {
   this.orders = [
     { order_id: 1, created_at: "2025-02-09T18:41:15+00:00", order_data: "2023-10-01", destination: "Rua A, 123", status: "delivered", total_value: 550 },
@@ -113,7 +108,6 @@ const mockOrders = [
 ];
 
 When('o sistema consulta os {int} pedidos mais recentes do usuário', function (limit: number) {
-  // Corrigido: Ordenar por order_data em vez de created_at
   const sortedOrders = mockOrders.sort((a, b) => {
     return new Date(b.order_data).getTime() - new Date(a.order_data).getTime();
   });
@@ -130,7 +124,6 @@ Then('o sistema retorna os seguintes pedidos:', function (dataTable) {
     { order_id: 5, created_at: "2025-02-09T18:53:10.346646+00:00", order_data: "2023-09-10", destination: "Rua E, 202", status: "delivered", total_value: 100 },
   ];
 
-  // Corrigido: Ordenar por order_data em vez de created_at
   const sortedOrders = allOrders.sort((a, b) => {
     return new Date(b.order_data).getTime() - new Date(a.order_data).getTime();
   });
