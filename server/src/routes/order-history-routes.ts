@@ -88,6 +88,45 @@ orderHistoryRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
+orderHistoryRouter.get("/:userId", async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+
+  try {
+    // Consulta ao Supabase para buscar os pedidos do usuário
+    const { data, error } = await supabase
+      .from("order-history")
+      .select("*")
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error("Erro ao consultar o Supabase:", error.message);
+       res.status(500).json({ message: "Erro ao carregar pedidos." })
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      res.status(404).json({ message: "Nenhum pedido encontrado para este usuário." })
+      return;
+    }
+
+    // Transforma os dados para o formato esperado nos testes
+    const formattedOrders = data.map((order: any) => ({
+      order_id: String(order.order_id), // Converte para string
+      created_at: order.created_at,
+      order_data: order.order_data,
+      destination: order.destination,
+      status: order.status,
+      total_value: String(order.total_value), // Converte para string
+    }));
+
+     res.json(formattedOrders); // Envia a resposta diretamente
+  } catch (error) {
+    console.error("Erro inesperado:", error);
+     res.status(500).json({ message: "Erro ao carregar pedidos. Tente novamente mais tarde." });
+     return;
+  }
+});
+
 const orders = [
   { order_id: "1", created_at: "2025-02-09T18:41:15+00:00", order_data: "2023-10-01", destination: "Rua A, 123", status: "delivered", total_value: "550" },
   { order_id: "2", created_at: "2025-02-09T18:45:48.99775+00:00", order_data: "2023-09-25", destination: "Rua B, 456", status: "shipped", total_value: "200" },

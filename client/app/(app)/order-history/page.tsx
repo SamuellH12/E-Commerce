@@ -1,81 +1,62 @@
-"use client"; // Add this line at the very top of the file
+"use client";
 
+// /cliente/app/(app)/order-history/page.tsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { getOrders, getOrderItems, getOrderItemsToOrder } from "./../api/order-api";
+import OrderCard from "./components/order-card";
 
-interface Order {
-  order_id: number;
-  created_at: string;
-  order_data: string;
-  destination: string;
-  status: string;
-  total_value: number;
-}
-
-const OrderHistory: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+const OrderHistoryPage = () => {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Função para carregar os pedidos do backend
-  const fetchOrders = async () => {
-    try {
-      const response = await axios.get<Order[]>("/api/order-history");
-      setOrders(response.data);
-      setLoading(false);
-    } catch (err) {
-      setError("Erro ao carregar os pedidos. Tente novamente mais tarde.");
-      setLoading(false);
-    }
-  };
-
-  // Carrega os pedidos quando o componente é montado
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const data = await getOrders();
+        console.log(data);
+        setOrders(data);
+        setRecentOrders(data.slice(0, 3)); // Exibe apenas os 3 pedidos mais recentes
+      } catch (err) {
+        setError("Erro ao carregar pedidos.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchOrders();
   }, []);
 
-  // Renderiza o estado de carregamento
-  if (loading) {
-    return <div>Carregando pedidos...</div>;
-  }
+  const handleViewOrderDetails = async (orderId: number) => {
+    try {
+      const items = await getOrderItemsToOrder(orderId);
+      alert(JSON.stringify(items, null, 2)); // Exibe os itens em um alerta (pode ser substituído por uma modal)
+    } catch (err) {
+      setError("Erro ao carregar detalhes do pedido.");
+    }
+  };
 
-  // Renderiza uma mensagem de erro, se houver
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <p>Carregando...</p>;
+  if (error) return <p>{error}</p>;
 
-  // Renderiza os pedidos
   return (
     <div>
       <h1>Histórico de Pedidos</h1>
-      {orders.length === 0 ? (
-        <p>Você ainda não realizou nenhum pedido.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>ID do Pedido</th>
-              <th>Data do Pedido</th>
-              <th>Local de Envio</th>
-              <th>Status</th>
-              <th>Valor Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.order_id}>
-                <td>{order.order_id}</td>
-                <td>{order.order_data}</td>
-                <td>{order.destination}</td>
-                <td>{order.status}</td>
-                <td>R$ {order.total_value.toFixed(2)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+
+      {/* Exibe os 3 pedidos mais recentes */}
+      <h2>Últimos Pedidos</h2>
+      {recentOrders.map((order) => (
+        <OrderCard key={order.order_id} order={order} onViewDetails={handleViewOrderDetails} />
+      ))}
+
+      {/* Botão para ver todos os pedidos */}
+      <button onClick={() => setRecentOrders(orders)}>Ver Todos os Pedidos</button>
+
+      {/* Mensagem caso não haja pedidos */}
+      {orders.length === 0 && <p>Você ainda não realizou nenhum pedido.</p>}
     </div>
   );
 };
 
-export default OrderHistory;
+export default OrderHistoryPage;

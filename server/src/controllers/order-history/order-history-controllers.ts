@@ -1,7 +1,5 @@
-import { orderHistoryRouter, } from "../../routes/order-history-routes";
-//import { orderHistoryErrorRouter } from "../../routes/order-history-routes";
-import supabase from "../../supabase/supabase";
 import { Request, Response } from "express";
+import supabase from "../../supabase/supabase";
 
 /**
  * Função para buscar o histórico de pedidos de um usuário específico.
@@ -17,11 +15,12 @@ export const getOrderHistory = async (req: Request, res: Response) => {
       .eq("user_id", userId);
 
     if (error) {
-      orderHistoryRouter.get("/error")
+      console.error("Erro ao consultar o Supabase:", error.message);
+      return res.status(500).json({ message: "Erro ao carregar pedidos." });
     }
 
     if (!data || data.length === 0) {
-      return [];
+      return res.status(404).json({ message: "Nenhum pedido encontrado." });
     }
 
     // Transforma os dados para o formato esperado nos testes
@@ -34,13 +33,12 @@ export const getOrderHistory = async (req: Request, res: Response) => {
       total_value: String(order.total_value),
     }));
 
-    return formattedOrders;
+    return res.status(200).json(formattedOrders);
   } catch (error) {
     console.error("Erro inesperado:", error);
-    throw new Error("Erro ao carregar pedidos.");
+    return res.status(500).json({ message: "Erro ao carregar pedidos." });
   }
 };
-
 
 /**
  * Função para filtrar pedidos por data.
@@ -48,24 +46,24 @@ export const getOrderHistory = async (req: Request, res: Response) => {
 export const filterOrdersByDate = async (req: Request, res: Response) => {
   const { date } = req.query;
 
-  if (typeof date !== "string") {
+  if (typeof date !== "string" || !date) {
     return res.status(400).json({ message: "Data inválida ou ausente." });
   }
 
   try {
     // Consulta ao Supabase para filtrar pedidos pela data
     const { data, error } = await supabase
-      .from("order-history") // Certifique-se de que o nome da tabela está correto
+      .from("order-history") // Certifique-se de que o nome da tabela está correta
       .select("*")
       .eq("order_data", date);
 
     if (error) {
       console.error("Erro ao consultar o Supabase:", error.message);
-      throw new Error("Erro ao filtrar pedidos.");
+      return res.status(500).json({ message: "Erro ao filtrar pedidos." });
     }
 
     if (!data || data.length === 0) {
-      return [];
+      return res.status(404).json({ message: "Nenhum pedido encontrado para a data informada." });
     }
 
     // Transforma os dados para o formato esperado nos testes
@@ -77,9 +75,9 @@ export const filterOrdersByDate = async (req: Request, res: Response) => {
       total_value: String(order.total_value),
     }));
 
-    return formattedOrders;
+    return res.status(200).json(formattedOrders);
   } catch (error) {
     console.error("Erro inesperado:", error);
-    throw new Error("Erro ao filtrar pedidos.");
+    return res.status(500).json({ message: "Erro ao filtrar pedidos." });
   }
 };
