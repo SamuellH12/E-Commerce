@@ -24,38 +24,41 @@ export function encryptData(cardData: string): {
 export function cardTypeValidation(numero: string): string {
   const tamanho = numero.length
 
-  const reverso = numero.split('').reverse().join('')
-
+  // Aplicar o Algoritmo de Luhn para validar o número do cartão
   let soma = 0
-  for (let i = 0; i < tamanho; i++) {
-    let digito = Number(reverso[i])
-    if (i % 2 === 1) {
+  let alternar = false
+
+  for (let i = tamanho - 1; i >= 0; i--) {
+    let digito = Number(numero[i])
+    if (alternar) {
       digito *= 2
       if (digito > 9) digito -= 9
     }
     soma += digito
+    alternar = !alternar
   }
-  if (soma % 10 !== 0) return 'invalido'
 
-  switch (tamanho) {
-    case 13:
-      if (numero[0] === '4') return 'VISA'
-      return 'invalido'
-    case 16:
-      if (
-        numero.substring(0, 2) in ['51', '52', '53', '54', '55'] ||
-        (Number(numero.substring(0, 4)) >= 2221 &&
-          Number(numero.substring(0, 4)) <= 2720)
-      )
-        return 'MasterCard'
-      if (numero[0] === '4') return 'VISA'
-      return 'invalido'
-    case 19:
-      if (numero[0] === '4') return 'VISA'
-      return 'invalido'
-    default:
-      return 'invalido'
+  if (soma % 10 !== 0) return 'invalid' // Se falhar no Luhn, é inválido
+
+  // Verificação do tipo de cartão
+  const prefixo2 = numero.substring(0, 2)
+  const prefixo4 = Number(numero.substring(0, 4))
+
+  if (tamanho === 16) {
+    if (
+      ['51', '52', '53', '54', '55'].includes(prefixo2) || // MasterCard (51-55)
+      (prefixo4 >= 2221 && prefixo4 <= 2720) // MasterCard (2221-2720)
+    ) {
+      return 'MasterCard'
+    }
+    if (numero[0] === '4') return 'VISA' // Verifica VISA (começa com 4)
   }
+
+  if (tamanho === 13 || tamanho === 19) {
+    if (numero[0] === '4') return 'VISA'
+  }
+
+  return 'invalid'
 }
 
 export function cardDateValidation(data: string): string {

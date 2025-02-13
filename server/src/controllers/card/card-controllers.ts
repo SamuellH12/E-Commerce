@@ -2,7 +2,6 @@ import type { Request, Response } from 'express'
 import supabase from '../../supabase/supabase'
 import type { CardType } from './schema/card-schemas'
 import { cardTypeValidation, encryptData } from './utils/card-utils'
-import test from 'node:test'
 
 export async function getAllCards(req: Request, res: Response) {
   const { data, error } = await supabase.from('cards').select('*')
@@ -20,20 +19,23 @@ export async function createCard(req: Request, res: Response) {
   const encryptedNumber = encryptData(card.code)
   const encryptedExpiration = encryptData(card.expiration)
 
-  const { error } = await supabase.from('cards').insert({
-    nickname: card.nickname,
-    name: card.name,
-    expiration: encryptedExpiration.encryptedData,
-    code: encryptedNumber.encryptedData,
-    card_type: cardType,
-    code_last4: card.code.substring(card.code.length - 4),
-    code_iv: encryptedNumber.iv,
-    expiration_iv: encryptedExpiration.iv,
-  })
+  const { error, data } = await supabase
+    .from('cards')
+    .insert({
+      nickname: card.nickname,
+      name: card.name,
+      expiration: encryptedExpiration.encryptedData,
+      code: encryptedNumber.encryptedData,
+      card_type: cardType,
+      code_last4: card.code.substring(card.code.length - 4),
+      code_iv: encryptedNumber.iv,
+      expiration_iv: encryptedExpiration.iv,
+    })
+    .select()
 
   if (error) res.status(500).json(error)
 
-  res.send('Card created successfully')
+  res.json(data?.[0] ?? null)
 }
 
 export async function deleteCard(req: Request, res: Response) {

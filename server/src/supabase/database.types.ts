@@ -48,6 +48,72 @@ export type Database = {
         }
         Relationships: []
       }
+      coupons: {
+        Row: {
+          codename: string
+          created_at: string
+          expiration_date: string | null
+          id: number
+          percentage: number
+        }
+        Insert: {
+          codename?: string
+          created_at?: string
+          expiration_date?: string | null
+          id?: number
+          percentage?: number
+        }
+        Update: {
+          codename?: string
+          created_at?: string
+          expiration_date?: string | null
+          id?: number
+          percentage?: number
+        }
+        Relationships: []
+      }
+      coupons_test: {
+        Row: {
+          codename: string
+          created_at: string
+          expiration_date: string | null
+          id: number
+          percentage: number
+        }
+        Insert: {
+          codename?: string
+          created_at?: string
+          expiration_date?: string | null
+          id?: number
+          percentage?: number
+        }
+        Update: {
+          codename?: string
+          created_at?: string
+          expiration_date?: string | null
+          id?: number
+          percentage?: number
+        }
+        Relationships: []
+      }
+      departments: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
       "order-history": {
         Row: {
           created_at: string
@@ -80,6 +146,7 @@ export type Database = {
           amount: number | null
           created_at: string
           id: number
+          is_active: boolean | null
           order_id: number | null
           price_paid: number | null
           product_id: string | null
@@ -88,6 +155,7 @@ export type Database = {
           amount?: number | null
           created_at?: string
           id?: number
+          is_active?: boolean | null
           order_id?: number | null
           price_paid?: number | null
           product_id?: string | null
@@ -96,6 +164,7 @@ export type Database = {
           amount?: number | null
           created_at?: string
           id?: number
+          is_active?: boolean | null
           order_id?: number | null
           price_paid?: number | null
           product_id?: string | null
@@ -153,6 +222,24 @@ export type Database = {
           price?: number | null
           stock_quantity?: number | null
           update_at?: string | null
+        }
+        Relationships: []
+      }
+      "shopping-cart": {
+        Row: {
+          amount: number
+          product_id: string[]
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          product_id: string[]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          product_id?: string[]
+          user_id?: string
         }
         Relationships: []
       }

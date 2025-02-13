@@ -19,6 +19,7 @@
     "@supabase/supabase-js": "^2.48.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "dependencies": "^0.0.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "fastify": "^5.2.1",
@@ -27,8 +28,8 @@
     "supabase": "^2.9.6"
   },
   "devDependencies": {
-
     "@cucumber/cucumber": "^11.2.0",
+    "@types/chai": "^5.0.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.1",
