@@ -88,6 +88,18 @@ orderHistoryRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
+const orders = [
+  { order_id: "1", created_at: "2025-02-09T18:41:15+00:00", order_data: "2023-10-01", destination: "Rua A, 123", status: "delivered", total_value: "550" },
+  { order_id: "2", created_at: "2025-02-09T18:45:48.99775+00:00", order_data: "2023-09-25", destination: "Rua B, 456", status: "shipped", total_value: "200" },
+  { order_id: "3", created_at: "2025-02-09T18:46:27.623864+00:00", order_data: "2023-09-20", destination: "Rua C, 789", status: "pending", total_value: "150" },
+  { order_id: "4", created_at: "2025-02-09T18:49:36.882636+00:00", order_data: "2023-09-15", destination: "Rua D, 101", status: "canceled", total_value: "300" },
+  { order_id: "5", created_at: "2025-02-09T18:53:10.346646+00:00", order_data: "2023-09-10", destination: "Rua E, 202", status: "delivered", total_value: "100" },
+];
+
+orderHistoryRouter.get("/orders", (req, res) => {
+  res.json(orders);
+});
+
 
 
 
