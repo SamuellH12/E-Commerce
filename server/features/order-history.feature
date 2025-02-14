@@ -30,9 +30,9 @@ Feature: Histórico de Pedidos
     Given o usuário atual possui pedidos registrados
     When o sistema consulta os 3 pedidos mais recentes do usuário
     Then o sistema retorna os seguintes pedidos:
-      | order_id | created_at                | order_data | destination   | status    | total_value |
-      | 1        | 2025-02-09T18:41:15+00:00 | 2023-10-01 | Rua A, 123    | delivered | 550         |
-      | 2        | 2025-02-09T18:45:48.99775+00:00 | 2023-09-25 | Rua B, 456    | shipped   | 200         |
-      | 3        | 2025-02-09T18:46:27.623864+00:00 | 2023-09-20 | Rua C, 789    | pending   | 150         |
+      | order_id | order_data | destination   | status    | total_value |
+      | 1  | 2023-10-01 | Rua A, 123    | delivered | 550         |
+      | 2  | 2023-09-25 | Rua B, 456    | shipped   | 200         |
+      | 3  | 2023-09-20 | Rua C, 789    | pending   | 150         |
 
   
