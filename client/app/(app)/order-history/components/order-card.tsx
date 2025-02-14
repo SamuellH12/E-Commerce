@@ -24,11 +24,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
   };
   return (
     <div style={{ border: "1px solid #ccc", padding: "16px", margin: "8px 0", borderRadius: "8px" }}>
-      <p>Pedido ID: {order.order_id}</p>
-      <p>Data: {order.order_data}</p>
-      <p>Destino: {order.destination}</p>
+      <p>Order ID: {order.order_id}</p>
+      <p>Date: {order.order_data}</p>
+      <p>Destination: {order.destination}</p>
       <p>Status: {order.status}</p>
-      <p>Valor Total: R$ {totalValue.toFixed(2)}</p> {/* Usa o valor convertido */}
+      <p>Total Value: R$ {totalValue.toFixed(2)}</p> {/* Usa o valor convertido */}
       <button onClick={navigateToOrderDetails}>Ver Detalhes</button>    </div>
   );
 };

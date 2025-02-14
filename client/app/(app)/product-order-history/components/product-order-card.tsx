@@ -19,11 +19,11 @@ const ProductOrderCard: React.FC<ProductOrderCardProps> = ({
 }) => {
   return (
     <div style={{ border: "1px solid #ccc", padding: "10px", margin: "10px 0" }}>
-      <p><strong>ID do Item:</strong> {id}</p>
-      <p><strong>Data de Criação:</strong> {createdAt}</p>
-      <p><strong>ID do Produto:</strong> {productId}</p>
-      <p><strong>Valor Pago:</strong> R$ {pricePaid}</p>
-      <p><strong>Quantidade:</strong> {amount}</p>
+      <p><strong>Item ID:</strong> {id}</p>
+      <p><strong>Created Date:</strong> {createdAt}</p>
+      <p><strong>Product ID:</strong> {productId}</p>
+      <p><strong>Price Paid:</strong> R$ {pricePaid}</p>
+      <p><strong>Amount:</strong> {amount}</p>
     </div>
   );
 };

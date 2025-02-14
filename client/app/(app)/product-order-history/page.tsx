@@ -9,7 +9,7 @@ import { useSearchParams } from "next/navigation";
 const fetchProductDetails = async (productId: string) => {
     const response = await fetch(`/products/${productId}`);
     if (!response.ok) {
-      throw new Error("Erro ao buscar detalhes do produto");
+      throw new Error("Error fetching product details");
     }
     const data = await response.json();
     return data.image_url; // Supondo que a coluna no Supabase seja `image_url`
@@ -27,7 +27,7 @@ const ProductOrderHistoryPage = () => {
       const fetchedItems = await getOrderItemsToOrder(orderId);
       setItems(fetchedItems); // Atualiza o estado com os itens do pedido
     } catch (err) {
-      setError("Erro ao carregar detalhes do pedido.");
+      setError("Error loading order details.");
     }
   };
 
@@ -40,12 +40,12 @@ const ProductOrderHistoryPage = () => {
   }, [order_id]);
 
   if (!order_id || isNaN(Number(order_id))) {
-    return <p>ID do pedido inválido.</p>;
+    return <p>Invalid order ID.</p>;
   }
 
   return (
     <div>
-      <h1>Itens do Pedido #{order_id}</h1>
+      <h1>Order Itens #{order_id}</h1>
       {error && <p>{error}</p>}
       {items.length > 0 ? (
         items.map((item) => (
@@ -59,7 +59,7 @@ const ProductOrderHistoryPage = () => {
           />
         ))
       ) : (
-        <p>Nenhum item encontrado para este pedido.</p>
+        <p>No items found for this order.</p>
       )}
     </div>
   );

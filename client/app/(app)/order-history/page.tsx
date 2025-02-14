@@ -42,19 +42,19 @@ const OrderHistoryPage = () => {
 
   return (
     <div>
-      <h1>Histórico de Pedidos</h1>
+      <h1>Order History</h1>
 
       {/* Exibe os 3 pedidos mais recentes */}
-      <h2>Últimos Pedidos</h2>
+      <h2>Last Orders</h2>
       {recentOrders.map((order) => (
         <OrderCard key={order.order_id} order={order} onViewDetails={handleViewOrderDetails} />
       ))}
 
       {/* Botão para ver todos os pedidos */}
-      <button onClick={() => setRecentOrders(orders)}>Ver Todos os Pedidos</button>
+      <button onClick={() => setRecentOrders(orders)}>All Orders</button>
 
       {/* Mensagem caso não haja pedidos */}
-      {orders.length === 0 && <p>Você ainda não realizou nenhum pedido.</p>}
+      {orders.length === 0 && <p>You haven't placed any orders yet.</p>}
     </div>
   );
 };
