@@ -22,17 +22,3 @@ Feature: Cadastro e Manutenção de Métodos de Pagamento (inserir, remover, atu
         When o usuário preenche o apelido "Cartão de pai", o nome "Wilson F Torres", o código "4556737586899855", o vencimento "3000/03" e o cvc "123"
         Then o cartão é salvo na conta com o apelido "Cartão de pai", o nome "Wilson F Torres", os quatro últimos dígitos "9855" e o tipo "VISA"
         And o usuário está na página de "Pagamento"
-
-#    Scenario: algoritmo de validação dos cartões cadastrados
-#        Given o usuário está na página de "Cadastro de cartão"
-#        When o usuário preenche o apelido "Cartão de painho", o nome "Wilson F Torres", o código "5112345678998766", o vencimento "08/32" e o cvc "123"
-#        And o usuário seleciona a opção "Cadastrar" com sucesso
-#        Then o cartão é validado
-#        And o cartão é salvo com a figura do tipo "MasterCard" ou "Visa"
-
-#    Scenario: requisito não funcional de segurança de cadastro de cartão
-#        Given o usuário está na página de "Cadastro de cartão"
-#        When o usuário preenche o apelido "Cartão de painho", o nome "Wilson F Torres", o código "5112345678998766", o vencimento "08/32" e o cvc "123"
-#        And o usuário seleciona a opção "Cadastrar" com sucesso
-#        Then o número do cartão salvo está protegido como "************9855" por questões de segurança
-#        And o usuário está na página de "Pagamento"
