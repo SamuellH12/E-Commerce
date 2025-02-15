@@ -5,7 +5,17 @@ import { expect } from "chai";
 const BASE_URL = process.env.BASE_URL;
 
 Given("o usuário está na página de {string}", function (string) {
-  // This isn't necessary to service scenario
+  switch (string) {
+    case "Cadastro de cartão":
+      this.cenario = "Cadastrar";
+      break;
+    case "Atualização de cartão":
+      this.cenario = "Atualizar";
+      break;
+    default:
+      // this given isn't necessary to this service scenario
+      break;
+  }
 });
 
 Given(
@@ -58,19 +68,26 @@ Given(
 
 When(
   "o usuário seleciona a opção {string} o cartão {string}",
-  function (string, string2) {
-
-    if (string === "Remover") {
-      switch (string2) {
-        case this.card1.nickname:
-          axios.delete(`http://localhost:3000/cards/${this.id1}`);
-          break;
-        case this.card2.nickname:
-          axios.delete(`http://localhost:3000/cards/${this.id2}`);
-          break;
-        default:
-          throw new Error("Cartão não encontrado");
-      }
+  async function (string, string2) {
+    switch (string) {
+      case "Remover":
+        this.cenario = "Remover";
+        switch (string2) {
+          case this.card1.nickname:
+            await axios.delete(`http://localhost:3000/cards/${this.id1}`);
+            break;
+          case this.card2.nickname:
+            await axios.delete(`http://localhost:3000/cards/${this.id2}`);
+            break;
+          default:
+            throw new Error("Cartão não encontrado");
+        }
+        break;
+      case "Atualizar":
+        // This step is not necessary for this service scenario
+        break;
+      default:
+        return "pending";
     }
   }
 );
@@ -89,32 +106,93 @@ Then(
 Then(
   "o usuário tem os cartões de apelido {string} cadastrados",
   async function (string) {
+    const data = new Date();
+    let mes = data.getMonth() + 1;
+    const ano = data.getFullYear();
+
+    if (mes < 10) mes = `0${mes}`;
+
+    let response;
     
-    await axios.get("http://localhost:3000/cards").then((response) => {
-      const cards = response.data;
-      const card = cards.find((card) => card.id === this.id2);
+    switch (this.cenario) {
+      case "Remover":
+        await axios.get("http://localhost:3000/cards").then((response) => {
+          const cards = response.data;
+          const card = cards.find((card) => card.id === this.id2);
+    
+          expect(card.nickname).to.equal(string);
+        });
+    
+        await axios.delete(`http://localhost:3000/cards/${this.id2}`);
+        break;
 
-      expect(card.nickname).to.equal(string);
-    });
+      default:
+        response = await axios.post("http://localhost:3000/cards/new", {
+          nickname: string,
+          name: "John Doe",
+          code: "5197952644616116",
+          expiration: `${ano}/${mes}`,
+          cvc: "123"
+        });
 
-    await axios.delete(`http://localhost:3000/cards/${this.id2}`);
+        this.card = response.data;
+        expect(response.status).to.equal(200);
+
+        response = await axios.get("http://localhost:3000/cards").then((response) => {
+          const cards = response.data;
+          const card = cards.find((card) => card.id === this.card.id);
+    
+          expect(card.nickname).to.equal(string);
+          expect(response.status).to.equal(200);
+          this.id = card.id;
+        })
+        break;
+    }
+    
   }
 );
 
 When(
   "o usuário preenche o apelido {string}, o nome {string}, o código {string}, o vencimento {string} e o cvc {string}",
   async function (string1, string2, string3, string4, string5) {
-    // Debug para verificar os dados enviados
-    const response = await axios.post("http://localhost:3000/cards/new", {
-      nickname: string1,
-      name: string2,
-      code: string3,
-      expiration: string4,
-      cvc: string5,
-    });
 
-    this.cardId = response.data.id;
+    let response;
+    let card;
 
+    switch (this.cenario) {
+      case "Cadastrar":
+        response = await axios.post("http://localhost:3000/cards/new", {
+          nickname: string1,
+          name: string2,
+          code: string3,
+          expiration: string4,
+          cvc: string5,
+        });
+
+        card = response.data;
+        expect(card.nickname).to.equal(string1);
+        expect(card.name).to.equal(string2);
+        expect(card.code_last4).to.equal(string3.slice(-4));
+
+        this.id = response.data.id;
+        break;
+      
+      case "Atualizar":
+        response = await axios.put(`http://localhost:3000/cards/${this.id}`, {
+          nickname: string1,
+          name: string2,
+          code: string3,
+          expiration: string4,
+          cvc: string5,
+        });
+
+        this.nickname = string1;
+        this.name = string2;
+        this.code = string3;
+        break;
+      default:
+        break;
+    }
     expect(response.status).to.equal(200);
   }
 );
@@ -132,7 +210,7 @@ Then(
 
     await axios.get("http://localhost:3000/cards").then((response) => {
       const cards = response.data;
-      const card = cards.find((card) => card.id === this.cardId);
+      const card = cards.find((card) => card.id === this.id);
 
       expect(card.nickname).to.equal(string);
       expect(card.name).to.equal(string2);
@@ -140,7 +218,7 @@ Then(
       expect(card.card_type).to.equal(string4);
     });
 
-    axios.delete(`http://localhost:3000/cards/${this.cardId}`);
+    axios.delete(`http://localhost:3000/cards/${this.id}`);
   }
 );
 
