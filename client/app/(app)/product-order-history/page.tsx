@@ -150,18 +150,18 @@ const ProductOrderHistoryPage = () => {
       </div>
 
       <div style={{ padding: "16px"}}>
-        <button style={{ padding: "10px 15px", fontSize: "14px", background: "#007bff", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", transition: "0.3s" }} onClick={() => router.push("/order-history")}>Voltar</button>
+        <button style={{ padding: "10px 15px", fontSize: "14px", background: "#007bff", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", transition: "0.3s" }} onClick={() => router.push("/order-history")}>Back</button>
         <h1 style={{ 
             fontSize: "2em",
             textAlign: "center",
             width: "100%",
-            margin: "40px 0",
+            margin: "10px 0",
             padding: "16px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center"
           }}>
-            Itens do Pedido #{order_id}
+            Itens by Order #{order_id}
           </h1>        
         {error && <p>{error}</p>}
         

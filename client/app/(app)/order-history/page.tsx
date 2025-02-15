@@ -35,6 +35,7 @@ const OrderHistoryPage = () => {
       setError("Error loading order details.");
     }
   };
+  
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -49,8 +50,25 @@ const OrderHistoryPage = () => {
 
       {/* Order History */}
       <div style={{ padding: "16px" }}>
-        <h1>Order History</h1>
-        <h2>Last Orders</h2>
+        <h1 style={{ 
+            fontSize: "2em",
+            textAlign: "center",
+            width: "100%",
+            marginTop: "10px 0",
+            paddingTop: "10px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}>Order History</h1>
+        <h2 style={{ 
+            fontSize: "1.5em",
+            textAlign: "center",
+            width: "100%",
+            paddingBottom: "10px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}>Last Orders</h2>
         {recentOrders.map((order) => (
           <OrderCard key={order.order_id} order={order} onViewDetails={handleViewOrderDetails} />
         ))}
