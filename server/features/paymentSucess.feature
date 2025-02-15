@@ -6,13 +6,13 @@ Feature: Cadastro e Manutenção de Métodos de Pagamento (inserir, remover, atu
         Then o cartão é salvo na conta com o apelido "Cartão de painho", o nome "Wilson F Torres", os quatro últimos dígitos "9691" e o tipo "MasterCard"
         And o usuário está na página de "Pagamento"
 
-#   Scenario: Remoção de cartão com sucesso
-#        Given o usuário está na página de "Pagamento"
-#        And o usuário tem os cartões de apelido "cartão de painho" e "Cartão de mainha" cadastrados
-#        When o usuário seleciona a opção "Remover" o cartão "Cartão de painho"
-#        Then o usuário está na página de "Pagamento"
-#        And o cartão de apelido "Cartão de painho" é removido da lista de cartões
-#        And o usuário tem os cartões de apelido "Cartão de mainha" cadastrados
+    Scenario: Remoção de cartão com sucesso
+        Given o usuário está na página de "Pagamento"
+        And o usuário tem os cartões de apelido "Cartão de painho" e "Cartão de mainha" cadastrados
+        When o usuário seleciona a opção "Remover" o cartão "Cartão de painho"
+        Then o usuário está na página de "Pagamento"
+        And o cartão de apelido "Cartão de painho" é removido da lista de cartões
+        And o usuário tem os cartões de apelido "Cartão de mainha" cadastrados
 
 #    Scenario: Atualização de cartão com sucesso
 #        Given o usuário está na página de "Atualização de cartão"
