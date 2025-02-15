@@ -68,3 +68,20 @@ export async function disableProduct(req: Request, res: Response) {
 
   res.send("Product disabled successfully");
 }
+
+export async function getProductImageUrl(req: Request, res: Response) {
+  const productId = req.params.productId;
+  
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('image_url')
+      .eq('id', productId)
+      .single();
+
+    if (error) throw error;
+    res.json(data);
+  } catch (error) {
+    res.status(404).json({ error: 'Product not found' });
+  }
+}

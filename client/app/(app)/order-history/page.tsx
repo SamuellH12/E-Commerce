@@ -1,8 +1,8 @@
 "use client";
 
-// /cliente/app/(app)/order-history/page.tsx
 import React, { useEffect, useState } from "react";
-import { getOrders, getOrderItems, getOrderItemsToOrder } from "./../api/order-api";
+import { useRouter } from "next/navigation";
+import { getOrders, getOrderItemsToOrder } from "./../api/order-api";
 import OrderCard from "./components/order-card";
 
 const OrderHistoryPage = () => {
@@ -10,51 +10,70 @@ const OrderHistoryPage = () => {
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const data = await getOrders();
-        console.log(data);
         setOrders(data);
-        setRecentOrders(data.slice(0, 3)); // Exibe apenas os 3 pedidos mais recentes
+        setRecentOrders(data.slice(0, 3));
       } catch (err) {
-        setError("Erro ao carregar pedidos.");
+        setError("Error loading orders.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchOrders();
   }, []);
 
   const handleViewOrderDetails = async (orderId: number) => {
     try {
       const items = await getOrderItemsToOrder(orderId);
-      alert(JSON.stringify(items, null, 2)); // Exibe os itens em um alerta (pode ser substituído por uma modal)
+      alert(JSON.stringify(items, null, 2));
     } catch (err) {
-      setError("Erro ao carregar detalhes do pedido.");
+      setError("Error loading order details.");
     }
   };
 
-  if (loading) return <p>Carregando...</p>;
+  if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <div>
-      <h1>Order History</h1>
+      {/* Top Bar */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", background: "#f8f8f8", borderBottom: "1px solid #ccc" }}>
+        <button style={{ padding: "10px 15px", fontSize: "14px", background: "#007bff", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", transition: "0.3s" }} onClick={() => router.push("/home")}>Main Menu</button>
+        <button style={{ padding: "10px 15px", fontSize: "14px", background: "#007bff", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", transition: "0.3s" }} onClick={() => router.push("/cart")}>Shopping Cart</button>
+      </div>
 
-      {/* Exibe os 3 pedidos mais recentes */}
-      <h2>Last Orders</h2>
-      {recentOrders.map((order) => (
-        <OrderCard key={order.order_id} order={order} onViewDetails={handleViewOrderDetails} />
-      ))}
+      {/* Order History */}
+      <div style={{ padding: "16px" }}>
+        <h1>Order History</h1>
+        <h2>Last Orders</h2>
+        {recentOrders.map((order) => (
+          <OrderCard key={order.order_id} order={order} onViewDetails={handleViewOrderDetails} />
+        ))}
 
-      {/* Botão para ver todos os pedidos */}
-      <button onClick={() => setRecentOrders(orders)}>All Orders</button>
+        <button style={{
+          marginTop: "20px",
+          padding: "12px 20px",
+          fontSize: "16px",
+          background: "#28a745",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          transition: "0.3s",
+          display: "block",
+          width: "100%",
+          maxWidth: "200px",
+          marginLeft: "auto",
+          marginRight: "auto"
+        }} onClick={() => setRecentOrders(orders)}>View All Orders</button>
 
-      {/* Mensagem caso não haja pedidos */}
-      {orders.length === 0 && <p>You haven't placed any orders yet.</p>}
+        {orders.length === 0 && <p>You haven't placed any orders yet.</p>}
+      </div>
     </div>
   );
 };
