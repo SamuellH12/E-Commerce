@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createProduct,
+  deleteProduct,
   disableProduct,
   getAllProducts,
   getProduct,
@@ -15,6 +16,7 @@ productRouter.get("/:productId", getProduct);
 productRouter.post("/new", createProduct);
 productRouter.put("/:productId", updateProduct);
 productRouter.put("/:productId/disable", disableProduct);
-productRouter.get('/:productId/image-url', getProductImageUrl);
+productRouter.delete("/:productId", deleteProduct);
+productRouter.get("/:productId/image-url", getProductImageUrl);
 
 export { productRouter };
