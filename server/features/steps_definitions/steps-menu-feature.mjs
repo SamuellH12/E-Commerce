@@ -55,6 +55,9 @@ Then(
     const response = await axios.get(`http://localhost:3000/products`);
 
     const idx = response.data.findIndex((item) => item.id === this.productId);
+
     expect(idx).to.be.greaterThan(-1);
+
+    await axios.delete(`http://localhost:3000/products/${this.productId}`);
   }
 );

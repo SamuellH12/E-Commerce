@@ -28,7 +28,6 @@ export async function createProduct(req: Request, res: Response) {
     .from("products")
     .insert(req.body)
     .select();
-  console.log("error", error);
 
   if (error) {
     res.status(400).json(error);
