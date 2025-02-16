@@ -57,7 +57,7 @@ export async function updateCard(req: Request, res: Response) {
   const encryptedNumber = encryptData(card.code)
   const encryptedExpiration = encryptData(card.expiration)
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('cards')
     .update({
       nickname: card.nickname,
@@ -70,8 +70,9 @@ export async function updateCard(req: Request, res: Response) {
       expiration_iv: encryptedExpiration.iv,
     })
     .eq('id', Number(id))
+    .select()
 
   if (error) res.status(500).json(error)
 
-  res.send('Card updated successfully')
+  res.json(data?.[0] ?? null)
 }
