@@ -98,7 +98,9 @@ Then(
     
     await axios.get("http://localhost:3000/cards").then((response) => {
       const cards = response.data;
-      const card = cards.find((card) => card.id === this.id1);
+      const card = cards.find((card) => card.id === this.id1 && card.nickname === string);
+      
+      expect(card).to.be.undefined;
     });
   }
 );
