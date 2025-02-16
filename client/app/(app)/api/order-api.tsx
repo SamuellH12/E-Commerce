@@ -1,0 +1,40 @@
+// /cliente/app/(app)/api/order-api.ts
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "http://localhost:3000", // URL do back-end
+});
+
+export const getOrders = async () => {
+  const response = await api.get("/order-history");
+  return response.data;
+};
+
+/*
+sem tratamento de erros
+export const getOrderItemsToOrder = async (orderId: number) => {
+  const response = await api.get(`/product-order-history?order_id=${orderId}`);
+  return response.data;
+};
+*/
+
+export const getOrderItemsToOrder = async (orderId: number) => {
+  try {
+    const response = await api.get(`/product-order-history?order_id=${orderId}`);
+    return response.data; // Retorna os dados brutos da API
+  } catch (error) {
+    console.error('Error fetching order items:', error);
+    throw new Error('Failed to load order items. Please try again later.');
+  }
+};
+
+export const getOrderItems = async (orderId: string) => {
+    const response = await fetch(
+      `http://localhost:3000/product-order-history?order_id=${orderId}`
+    );
+    console.log(response);
+    if (!response.ok) throw new Error('Erro ao buscar itens');
+    return response.json();
+  };
+
+  
