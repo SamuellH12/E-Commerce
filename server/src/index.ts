@@ -8,6 +8,7 @@ import { categoriesRouter } from "./routes/categories-routes";
 import { departmentRouter } from "./routes/departament-routes";
 import { orderHistoryRouter } from "./routes/order-history-routes";
 import { productOrderHistoryRouter } from "./routes/product-order-history-routes";
+import { shoppingCartRouter } from "./routes/shopping-cart-routes";
 
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use("/category", cors(), categoriesRouter);
 app.use("/department", cors(), departmentRouter);
 app.use("/order-history", orderHistoryRouter);
 app.use("/product-order-history", productOrderHistoryRouter);
+app.use("/shopping-cart", shoppingCartRouter)
 
 
 const PORT = process.env.PORT || 3000;
