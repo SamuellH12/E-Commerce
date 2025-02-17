@@ -5,7 +5,8 @@ import {
   getAllCart,
   updateCartProduct,
   emptyShoppingCart,
-  getCartProduct
+  getCartProduct,
+  checkoutCart
 } from "../controllers/shopping-cart/shopping-cart-controllers";
 
 const shoppingCartRouter = Router();
@@ -13,6 +14,7 @@ const shoppingCartRouter = Router();
 shoppingCartRouter.get("/", getAllCart);
 shoppingCartRouter.get("/:productId", getCartProduct);
 shoppingCartRouter.post("/add", addToCart);
+shoppingCartRouter.post("/checkout", checkoutCart);
 shoppingCartRouter.put("/", updateCartProduct);
 shoppingCartRouter.delete('/:productId', deleteFromCart);
 shoppingCartRouter.delete('/', emptyShoppingCart);

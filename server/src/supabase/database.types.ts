@@ -48,6 +48,35 @@ export type Database = {
         }
         Relationships: []
       }
+      categories: {
+        Row: {
+          created_at: string
+          department_id: number
+          id: number
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          department_id: number
+          id?: number
+          name: string
+        }
+        Update: {
+          created_at?: string
+          department_id?: number
+          id?: number
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coupons: {
         Row: {
           codename: string
@@ -146,7 +175,6 @@ export type Database = {
           amount: number | null
           created_at: string
           id: number
-          is_active: boolean | null
           order_id: number | null
           price_paid: number | null
           product_id: string | null
@@ -155,7 +183,6 @@ export type Database = {
           amount?: number | null
           created_at?: string
           id?: number
-          is_active?: boolean | null
           order_id?: number | null
           price_paid?: number | null
           product_id?: string | null
@@ -164,7 +191,6 @@ export type Database = {
           amount?: number | null
           created_at?: string
           id?: number
-          is_active?: boolean | null
           order_id?: number | null
           price_paid?: number | null
           product_id?: string | null
@@ -195,9 +221,9 @@ export type Database = {
           image_url: string | null
           is_active: boolean | null
           name: string
-          price: number | null
-          stock_quantity: number | null
-          update_at: string | null
+          price: number
+          stock_quantity: number
+          updated_at: string | null
         }
         Insert: {
           category_id?: number | null
@@ -207,9 +233,9 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean | null
           name: string
-          price?: number | null
-          stock_quantity?: number | null
-          update_at?: string | null
+          price?: number
+          stock_quantity?: number
+          updated_at?: string | null
         }
         Update: {
           category_id?: number | null
@@ -219,29 +245,45 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean | null
           name?: string
-          price?: number | null
-          stock_quantity?: number | null
-          update_at?: string | null
+          price?: number
+          stock_quantity?: number
+          updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       "shopping-cart": {
         Row: {
           amount: number
-          product_id: string[]
-          user_id: string
+          created_at: string | null
+          id: string
         }
         Insert: {
-          amount: number
-          product_id: string[]
-          user_id: string
+          amount?: number
+          created_at?: string | null
+          id?: string
         }
         Update: {
           amount?: number
-          product_id?: string[]
-          user_id?: string
+          created_at?: string | null
+          id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "shopping-cart_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

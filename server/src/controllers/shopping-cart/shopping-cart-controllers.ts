@@ -10,7 +10,7 @@ export async function getAllCart(req: Request, res: Response) {
       `)
 
     if (error) {
-      res.status(400).json(error);
+      res.status(500).json(error);
     }
     else {
     res.json(data);
@@ -79,10 +79,10 @@ export async function emptyShoppingCart(req: Request, res: Response) {
     const { error } = await supabase
         .from('shopping-cart')
         .delete()
-        .neq("amount",-1)
+        .neq("amount",-1);
     
     if (error) {
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
     else {
       res.send("Shopping cart emptied successfully");
@@ -109,4 +109,83 @@ export async function updateCartProduct(req: Request, res: Response) {
       res.send("Product "+ data.products.name +" updated successfully");
 
     }
+}
+
+export async function checkoutCart(req: Request, res: Response) {
+  const { data: cart_products, error: fetch_error } = await supabase
+    .from("shopping-cart")
+    .select(`
+      products(*),
+      amount
+    `);
+
+  if (fetch_error) {
+    res.status(500).json(fetch_error);
+  }
+  else {
+    for (const row of cart_products) {
+      try {
+        if(row.products.stock_quantity < row.amount){
+          throw new Error ("Stock for product "+ row.products.name + " lower than the amount requested");
+        }
+      }
+      catch (err) {
+        res.status(500).json(err);
+        return;
+      }
+    };
+    let updated_stock: number;
+    let price_paid_product: number;
+    let total_cost_order: number = 0;
+    const {data: new_order, error: order_error} = await supabase
+      .from("order-history")
+      .insert({status: "processing"})
+      .select()
+      .single()
+    
+    if (order_error){
+      res.status(500).json(order_error);
+    }
+    else {
+      for (const row of cart_products) {
+        price_paid_product = row.products.price * row.amount;
+        total_cost_order += price_paid_product;
+        updated_stock = row.products.stock_quantity - row.amount;
+
+        const {error: update_error} = await supabase
+          .from("products")
+          .update({stock_quantity: updated_stock})
+          .eq("id" ,row.products.id)
+
+        const {error: product_error} = await supabase
+          .from("product-order-history")
+          .insert({
+            product_id: row.products.id,
+            amount: row.amount, 
+            price_paid: price_paid_product, 
+            order_id: new_order.order_id})
+        if (product_error || update_error){
+          res.status(500).json(product_error);
+          return;
+        }
+      };
+      const { error: total_cost_order_error} = await supabase
+        .from("order-history")
+        .update({total_value:total_cost_order})
+        .eq("order_id", new_order.order_id)
+
+      const { error: empty_error } = await supabase
+        .from('shopping-cart')
+        .delete()
+        .neq("amount",-1);
+      
+      if (empty_error || total_cost_order_error) {
+        res.status(500).json(empty_error);
+      }
+      else {
+        res.send("Shopping cart successfully checked out. Shopping cart is now empty");
+
+    }
+    }
+  }
 }
