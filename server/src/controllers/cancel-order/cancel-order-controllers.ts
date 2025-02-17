@@ -35,7 +35,7 @@ export async function attemptCancel(req: Request, res: Response) {
                         `);
                     
                     if (error){
-                        res.status(500).json(error);
+                        res.send("Order canceled successfully. No products found on this order");
                     }
                     else{
                         let updated_stock: number;
@@ -52,7 +52,7 @@ export async function attemptCancel(req: Request, res: Response) {
                                 } 
                             }
                         }
-                        res.send("Order of id: " + order_id + " has been canceled. The stocks of this order's products have been restored");
+                        res.send("Order of id: " + order_id + " has been canceled. The stocks of this order's products have been adjusted");
                     }      
             }
         }

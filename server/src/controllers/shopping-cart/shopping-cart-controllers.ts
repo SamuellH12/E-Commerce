@@ -22,7 +22,7 @@ export async function getCartProduct(req: Request, res: Response) {
     const { data, error } = await supabase
       .from("shopping-cart")
       .select(`
-        product(id, name, description, price, image_url, stock_quantity, is_active),
+        products(id, name, description, price, image_url, stock_quantity, is_active),
         amount
       `)
       .eq("id",id); 
@@ -57,7 +57,6 @@ export async function addToCart(req: Request, res: Response) {
 
 export async function deleteFromCart(req: Request, res: Response) {
     const id: string = req.params.productId;
-    
     const { data, error } = await supabase
         .from('shopping-cart')
         .delete()
@@ -65,8 +64,7 @@ export async function deleteFromCart(req: Request, res: Response) {
         .select(`
           products(name)
         `)
-        .single();
-    
+        .single();  
     if (error) {
       res.status(500).json(error)
     }
@@ -125,7 +123,7 @@ export async function checkoutCart(req: Request, res: Response) {
   else {
     for (const row of cart_products) {
         if(row.products.stock_quantity < row.amount){
-          res.send("Failed to complete checkout, there is more units of " + row.products.name + " on cart than on stock");
+          res.send("Failed to complete checkout, there are more units of " + row.products.name + " on cart than on stock");
           return;
         }
     };
