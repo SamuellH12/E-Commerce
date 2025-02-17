@@ -124,15 +124,10 @@ export async function checkoutCart(req: Request, res: Response) {
   }
   else {
     for (const row of cart_products) {
-      try {
         if(row.products.stock_quantity < row.amount){
-          throw new Error ("Stock for product "+ row.products.name + " lower than the amount requested");
+          res.send("Failed to complete checkout, there is more units of " + row.products.name + " on cart than on stock");
+          return;
         }
-      }
-      catch (err) {
-        res.status(500).json(err);
-        return;
-      }
     };
     let updated_stock: number;
     let price_paid_product: number;
