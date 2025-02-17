@@ -83,7 +83,12 @@ export async function emptyShoppingCart(req: Request, res: Response) {
       res.status(500).json(error);
     }
     else {
-      res.send("Shopping cart emptied successfully");
+      if (req.path == "/checkout"){
+        res.send("Shopping cart successfully checked out. Shopping cart is now empty");
+      } 
+      else{
+        res.send("Shopping cart emptied successfully");
+      }
 
     }
 }
@@ -162,22 +167,15 @@ export async function checkoutCart(req: Request, res: Response) {
           return;
         }
       };
-      const { error: total_cost_order_error} = await supabase
+      const { error } = await supabase
         .from("order-history")
         .update({total_value:total_cost_order})
-        .eq("order_id", new_order.order_id)
-
-      const { error: empty_error } = await supabase
-        .from('shopping-cart')
-        .delete()
-        .neq("amount",-1);
-      
-      if (empty_error || total_cost_order_error) {
-        res.status(500).json(empty_error);
+        .eq("order_id", new_order.order_id)      
+      if ( error ) {
+        res.status(500).json(error);
       }
       else {
-        res.send("Shopping cart successfully checked out. Shopping cart is now empty");
-
+        emptyShoppingCart(req, res);
     }
     }
   }
