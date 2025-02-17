@@ -7,6 +7,31 @@ export type Json =
   | Json[]
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string
+          query?: string
+          variables?: Json
+          extensions?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       cards: {
@@ -146,7 +171,6 @@ export type Database = {
           amount: number | null
           created_at: string
           id: number
-          is_active: boolean | null
           order_id: number | null
           price_paid: number | null
           product_id: string | null
@@ -155,7 +179,6 @@ export type Database = {
           amount?: number | null
           created_at?: string
           id?: number
-          is_active?: boolean | null
           order_id?: number | null
           price_paid?: number | null
           product_id?: string | null
@@ -164,7 +187,6 @@ export type Database = {
           amount?: number | null
           created_at?: string
           id?: number
-          is_active?: boolean | null
           order_id?: number | null
           price_paid?: number | null
           product_id?: string | null
@@ -227,19 +249,34 @@ export type Database = {
       }
       "shopping-cart": {
         Row: {
-          amount: number
-          product_id: string[]
-          user_id: string
+          amount: number | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          name: string
+          price: number | null
+          stock_quantity: number | null
+          total_price: number | null
         }
         Insert: {
-          amount: number
-          product_id: string[]
-          user_id: string
+          amount?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name: string
+          price?: number | null
+          stock_quantity?: number | null
+          total_price?: number | null
         }
         Update: {
-          amount?: number
-          product_id?: string[]
-          user_id?: string
+          amount?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name?: string
+          price?: number | null
+          stock_quantity?: number | null
+          total_price?: number | null
         }
         Relationships: []
       }
