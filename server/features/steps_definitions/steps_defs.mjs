@@ -1,8 +1,121 @@
 import { Given, Then, When } from "@cucumber/cucumber";
 import axios from "axios";
 import { expect } from "chai";
+import { parse } from "path";
+
 
 const BASE_URL = process.env.BASE_URL;
+
+Given('{string} não tem uma entrada {string}', async function (db, db_entry) {
+  try {
+    let response = await axios.get("http://localhost:3000/"+db);
+    
+    if (response.data.some(entry => entry.codename === db_entry)) {
+      let entry = response.data.find(entry => entry.codename === db_entry);
+      let id = entry ? entry.id : null;
+      await axios.delete("http://localhost:3000/"+db+"/"+id);
+    }
+    
+    response = await axios.get("http://localhost:3000/"+db);
+    
+    expect(response.data.some(entry => entry.codename === db_entry)).to.be.false;
+
+  } catch (error) {
+    throw new Error("Fail on request");
+  }
+});
+
+let getminbody = (db) => {
+  switch (db) {
+    case "Coupons":
+      return "{'name': 'name_','percentage': 10}";
+    }
+}
+
+Given('{string} tem uma entrada {string}', async function (db, db_entry) {
+  let body = getminbody(db).replace(/'/g, '"').replace("name_", db_entry);
+  let parsedBody = JSON.parse(body);
+  
+  try {
+    let response = await axios.get("http://localhost:3000/"+db);
+    
+    if (!response.data.some(entry => entry.codename === db_entry)) {
+      await axios.post("http://localhost:3000/"+db, parsedBody);
+    }
+    
+    response = await axios.get("http://localhost:3000/"+db);
+    
+    expect(response.data.some(entry => entry.codename === db_entry)).to.be.true;
+
+  } catch (error) {
+    throw new Error("Fail on request");
+  }
+});
+
+When('uma requisição {string} for enviada para {string} com o body: {string}', async function (type, db, body) {
+  let response;
+  let parsedBody;
+  
+  switch (type) {
+    case "GET":
+      response = await axios.get("http://localhost:3000"+db);
+      expect(response.status).to.equal(200);
+      break;
+      case "POST":  
+      parsedBody = JSON.parse(body.replace(/'/g, '"'));
+      response = await axios.post("http://localhost:3000/coupons", parsedBody);  
+      expect(response.status).to.equal(201);
+      
+      break;
+      case "PUT": 
+      parsedBody = JSON.parse(body.replace(/'/g, '"'));
+      response = await axios.put("http://localhost:3000"+db, parsedBody);
+      expect(response.status).to.equal(200);
+      break;
+      case "DELETE":
+        response = await axios.delete("http://localhost:3000"+db);
+        expect(response.status).to.equal(200);
+      break;
+    default:
+      throw new Error("Invalid request type");
+  }  
+});
+
+Then('{string} agora tem uma entrada {string}', async function (db, db_entry) {  
+  try {
+    let response = await axios.get("http://localhost:3000/"+db);
+    
+    expect(response.data.some(entry => entry.codename === db_entry)).to.be.true;
+
+  } catch (error) {
+    throw new Error("Fail on request");
+  }
+});
+
+Then('{string} agora não tem uma entrada {string}', async function (db, db_entry) {  
+  try {
+    let response = await axios.get("http://localhost:3000/"+db);
+    
+    expect(response.data.some(entry => entry.codename === db_entry)).to.be.false;
+
+  } catch (error) {
+    throw new Error("Fail on request");
+  }
+});
+
+Then('a entrada {string} de {string} tem no body: {string}', async function (db_entry, db, body) {
+  let parsedBody = JSON.parse(body.replace(/'/g, '"'));
+  
+  let response = await axios.get("http://localhost:3000/"+db);
+  let entry = response.data.find(entry => entry.codename === db_entry);
+
+  expect(entry).to.deep.include(parsedBody);
+});
+
+
+
+
+
 
 Given("o usuário está na página de {string}", function (string) {
   switch (string) {
@@ -97,7 +210,9 @@ Then(
   async function (string) {
     await axios.get("http://localhost:3000/cards").then((response) => {
       const cards = response.data;
-      const card = cards.find((card) => card.id === this.id1);
+      const card = cards.find((card) => card.id === this.id1 && card.nickname === string);
+      
+      expect(card).to.be.undefined;
     });
   }
 );
@@ -196,12 +311,6 @@ When(
   }
 );
 
-When("o usuário seleciona a opção {string} com sucesso", function (string) {
-  // Write code here that turns the phrase above into concrete actions
-
-  return "pending";
-});
-
 Then(
   "o cartão é salvo na conta com o apelido {string}, o nome {string}, os quatro últimos dígitos {string} e o tipo {string}",
   async function (string, string2, string3, string4) {
@@ -218,18 +327,5 @@ Then(
     });
 
     axios.delete(`http://localhost:3000/cards/${this.id}`);
-  }
-);
-
-Then("o cartão é validado", function () {
-  // Write code here that turns the phrase above into concrete actions
-  return "pending";
-});
-
-Then(
-  "o cartão é salvo com a figura do tipo {string} ou {string}",
-  (string, string2) => {
-    // Write code here that turns the phrase above into concrete actions
-    return "pending";
   }
 );
