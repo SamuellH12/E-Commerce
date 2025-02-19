@@ -204,7 +204,9 @@ Then(
   async function (string) {
     await axios.get("http://localhost:3000/cards").then((response) => {
       const cards = response.data;
-      const card = cards.find((card) => card.id === this.id1);
+      const card = cards.find((card) => card.id === this.id1 && card.nickname === string);
+      
+      expect(card).to.be.undefined;
     });
   }
 );
@@ -303,12 +305,6 @@ When(
   }
 );
 
-When("o usuário seleciona a opção {string} com sucesso", function (string) {
-  // Write code here that turns the phrase above into concrete actions
-
-  return "pending";
-});
-
 Then(
   "o cartão é salvo na conta com o apelido {string}, o nome {string}, os quatro últimos dígitos {string} e o tipo {string}",
   async function (string, string2, string3, string4) {
@@ -325,18 +321,5 @@ Then(
     });
 
     axios.delete(`http://localhost:3000/cards/${this.id}`);
-  }
-);
-
-Then("o cartão é validado", function () {
-  // Write code here that turns the phrase above into concrete actions
-  return "pending";
-});
-
-Then(
-  "o cartão é salvo com a figura do tipo {string} ou {string}",
-  (string, string2) => {
-    // Write code here that turns the phrase above into concrete actions
-    return "pending";
   }
 );
