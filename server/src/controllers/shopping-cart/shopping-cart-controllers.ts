@@ -25,7 +25,8 @@ export async function getCartProduct(req: Request, res: Response) {
         products(id, name, description, price, image_url, stock_quantity, is_active),
         amount
       `)
-      .eq("id",id); 
+      .eq("id",id) 
+      .single();
 
     if (error) {
       res.status(400).json(error);
