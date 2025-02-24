@@ -5,12 +5,8 @@ import supabase from "../../supabase/supabase";
 export async function getAllDepartments(req: Request, res: Response) {
     const { data, error } = await supabase.from("departments").select("*");
   
-    if (error) {
-      res.status(400).json(error);
-      return;
-    }
-  
-    res.json(data);
+    if (error) res.status(400).json(error);
+    else res.json(data);
 }
 
 export async function getDepartment(req: Request, res: Response) {
@@ -19,29 +15,16 @@ export async function getDepartment(req: Request, res: Response) {
         .select("*")
         .eq("id", +req.params.departmentId);
   
-    if(error){
-      res.status(400).json(error);
-      return;
-    }
-    if(data.length === 0){
-        res.status(404).json("not found");
-        return
-    }
-  
-    res.json(data[0]);
+    if(error) res.status(400).json(error);
+    else if(data.length === 0) res.status(404).json("not found");
+    else res.json(data[0]);
 }
 
 
 function validateDepartmentName(name : string) : boolean {
     if(!name) return false;
-    if(name.includes("#")) return false;
-    if(name.includes("$")) return false;
-    if(name.includes("*")) return false;
-    if(name.includes("\\")) return false;
-    if(name.includes("/")) return false;
-    if(name.includes("%")) return false;
-    if(name.includes("\n")) return false;
-    return true;
+    const regex = /^[^!@#$%^&*]+$/;
+    return regex.test(name);
 }
 
 export async function createDepartment(req: Request, res: Response) {
@@ -73,6 +56,7 @@ export async function updateDepartment(req: Request, res: Response) {
         .select()
     
     if(error) res.status(500).json(error);
+    else if(data.length === 0) res.status(404).json("not found");
     else res.status(201).json(data[0]);
 }
 

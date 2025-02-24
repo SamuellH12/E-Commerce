@@ -34,28 +34,27 @@ export async function createProduct(req: Request, res: Response) {
     return;
   }
 
-  res.send(data?.[0] ?? null);
+  res.json(data?.[0] ?? null);
 }
 export async function updateProduct(req: Request, res: Response) {
   const id: string = req.params.productId;
 
-  const { error } = await supabase
+  const { error, data } = await supabase
     .from("products")
-    .update(req.body)
+    .update({ ...req.body })
     .eq("id", id);
 
   if (error) {
     res.status(400).json(error);
     return;
   }
-
-  res.send("Product updated successfully");
+  res.json(data?.[0] ?? null);
 }
 
 export async function disableProduct(req: Request, res: Response) {
   const id: string = req.params.productId;
 
-  const { error } = await supabase
+  const { error, data } = await supabase
     .from("products")
     .update({ is_active: false })
     .eq("id", id);
@@ -64,8 +63,7 @@ export async function disableProduct(req: Request, res: Response) {
     res.status(400).json(error);
     return;
   }
-
-  res.send("Product disabled successfully");
+  res.json(data?.[0] ?? null);
 }
 export async function deleteProduct(req: Request, res: Response) {
   const id: string = req.params.productId;
