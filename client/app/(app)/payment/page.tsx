@@ -28,7 +28,7 @@ export default function Payment() {
     
     useEffect(() => {
         const fetchData = async () => {
-          const response = await fetch('http://localhost:3001/cards/');
+          const response = await fetch('http://localhost:3000/cards/');
           const result = await response.json();
           setCards(result);
         };
@@ -48,7 +48,7 @@ export default function Payment() {
         const answer = window.prompt("TEM CERTEZA QUE DESEJA REMOVER ESSE CARTÃO? (S/N)")?.toUpperCase()
 
         if (answer === "S") {
-            const response = await fetch(`http://localhost:3001/cards/${id}`, {
+            const response = await fetch(`http://localhost:3000/cards/${id}`, {
                 method: "DELETE"
             })
             if (response.status === 200) window.alert("Cartão deletado com sucesso!")
