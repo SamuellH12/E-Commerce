@@ -9,7 +9,6 @@ import { departmentRouter } from "./routes/departament-routes";
 import { orderHistoryRouter } from "./routes/order-history-routes";
 import { productOrderHistoryRouter } from "./routes/product-order-history-routes";
 
-
 dotenv.config();
 
 const app = express();
@@ -24,8 +23,7 @@ app.use("/department", cors(), departmentRouter);
 app.use("/order-history", orderHistoryRouter);
 app.use("/product-order-history", productOrderHistoryRouter);
 
-
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
 });
