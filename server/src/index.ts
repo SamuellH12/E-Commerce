@@ -25,10 +25,10 @@ app.use("/category", cors(), categoriesRouter);
 app.use("/department", cors(), departmentRouter);
 app.use("/order-history", orderHistoryRouter);
 app.use("/product-order-history", productOrderHistoryRouter);
-app.use("/shopping-cart", cors(), shoppingCartRouter)
-app.use("/cancel-order",cors(), cancelOrderRouter)
+app.use("/shopping-cart", cors(), shoppingCartRouter);
+app.use("/cancel-order", cors(), cancelOrderRouter);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
 });
