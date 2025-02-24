@@ -49,13 +49,13 @@ const OrderHistoryPage = () => {
       </div>
 
       {/* Order History */}
-      <div style={{ padding: "16px" }}>
+      <div style={{ padding: "10px" }}>
         <h1 style={{ 
             fontSize: "2em",
             textAlign: "center",
             width: "100%",
-            marginTop: "10px 0",
-            paddingTop: "10px",
+            marginTop: "2px 0",
+            paddingTop: "2px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center"
@@ -64,7 +64,7 @@ const OrderHistoryPage = () => {
             fontSize: "1.5em",
             textAlign: "center",
             width: "100%",
-            paddingBottom: "10px",
+            paddingBottom: "5px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center"
@@ -74,7 +74,7 @@ const OrderHistoryPage = () => {
         ))}
 
         <button style={{
-          marginTop: "20px",
+          marginTop: "10px",
           padding: "12px 20px",
           fontSize: "16px",
           background: "#28a745",

@@ -95,12 +95,14 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
       >
         {/* Detalhes do pedido */}
         <div>
-          <h3 style={{ marginBottom: "8px", color: "#333" }}>Pedido #{order.order_id}</h3>
-          <p style={{ color: "#666", fontSize: "14px" }}>Data: {order.order_data}</p>
-          <p style={{ color: "#666", fontSize: "14px" }}>Destino: {order.destination}</p>
+          <h3 style={{ marginBottom: "8px", color: "#333" }}>Order #{order.order_id}</h3>
+          <div style={{display:"flex"}}>
+          <p style={{  marginRight: "10px", color: "#666", fontSize: "14px" }}>Order placed: {order.order_data}</p>
+          <p style={{  marginRight: "10px", color: "#666", fontSize: "14px" }}>Destination: {order.destination}</p>
+          </div>
           <p style={{ color: "#666", fontSize: "14px" }}>
             Status:{" "}
-            <strong style={{ color: order.status === "Delivered" ? "#28a745" : "#dc3545" }}>
+            <strong style={{ color: order.status === "delivered" ? "#28a745" : "#dc3545" }}>
               {order.status}
             </strong>
           </p>
@@ -109,8 +111,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
           </p>
           <button
             style={{
-              marginTop: "10px",
-              padding: "10px 15px",
+              marginTop: "5px",
+              padding: "5px 10px",
               fontSize: "14px",
               background: "#007bff",
               color: "white",
@@ -121,7 +123,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
             }}
             onClick={navigateToOrderDetails}
           >
-            Ver Detalhes
+            See details 
           </button>
         </div>
 
