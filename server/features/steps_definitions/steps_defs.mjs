@@ -329,3 +329,31 @@ Then(
     axios.delete(`http://localhost:3000/cards/${this.id}`);
   }
 );
+
+
+Given('o usuário está na página {string}', async function (type, db, body) {
+    
+});
+
+
+Given('não existe a categoria {string}', function (categoria) {
+  
+});
+
+When('o usuário seleciona a opção {string}', function (opcao) {
+  
+});
+
+
+When('o usuário tenta cadastrar a Categoria com nome {string} e o departamento {string}', function () {
+
+});
+
+
+Then('aparece uma mensagem de confirmação', function () {
+  
+});
+
+Then('o usuário consegue ver {string} na lista de categorias', function (string) {
+  
+});
