@@ -1,6 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { axiosApi } from "@/lib/axios-client";
 import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { getOrderItemsToOrder } from "../../api/order-api";
 
 interface OrderCardProps {
@@ -26,9 +27,9 @@ interface OrderItem {
 
 const fetchProductDetails = async (productId: string) => {
   try {
-    const response = await fetch(`http://localhost:3000/products/${productId}`);
-    if (!response.ok) throw new Error("Produto não encontrado");
-    return await response.json();
+    const response = await axiosApi(`/products/${productId}`);
+
+    return await response.data;
   } catch (error) {
     console.error("Erro ao buscar produto:", error);
     return null;
@@ -38,7 +39,10 @@ const fetchProductDetails = async (productId: string) => {
 const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
   const router = useRouter();
   const [items, setItems] = useState<OrderItem[]>([]);
-  const totalValue = typeof order.total_value === "string" ? parseFloat(order.total_value) : order.total_value;
+  const totalValue =
+    typeof order.total_value === "string"
+      ? parseFloat(order.total_value)
+      : order.total_value;
 
   // Função para carregar os itens do pedido e os detalhes dos produtos
   const loadOrderItems = async () => {
@@ -53,7 +57,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
           return {
             ...item,
             product_name: productDetails?.name || "Produto não disponível",
-            image_url: productDetails?.image_url || "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg"
+            image_url:
+              productDetails?.image_url ||
+              "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg",
           };
         })
       );
@@ -95,14 +101,24 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
       >
         {/* Detalhes do pedido */}
         <div>
-          <h3 style={{ marginBottom: "8px", color: "#333" }}>Order #{order.order_id}</h3>
-          <div style={{display:"flex"}}>
-          <p style={{  marginRight: "10px", color: "#666", fontSize: "14px" }}>Order placed: {order.order_data}</p>
-          <p style={{  marginRight: "10px", color: "#666", fontSize: "14px" }}>Destination: {order.destination}</p>
+          <h3 style={{ marginBottom: "8px", color: "#333" }}>
+            Order #{order.order_id}
+          </h3>
+          <div style={{ display: "flex" }}>
+            <p style={{ marginRight: "10px", color: "#666", fontSize: "14px" }}>
+              Order placed: {order.order_data}
+            </p>
+            <p style={{ marginRight: "10px", color: "#666", fontSize: "14px" }}>
+              Destination: {order.destination}
+            </p>
           </div>
           <p style={{ color: "#666", fontSize: "14px" }}>
             Status:{" "}
-            <strong style={{ color: order.status === "delivered" ? "#28a745" : "#dc3545" }}>
+            <strong
+              style={{
+                color: order.status === "delivered" ? "#28a745" : "#dc3545",
+              }}
+            >
               {order.status}
             </strong>
           </p>
@@ -123,7 +139,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
             }}
             onClick={navigateToOrderDetails}
           >
-            See details 
+            See details
           </button>
         </div>
 
