@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import MasterCard from './(card_type_images)/mastercard';
 import Visa from './(card_type_images)/visa';
 import Image from 'next/image';
-import configuracoes from 'C:/Users/lucas/OneDrive/Área de Trabalho/E-CommerceESS/client/public/configuracoes.png';
+import configuracoes from '../../../public/configuracoes.png';
 
 interface Card {
     id: number,
