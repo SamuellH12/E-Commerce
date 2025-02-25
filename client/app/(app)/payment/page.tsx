@@ -1,11 +1,31 @@
 "use client";
 
 import Link from 'next/link';
-import { useState, useEffect } from "react";
-import MasterCard from './(card_type_images)/mastercard';
-import Visa from './(card_type_images)/visa';
+import { useState, useEffect, type JSX } from "react";
 import Image from 'next/image';
 import configuracoes from '../../../public/configuracoes.png';
+import mastercard from '../../../public/mastercard.png';
+import visa from '../../../public/visa.png';
+
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Card } from '@/components/ui/card';
+import { DotsHorizontalIcon } from '@radix-ui/react-icons';
+import { CreditCard, DollarSign, Plus } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
 interface Card {
     id: number,
@@ -14,27 +34,33 @@ interface Card {
     name: string,
     code_last4: string,
     expiration: string,
-    card_type: string,
+    card_type: CardType,
     code_iv: string,
     expiration_iv: string,
     code: string
 }
 
+enum CardType {
+    MasterCard = 'MasterCard',
+    Visa = 'VISA'
+}
+
+const cardType:Record<CardType, JSX.Element> = {
+    'MasterCard': <Image src={mastercard} alt="Picture of MasterCard" className="inline-block"/>,
+    'VISA': <Image src={visa} alt="Picture of MasterCard" className="inline-block"/>
+}
+
 export default function Payment() {
     const [optionSelected, setOptionSelected] = useState(0);
     const [cardSelected, setCardSelected] = useState(0);
-    const [cards, setCards] = useState<Card[]>([]);
     const [menuOpen, setMenuOpen] = useState(0);
     
-    useEffect(() => {
-        const fetchData = async () => {
-          const response = await fetch('http://localhost:3000/cards/');
-          const result = await response.json();
-          setCards(result);
-        };
-    
-        fetchData();
-    }, []);
+    const { data, isLoading } = useQuery({ queryKey:["cardsQuery"], queryFn: async (): Promise<Card[]> => {
+        const response = await fetch('http://localhost:3000/cards')
+        return response.json()
+    }})
+
+    if (isLoading) return <p>Carregando...</p>
 
     function atualizarMenu(id:number) {
         if (menuOpen === id) {
@@ -63,63 +89,59 @@ export default function Payment() {
             <p className="text-gray-500 mb-10">Selecione o método de pagamento da compra</p>
             
             <form>
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-4 px-4">
                     <button
                         type="button"
                         onClick={() => setOptionSelected(1)}
-                        className={`h-20 items-center justify-center border-2 rounded-lg bg-white shadow-md w-1/2 ${optionSelected === 1 ? "border-black" : "border-gray-300"}`}
+                        className={`h-20 items-center justify-center border-2 rounded-lg bg-white shadow-md w-1/2 flex gap-2 ${optionSelected === 1 ? "border-black" : "border-gray-300"}`}
                     >
-                        <h2>Cartão</h2>
+                        <CreditCard/><h2>Cartão</h2>
                     </button>
                     <button
                         type="button"
                         onClick={() => setOptionSelected(2)}
-                        className={`h-20 items-center justify-center border-2 rounded-lg bg-white shadow-md w-1/2 ${optionSelected === 2 ? "border-black" : "border-gray-300"}`}
+                        className={`h-20 items-center justify-center border-2 rounded-lg bg-white shadow-md w-1/2 flex gap-2 ${optionSelected === 2 ? "border-black" : "border-gray-300"}`}
                     >
-                        <h2>Pix</h2>
+                        <DollarSign/><h2>Pix</h2>
                     </button>
                 </div>
 
                 {optionSelected === 1 && (
                     <div className="mt-10 gap-4">
                         <Link href="/payment/new_card">
-                            <button type="button" className="h-20 items-center justify-center border-2 rounded-lg bg-white w-full hover:bg-gray-200 mb-4">
-                                <h2>+ Adicionar cartão</h2>
+                            <button type="button" className="h-20 items-center justify-center border-2 rounded-lg bg-white w-full hover:bg-gray-200 mb-4 flex gap-2">
+                                <Plus/><h2>Adicionar cartão</h2>
                             </button>
                         </Link>
                         <div className="grid">
-                            {cards.map((card:Card) => (
+                            {data?.map((card:Card) => (
                                 <div key={card.id} className="grid">
-                                    <button
-                                    type="button"
+                                    <Card
                                     onClick={() => {setCardSelected(card.id)}}
-                                    className={`h-32 shadow-md px-4 rounded flex justify-between items-center mx-4 mb-4 ${cardSelected === card.id ? "bg-gray-300" : "bg-white"}`}
+                                    className={`cursor-pointer h-32 shadow-md px-4 rounded flex justify-between items-center mx-4 mb-4 ${cardSelected === card.id ? "bg-muted-foreground/30" : "bg-white"}`}
                                     >
-                                        {card.card_type === "MasterCard" ? (<MasterCard/>) : (<Visa/>)}
+                                        {cardType[card.card_type]}
                                         <h3>{card.nickname} - {card.code_last4}</h3>
-                                        <span onClick={() => atualizarMenu(card.id)} onKeyDown={(e) => { if (e.key === 'Enter') atualizarMenu(card.id); }} className='border-4 rounded-lg p-2'>
-                                            <Image src={configuracoes} alt="Configurações e mais" className='w-10'/>
-                                        </span>
-                                    </button>
-                                    {card.id === menuOpen && (
-                                        <div className="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded-lg overflow-hidden">
-                                            <button
-                                            type='button'
-                                            className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                                            onClick={() => confirmarRemocao(card.id)}
-                                            >
-                                                Remover
-                                            </button>
-                                            <Link href={`/payment/edit_card/${card.id}`}>
-                                                <button
-                                                type='button'
-                                                className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                                                >
-                                                    Atualizar
-                                                </button>
-                                            </Link>
-                                        </div>
-                                    )}
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button onClick={() => atualizarMenu(card.id)} onKeyDown={(e) => { if (e.key === 'Enter') atualizarMenu(card.id); }} variant={'outline'} className='w-12 h-12'>
+                                                    <DotsHorizontalIcon className='w-16 h-16'/>
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent className="w-56">
+                                            <DropdownMenuLabel>Ação</DropdownMenuLabel>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuGroup>
+                                                <DropdownMenuItem>
+                                                Editar
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => confirmarRemocao(card.id)}>
+                                                Excluir
+                                                </DropdownMenuItem>
+                                            </DropdownMenuGroup>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </Card>
                                 </div>
                             ))}
                         </div>
