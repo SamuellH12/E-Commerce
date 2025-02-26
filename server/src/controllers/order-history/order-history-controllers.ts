@@ -1,9 +1,59 @@
 import { Request, Response } from "express";
 import supabase from "../../supabase/supabase";
+import { OrderHistory } from "./schema/order-history-schema";
 
-/**
- * Função para buscar o histórico de pedidos de um usuário específico.
- */
+export const postOrderHistory = async (req: Request, res: Response) => {
+  const OSData: OrderHistory = req.body
+
+  const { error, data } = await supabase
+    .from('order-history')
+    .insert({
+      order_data: OSData.order_data,
+      destination: OSData.destination,
+      status: OSData.status,
+      total_value: OSData.total_value,
+    })
+    .select()
+
+  if (error) res.status(500).json(error)
+
+  res.json(data?.[0] ?? null)
+}
+
+export const putOrderHistory = async (req: Request, res: Response) => {
+  const OSData: OrderHistory = req.body
+
+  const { error, data } = await supabase
+    .from('order-history')
+    .update({
+      order_data: OSData.order_data,
+      destination: OSData.destination,
+      status: OSData.status,
+      total_value: OSData.total_value,
+    })
+    .eq('order_id', OSData.order_id)
+    .select()
+    
+
+  if (error) res.status(500).json(error)
+
+  res.json(data?.[0] ?? null)
+}
+
+export const deleteOrderHistory = async (req: Request, res: Response) => {
+  const OSData: OrderHistory = req.body
+
+  const { error } = await supabase
+  .from('order-history')
+  .delete()
+  .eq('order_id', OSData.order_id)
+
+  if (error) res.status(500).json(error)
+
+  res.send('Order deleted successfully')
+}
+
+
 export const getOrderHistory = async (req: Request, res: Response) => {
   //const userId = req.params.userId;
 

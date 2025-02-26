@@ -143,28 +143,37 @@ const ProductOrderHistoryPage = () => {
 
   return (
     <div>
-      {/* Cabeçalho mantido igual */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", background: "#f8f8f8", borderBottom: "1px solid #ccc" }}>
-        <button style={{ padding: "10px 15px", fontSize: "14px", background: "#007bff", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", transition: "0.3s" }} onClick={() => router.push("/home")}>Main Menu</button>
-        <button style={{ padding: "10px 15px", fontSize: "14px", background: "#007bff", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", transition: "0.3s" }} onClick={() => router.push("/cart")}>Shopping Cart</button>
+      {/* Cabeçalho */}
+      <div className="flex justify-between items-center p-4 bg-gray-100 border-b border-gray-300">
+        <button
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
+          onClick={() => router.push("/home")}
+        >
+          Main Menu
+        </button>
+        <button
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
+          onClick={() => router.push("/cart")}
+        >
+          Shopping Cart
+        </button>
       </div>
-
-      <div style={{ padding: "16px"}}>
-        <button style={{ padding: "10px 15px", fontSize: "14px", background: "#007bff", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", transition: "0.3s" }} onClick={() => router.push("/order-history")}>Back</button>
-        <h1 style={{ 
-            fontSize: "2em",
-            textAlign: "center",
-            width: "100%",
-            margin: "10px 0",
-            padding: "16px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
-          }}>
-            Itens by Order #{order_id}
-          </h1>        
-        {error && <p>{error}</p>}
-        
+  
+      {/* Conteúdo principal */}
+      <div className="p-4">
+        <button
+          className="mb-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
+          onClick={() => router.push("/order-history")}
+        >
+          Back
+        </button>
+  
+        <h1 className="text-2xl font-bold text-center mb-4">
+          Itens by Order #{order_id}
+        </h1>
+  
+        {error && <p className="text-red-500 text-center">{error}</p>}
+  
         {items.length > 0 ? (
           items.map((item) => (
             <ProductOrderCard
@@ -179,7 +188,7 @@ const ProductOrderHistoryPage = () => {
             />
           ))
         ) : (
-          <p>Nenhum item encontrado neste pedido</p>
+          <p className="text-gray-600 text-center">Nenhum item encontrado neste pedido</p>
         )}
       </div>
     </div>

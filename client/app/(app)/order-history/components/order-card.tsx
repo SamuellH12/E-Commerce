@@ -75,89 +75,52 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
   };
 
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #ddd",
-        padding: "16px",
-        margin: "8px 0",
-        borderRadius: "12px",
-        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-        transition: "0.3s",
-        cursor: "pointer",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
+    <div className="bg-white border border-gray-300 p-4 m-2 rounded-lg shadow-sm hover:shadow-md transition duration-300 ease-in-out cursor-pointer">
+      <div className="flex justify-between">
         {/* Detalhes do pedido */}
         <div>
-          <h3 style={{ marginBottom: "8px", color: "#333" }}>Order #{order.order_id}</h3>
-          <div style={{display:"flex"}}>
-          <p style={{  marginRight: "10px", color: "#666", fontSize: "14px" }}>Order placed: {order.order_data}</p>
-          <p style={{  marginRight: "10px", color: "#666", fontSize: "14px" }}>Destination: {order.destination}</p>
+          <h3 className="mb-2 text-lg font-medium text-gray-800">Order #{order.order_id}</h3>
+          <div className="flex items-center mb-1 text-sm text-gray-600">
+            <p className="mr-2">Order placed: {order.order_data}</p>
+            <p>Destination: {order.destination}</p>
           </div>
-          <p style={{ color: "#666", fontSize: "14px" }}>
+          <p className="mb-2 text-sm text-gray-600">
             Status:{" "}
-            <strong style={{ color: order.status === "delivered" ? "#28a745" : "#dc3545" }}>
+            <strong
+              className={`font-bold ${
+                order.status === "delivered" ? "text-green-600" : "text-red-600"
+              }`}
+            >
               {order.status}
             </strong>
           </p>
-          <p style={{ fontWeight: "bold", fontSize: "16px", color: "#000" }}>
+          <p className="mb-2 text-base font-bold text-black">
             Valor Total: R$ {totalValue.toFixed(2)}
           </p>
           <button
-            style={{
-              marginTop: "5px",
-              padding: "5px 10px",
-              fontSize: "14px",
-              background: "#007bff",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              transition: "0.3s",
-            }}
+            className="mt-1 px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out"
             onClick={navigateToOrderDetails}
           >
-            See details 
+            See details
           </button>
         </div>
-
+  
         {/* Imagens dos produtos */}
-        <div
-          style={{
-            display: "flex",
-            gap: "8px",
-          }}
-        >
+        <div className="flex gap-2">
           {items.length > 0 ? (
             items.map((item, index) => (
               <img
                 key={index}
                 src={item.image_url}
                 alt={item.product_name}
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                }}
+                className="w-20 h-20 object-cover rounded-md"
               />
             ))
           ) : (
             <img
               src="https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg"
               alt="Imagem padrão"
-              style={{
-                width: "80px",
-                height: "80px",
-                objectFit: "cover",
-                borderRadius: "8px",
-              }}
+              className="w-20 h-20 object-cover rounded-md"
             />
           )}
         </div>
