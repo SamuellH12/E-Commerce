@@ -1,6 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { axiosApi } from "@/lib/axios-client";
 import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { getOrderItemsToOrder } from "../../api/order-api";
 
 interface OrderCardProps {
@@ -26,9 +27,9 @@ interface OrderItem {
 
 const fetchProductDetails = async (productId: string) => {
   try {
-    const response = await fetch(`http://localhost:3000/products/${productId}`);
-    if (!response.ok) throw new Error("Produto não encontrado");
-    return await response.json();
+    const response = await axiosApi(`/products/${productId}`);
+
+    return await response.data;
   } catch (error) {
     console.error("Erro ao buscar produto:", error);
     return null;
@@ -38,7 +39,10 @@ const fetchProductDetails = async (productId: string) => {
 const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
   const router = useRouter();
   const [items, setItems] = useState<OrderItem[]>([]);
-  const totalValue = typeof order.total_value === "string" ? parseFloat(order.total_value) : order.total_value;
+  const totalValue =
+    typeof order.total_value === "string"
+      ? parseFloat(order.total_value)
+      : order.total_value;
 
   // Função para carregar os itens do pedido e os detalhes dos produtos
   const loadOrderItems = async () => {
@@ -53,7 +57,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
           return {
             ...item,
             product_name: productDetails?.name || "Produto não disponível",
-            image_url: productDetails?.image_url || "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg"
+            image_url:
+              productDetails?.image_url ||
+              "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg",
           };
         })
       );
@@ -101,6 +107,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
             className="mt-1 px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out"
             onClick={navigateToOrderDetails}
           >
+            See details
             See details
           </button>
         </div>
