@@ -1,8 +1,8 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { getOrderItemsToOrder, getOrders } from "./../api/order-api";
+import { getOrders, getOrderItemsToOrder } from "./../api/order-api";
 import OrderCard from "./components/order-card";
 
 const OrderHistoryPage = () => {
@@ -35,6 +35,7 @@ const OrderHistoryPage = () => {
       setError("Error loading order details.");
     }
   };
+  
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -62,11 +63,7 @@ const OrderHistoryPage = () => {
         <h1 className="text-2xl font-bold text-center mb-4">Order History</h1>
         <h2 className="text-xl font-semibold text-center mb-2">Last Orders</h2>
         {recentOrders.map((order) => (
-          <OrderCard
-            key={order.order_id}
-            order={order}
-            onViewDetails={handleViewOrderDetails}
-          />
+          <OrderCard key={order.order_id} order={order} onViewDetails={handleViewOrderDetails} />
         ))}
         <button
           className="mt-4 px-6 py-3 text-lg font-medium text-white bg-green-600 rounded hover:bg-green-700 transition duration-300 block mx-auto w-full max-w-[200px]"
