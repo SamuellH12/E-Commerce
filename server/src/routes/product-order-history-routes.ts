@@ -7,7 +7,7 @@ const productOrderHistoryRouter = Router();
 productOrderHistoryRouter.get("/", getProductOrderHistory);
 productOrderHistoryRouter.post("/", postProductOrderHistory);
 productOrderHistoryRouter.put("/", putProductOrderHistory);
-productOrderHistoryRouter.delete("/"), deleteProductOrderHistory;
+productOrderHistoryRouter.delete("/", deleteProductOrderHistory);
 
 
 export { productOrderHistoryRouter };
