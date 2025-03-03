@@ -6,7 +6,6 @@ import { useState, type JSX } from "react";
 import mastercard from "../../../public/mastercard.png";
 import visa from "../../../public/visa.png";
 
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
   DropdownMenu,
@@ -21,8 +20,27 @@ import { axiosApi } from "@/lib/axios-client";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { CreditCard, DollarSign, Plus } from "lucide-react";
+import { z } from "zod"
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-interface Card {
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+
+interface CardAPI {
   id: number;
   created_at: string;
   nickname: string;
@@ -33,6 +51,7 @@ interface Card {
   code_iv: string;
   expiration_iv: string;
   code: string;
+  transaction_type: string;
 }
 
 enum CardType {
@@ -57,18 +76,53 @@ export default function Payment() {
   const [optionSelected, setOptionSelected] = useState(0);
   const [cardSelected, setCardSelected] = useState(0);
   const [menuOpen, setMenuOpen] = useState(0);
+  const [transactionType, setTransactionType] = useState("");
+  const [formData, setFormData] = useState({
+    nickname: "",
+    name: "",
+    code: "",
+    month: "",
+    year: "",
+    cvc: "",
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["cardsQuery"],
-    queryFn: async (): Promise<Card[]> => {
+    queryFn: async (): Promise<CardAPI[]> => {
       const response = await axiosApi("/cards");
       return response.data;
     },
   });
 
+  const months = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSelectChange = (value: string) => {
+    setFormData({
+      ...formData,
+      month: String(months.indexOf(value) + 1).padStart(2, "0"),
+    });
+  };
+
   if (isLoading) return <p>Carregando...</p>;
 
-  function atualizarMenu(id: number) {
+  function updateMenu(id: number) {
     if (menuOpen === id) {
       setMenuOpen(0);
     } else {
@@ -76,7 +130,7 @@ export default function Payment() {
     }
   }
 
-  async function confirmarRemocao(id: number) {
+  async function deleteCard(id: number) {
     const answer = window
       .prompt("TEM CERTEZA QUE DESEJA REMOVER ESSE CARTÃO? (S/N)")
       ?.toUpperCase();
@@ -91,6 +145,40 @@ export default function Payment() {
     return;
   }
 
+  async function updateCard() {
+    console.log("ATUALIZANDO CARTÃO");
+
+    const requestBody = {
+      nickname: formData.nickname,
+      name: formData.name,
+      code: formData.code,
+      expiration: `${formData.year}/${formData.month}`,
+      cvc: formData.cvc,
+      transactionType: transactionType,
+    };
+
+    console.log(requestBody);
+
+    const response = await axiosApi(`/cards/${menuOpen}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(requestBody),
+    });
+
+    console.log(response);
+
+    if (response.status === 200) {
+      window.alert("CARTÃO ATUALIZADO COM SUCESSO!");
+      location.reload();
+    }
+  }
+
+  function handleSubmit() {
+    window.alert("FINALIZANDO COMPRA!");
+  }
+
   return (
     <div className="bg-white rounded-lg p-4 shadow-lg mt-10">
       <h1 className="font-extrabold mb-2 text-2xl">PAGAMENTO</h1>
@@ -98,7 +186,7 @@ export default function Payment() {
         Selecione o método de pagamento da compra
       </p>
 
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="flex justify-between gap-4 px-4">
           <button
             type="button"
@@ -120,7 +208,7 @@ export default function Payment() {
             <DollarSign />
             <h2>Pix</h2>
           </button>
-        </div>
+          </div>
 
         {optionSelected === 1 && (
           <div className="mt-10 gap-4">
@@ -134,51 +222,133 @@ export default function Payment() {
               </button>
             </Link>
             <div className="grid">
-              {data?.map((card: Card) => (
+              {data?.map((card: CardAPI) => (
                 <div key={card.id} className="grid">
-                  <Card
-                    onClick={() => {
-                      setCardSelected(card.id);
-                    }}
-                    className={`cursor-pointer h-32 shadow-md px-4 rounded flex justify-between items-center mx-4 mb-4 ${
-                      cardSelected === card.id
-                        ? "bg-muted-foreground/30"
-                        : "bg-white"
-                    }`}
-                  >
-                    {cardType[card.card_type]}
-                    <h3>
-                      {card.nickname} - {card.code_last4}
-                    </h3>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          onClick={() => atualizarMenu(card.id)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") atualizarMenu(card.id);
-                          }}
-                          variant={"outline"}
-                          className="w-12 h-12"
+                    
+                    <Dialog>
+                        <Card
+                        onClick={() => {
+                            setCardSelected(card.id);
+                        }}
+                        className={`cursor-pointer h-32 shadow-md px-4 rounded flex justify-between items-center mx-4 mb-4 ${
+                            cardSelected === card.id
+                            ? "bg-muted-foreground/30"
+                            : "bg-white"
+                        }`}
                         >
-                          <DotsHorizontalIcon className="w-16 h-16" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-56">
-                        <DropdownMenuLabel>Ação</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem>Editar</DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => confirmarRemocao(card.id)}
-                          >
-                            Excluir
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </Card>
+                        {cardType[card.card_type]}
+                        <h3>
+                            {card.nickname} - {card.code_last4}
+                        </h3>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                            <Button
+                                onClick={() => updateMenu(card.id)}
+                                onKeyDown={(e) => {
+                                if (e.key === "Enter") updateMenu(card.id);
+                                }}
+                                variant={"outline"}
+                                className="w-12 h-12"
+                            >
+                                <DotsHorizontalIcon className="w-16 h-16" />
+                            </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56">
+                            <DropdownMenuLabel>Ação</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuGroup>
+                                
+                                <DialogTrigger asChild>
+                                <DropdownMenuItem onClick={() => {setMenuOpen(card.id); setTransactionType(card.transaction_type); setFormData({
+                                    ...formData,
+                                    nickname: card.nickname,
+                                    name: card.name
+                                })}}>Editar</DropdownMenuItem>
+                                </DialogTrigger>
+                                <DropdownMenuItem
+                                onClick={() => deleteCard(card.id)}
+                                >
+                                Excluir
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        </Card>
+                        
+                        <DialogContent className="sm:max-w-[520px]">
+                        <DialogHeader>
+                            <DialogTitle>ATUALIZAÇÃO DE CARTÃO</DialogTitle>
+                            <p className="text-sm">ATUALIZE OS DADOS DO SEU CARTÃO</p>
+                        </DialogHeader>
+                          <form className="grid gap-4 py-4">
+                            <div className="grid w-full items-center gap-4">
+                              <div className="flex justify-between gap-4 px-4">
+                                <button
+                                  type="button"
+                                  onClick={() => setTransactionType("Credit")}
+                                  className={`h-12 items-center justify-center border-2 rounded-lg bg-white shadow-md w-1/2 flex gap-2 ${
+                                    transactionType === "Credit"
+                                      ? "border-black"
+                                      : "border-gray-300"
+                                  }`}
+                                >
+                                  <h2>CRÉDITO</h2>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setTransactionType("Debit")}
+                                  className={`h-12 items-center justify-center border-2 rounded-lg bg-white shadow-md w-1/2 flex gap-2 ${
+                                    transactionType === "Debit"
+                                      ? "border-black"
+                                      : "border-gray-300"
+                                  }`}
+                                >
+                                  <h2>DÉBITO</h2>
+                                </button>
+                              </div>
+                              <div className="flex flex-col space-y-1.5">
+                                <Label htmlFor="nickname">Apelido</Label>
+                                <Input id="nickname" name="nickname" placeholder="apelido" defaultValue={card.nickname} onChange={handleChange} className="col-span-3" />
+                              </div>
+                              <div className="flex flex-col space-y-1.5">
+                                <Label htmlFor="name">Nome</Label>
+                                <Input id="name" name="name" placeholder="nome" defaultValue={card.name} onChange={handleChange}  className="col-span-3" />
+                              </div>
+                              <div className="flex flex-col space-y-1.5">
+                                <Label htmlFor="code">Número do cartão</Label>
+                                <Input id="code" name="code" placeholder="código" defaultValue={card.code_last4} onChange={handleChange}  className="col-span-3" />
+                              </div>
+                              <div className="flex flex-col space-y-1.5">
+                                <div className="grid grid-cols-2 gap-4">
+                                  <Label htmlFor="expiration">Vencimento</Label>
+                                  <Label htmlFor="cvc">CVC</Label>
+                                </div>
+                                <div className="grid grid-cols-4 gap-2">
+                                  <Select onValueChange={handleSelectChange}>
+                                    <SelectTrigger id="month" name="month">
+                                      <SelectValue placeholder="Mês" />
+                                    </SelectTrigger>
+                                    <SelectContent position="popper">
+                                      {months.map((month) => (
+                                        <SelectItem key={month} value={month}>
+                                          {month}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+
+                                  <Input id="year" name="year" placeholder="Ano" onChange={handleChange}   />
+                                
+                                  <Input id="cvc" name="cvc" placeholder="CVC" onChange={handleChange}  />
+                                </div>
+                              </div>
+                            </div>
+                            <Button type="button" onClick={updateCard}>Atualizar</Button>
+                          </form>
+                        </DialogContent>
+                    </Dialog>
                 </div>
-              ))}
+                ))}
             </div>
           </div>
         )}
