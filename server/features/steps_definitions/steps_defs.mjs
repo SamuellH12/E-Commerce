@@ -326,8 +326,29 @@ Then(
 
 
 
-Given('existe a categoria {string}', async function (categoria) {
+Given('existe a categoria {string} do departamento {string}', async function (categoria, departamento) {
+  let response = await axios.get("http://localhost:3000/department");
+  expect(response.data.some(entry => entry.name === departamento)).to.be.true;
+  let dept = response.data.find(entry => entry.name === departamento);
+  
+  
+  response = await axios.get("http://localhost:3000/category");
+  if(!response.data.some(entry => entry.name === categoria))
+  {
+    let body = "{'name' : '"+categoria+"' , 'department_id' : "+dept.id+"}";
+    let parsedBody = JSON.parse(body.replace(/'/g, '"'));
+    response = await axios.post("http://localhost:3000/category", parsedBody);
+    expect(response.status).to.equal(201);
+    return;
+  }
+  
+  let entry = response.data.find(entry => entry.name === categoria);
+  if(entry.department_id == dept.id) return;
 
+  let body = "{'name' : '"+categoria+"' , 'department_id' : "+dept.id+"}";
+  let parsedBody = JSON.parse(body.replace(/'/g, '"'));
+  response = await axios.put("http://localhost:3000/category/"+entry.id, parsedBody);
+  expect(response.status).to.equal(201);
 });
 
 Given('não existe a categoria {string}', async function (categoria) {
@@ -336,7 +357,7 @@ Given('não existe a categoria {string}', async function (categoria) {
   if(!entry) return;
   
   response = await axios.delete("http://localhost:3000/category/"+entry.id);
-  expect(response.status).to.equal(201);
+  expect(response.status).to.equal(200);
 });
 
 Given('existe o departamento {string}', async function (departamento) {
@@ -352,31 +373,49 @@ Given('existe o departamento {string}', async function (departamento) {
 
 Given('não existe o departamento {string}', async function (departamento) {
   let response = await axios.get("http://localhost:3000/department");
-  let entry = response.data.find(entry => entry.name === departamento);
   
-  if(entry){
+  if( response.data.some(entry => entry.name === departamento) == true ){
+    let entry = response.data.find(entry => entry.name === departamento);
     response = await axios.delete("http://localhost:3000/department/"+entry.id);
     expect(response.status).to.equal(200);
-  } 
-  
+  }
 });
 
-
-
-When('o usuário tenta cadastrar a Categoria com nome {string} e o departamento {string}', function () {
-
+When('o usuário tenta cadastrar a Categoria com nome {string} e o departamento {string}', async function (categoria, departamento) {
+  let response = await axios.get("http://localhost:3000/department");
+  expect(response.data.some(entry => entry.name === departamento)).to.be.true;
+  let dept = response.data.find(entry => entry.name === departamento);
+  
+  let body = "{'name' : '"+categoria+"' , 'department_id' : "+dept.id+"}";
+  let parsedBody = JSON.parse(body.replace(/'/g, '"'));
+  response = await axios.post("http://localhost:3000/category", parsedBody);
+  
+  status = response.status;
 });
 
 When('o usuário tenta cadastrar o Departamento com nome {string}', async function (departamento) {
   let body = "{ 'name': '"+departamento+"' }";
   let parsedBody = JSON.parse(body.replace(/'/g, '"'));
   let response = await axios.post("http://localhost:3000/department", parsedBody);
-  expect(response.status).to.equal(201);
+  
+  status = response.status;
 });
 
+When('o usuário tenta editar o Departamento com nome {string} para {string}', async function (departamento, novo_nome) {
+  let response = await axios.get("http://localhost:3000/department");
+  let entry = response.data.find(entry => entry.name === departamento);
 
-Then('o usuário consegue ver {string} na lista de categorias', function (string) {
+  let body = "{ 'name': '"+novo_nome+"' }";
+  let parsedBody = JSON.parse(body.replace(/'/g, '"'));
+  response = await axios.put("http://localhost:3000/department/"+entry.id, parsedBody);
   
+  status = response.status;
+});
+
+Then('o usuário consegue ver {string} na lista de categorias', async function (categoria) {
+  let response = await axios.get("http://localhost:3000/category");
+  let entry = response.data.some(entry => entry.name === categoria);
+  expect(entry).to.be.true;
 });
 
 Then('o usuário consegue ver {string} na lista de departamentos', async function (departamento) {
@@ -385,10 +424,14 @@ Then('o usuário consegue ver {string} na lista de departamentos', async functio
   expect(entry).to.be.true;
 });
 
-Then('não existe {string} na lista de categorias', function (string) {
-  
+Then('não existe {string} na lista de categorias', async function (categoria) {
+  let response = await axios.get("http://localhost:3000/category");
+  let entry = response.data.some(entry => entry.name === categoria);
+  expect(entry).to.be.false;
 });
 
-Then('não existe {string} na lista de departamentos', function (string) {
-  
+Then('não existe {string} na lista de departamentos', async function (departamento) {
+  let response = await axios.get("http://localhost:3000/department");
+  let entry = response.data.some(entry => entry.name === departamento);
+  expect(entry).to.be.false;
 });
