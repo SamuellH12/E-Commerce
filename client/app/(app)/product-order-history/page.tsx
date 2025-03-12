@@ -1,9 +1,9 @@
-// // Arquivo: /product-order-history/page.tsx
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import ProductOrderCard from "./components/product-order-card";
 import { useSearchParams, useRouter } from "next/navigation";
 import { axiosApi } from "@/lib/axios-client";
+import { useQuery } from "@tanstack/react-query";
 
 interface OrderItem {
   id: string;
@@ -18,45 +18,40 @@ interface OrderItem {
 const ProductOrderHistoryPage = () => {
   const searchParams = useSearchParams();
   const order_id = searchParams.get("order_id");
-  const [items, setItems] = useState<OrderItem[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const defaultImage = "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg";
+  const defaultImage =
+    "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg";
 
-  const fetchOrderItems = async (orderId: number) => {
-    try {
-      // Busca direta dos itens do pedido
-      // const response = await axiosApi.get(
-      //   `/product-order-history?order_id=${orderId}`
-      // );
-      
-      // const response = await axiosApi.get(
-      //   `http://localhost:3000/product-order-history?order_id=${orderId}`
-      // );
+  if (!order_id || isNaN(Number(order_id))) {
+    return <p>ID do pedido inválido</p>;
+  }
+
+  const { data: items, isLoading, isError, error } = useQuery<OrderItem[]>({
+    queryKey: ["orderItems", order_id],
+    queryFn: async () => {
       const response = await axiosApi.get(
-        `https://e-commerce-api-fnhq.onrender.com/product-order-history?order_id=${orderId}`
+        `https://e-commerce-api-fnhq.onrender.com/product-order-history?order_id=${order_id}`
       );
-      console.log(response);
       const orderItems = response.data;
-
-      // Busca detalhes dos produtos em paralelo
       const itemsWithDetails = await Promise.all(
         orderItems.map(async (item: any) => {
           try {
+            const productResponse = await axiosApi.get(
+              `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
+            );
             // const productResponse = await axiosApi.get(
             //   `/products/${item.product_id}`
             // );
             // const productResponse = await axiosApi.get(
             //   `http://localhost:3000/products/${item.product_id}`
             // );
-            const productResponse = await axiosApi.get(
-              `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
-            );
-            console.log(productResponse);
-            
+            // const productResponse = await axiosApi.get(
+            //   `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
+            // );
             return {
               ...item,
-              product_name: productResponse.data.name || "Produto não disponível",
+              product_name:
+                productResponse.data.name || "Produto não disponível",
               image_url: productResponse.data.image_url || defaultImage,
             };
           } catch (error) {
@@ -68,26 +63,25 @@ const ProductOrderHistoryPage = () => {
           }
         })
       );
+      return itemsWithDetails;
+    },
+  });
 
-      setItems(itemsWithDetails);
-    } catch (err) {
-      setError("Erro ao carregar detalhes do pedido");
-    }
-  };
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
-  useEffect(() => {
-    if (order_id && !isNaN(Number(order_id))) {
-      fetchOrderItems(Number(order_id));
-    }
-  }, [order_id]);
-
-  if (!order_id || isNaN(Number(order_id))) {
-    return <p>ID do pedido inválido</p>;
+  if (isError) {
+    return (
+      <p>
+        {(error as Error)?.message ||
+          "Erro ao carregar detalhes do pedido"}
+      </p>
+    );
   }
 
   return (
     <div>
-      {/* Conteúdo principal */}
       <div className="p-4">
         <button
           className="mb-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
@@ -100,10 +94,8 @@ const ProductOrderHistoryPage = () => {
           Itens by Order #{order_id}
         </h1>
 
-        {error && <p className="text-red-500 text-center">{error}</p>}
-
         <div className="grid gap-4">
-          {items.length > 0 ? (
+          {items && items.length > 0 ? (
             items.map((item) => (
               <ProductOrderCard
                 key={item.id}
