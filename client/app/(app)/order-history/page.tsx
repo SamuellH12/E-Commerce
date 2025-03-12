@@ -141,7 +141,7 @@ const OrderHistoryPage = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <div className="container">
       {/* Top Bar */}
       <div className="flex justify-between items-center p-4 bg-gray-100 border-b border-gray-300">
         <button
