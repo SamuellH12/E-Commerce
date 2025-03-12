@@ -9,13 +9,13 @@ export function ProductCard({ product }: { product?: ProductType }) {
   return (
     <Card className="p-0 cursor-pointer  hover:border-foreground">
       <CardHeader className="p-0">
-        <div className="w-full h-[150px]  flex justify-center items-center my-2 rounded-lg bg-white ">
-          <div className="rounded-lg">
+        <div className="w-full h-[180px]  flex justify-center items-center  rounded-t-lg bg-white ">
+          <div className="rounded-t-lg ">
             <Image
               width={200}
               height={200}
               alt="Foto do produto"
-              className="  w-full object-contain h-[150px] object-center rounded-lg"
+              className="  w-full object-contain h-[180px] object-center rounded-t-lg py-2"
               src={product?.image_url ?? ""}
             />
           </div>
