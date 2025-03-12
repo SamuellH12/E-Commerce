@@ -1,9 +1,9 @@
 // // Arquivo: /product-order-history/page.tsx
 "use client";
-import React, { useState, useEffect } from "react";
-import ProductOrderCard from "./components/product-order-card";
-import { useSearchParams, useRouter } from "next/navigation";
 import { axiosApi } from "@/lib/axios-client";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import ProductOrderCard from "../components/product-order-card";
 
 interface OrderItem {
   id: string;
@@ -16,12 +16,13 @@ interface OrderItem {
 }
 
 const ProductOrderHistoryPage = () => {
-  const searchParams = useSearchParams();
-  const order_id = searchParams.get("order_id");
+  const { orderId } = useParams();
+  console.log("order-id", orderId);
   const [items, setItems] = useState<OrderItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const defaultImage = "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg";
+  const defaultImage =
+    "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg";
 
   const fetchOrderItems = async (orderId: number) => {
     try {
@@ -29,7 +30,7 @@ const ProductOrderHistoryPage = () => {
       // const response = await axiosApi.get(
       //   `/product-order-history?order_id=${orderId}`
       // );
-      
+
       // const response = await axiosApi.get(
       //   `http://localhost:3000/product-order-history?order_id=${orderId}`
       // );
@@ -53,10 +54,11 @@ const ProductOrderHistoryPage = () => {
               `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
             );
             console.log(productResponse);
-            
+
             return {
               ...item,
-              product_name: productResponse.data.name || "Produto não disponível",
+              product_name:
+                productResponse.data.name || "Produto não disponível",
               image_url: productResponse.data.image_url || defaultImage,
             };
           } catch (error) {
@@ -76,12 +78,12 @@ const ProductOrderHistoryPage = () => {
   };
 
   useEffect(() => {
-    if (order_id && !isNaN(Number(order_id))) {
-      fetchOrderItems(Number(order_id));
+    if (orderId && !isNaN(Number(orderId))) {
+      fetchOrderItems(Number(orderId));
     }
-  }, [order_id]);
+  }, [orderId]);
 
-  if (!order_id || isNaN(Number(order_id))) {
+  if (!orderId || isNaN(Number(orderId))) {
     return <p>ID do pedido inválido</p>;
   }
 
@@ -97,7 +99,7 @@ const ProductOrderHistoryPage = () => {
         </button>
 
         <h1 className="text-2xl font-bold text-center mb-4">
-          Itens by Order #{order_id}
+          Itens by Order #{orderId}
         </h1>
 
         {error && <p className="text-red-500 text-center">{error}</p>}
