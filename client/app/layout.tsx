@@ -1,7 +1,9 @@
+import { MenuNav } from "@/components/menu-nav";
+import { TanstackQueryClientProvider } from "@/providers/tanstack-query-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { TanstackQueryClientProvider } from "@/providers/tanstack-query-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,14 +27,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
         >
-          <TanstackQueryClientProvider>
-            {children}
-          </TanstackQueryClientProvider>
-        </body>
-      </html>
+          <MenuNav />
+          <TanstackQueryClientProvider>{children}</TanstackQueryClientProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }

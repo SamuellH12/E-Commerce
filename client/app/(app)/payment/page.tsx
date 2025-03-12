@@ -16,11 +16,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { axiosApi } from "@/lib/axios-client";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { useQuery } from "@tanstack/react-query";
-import { CreditCard, DollarSign, Plus } from "lucide-react";
-import { z } from "zod"
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -29,6 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { axiosApi } from "@/lib/axios-client";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { useQuery } from "@tanstack/react-query";
+import { CreditCard, DollarSign, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -180,7 +179,7 @@ export default function Payment() {
   }
 
   return (
-    <div className="bg-white rounded-lg p-4 shadow-lg mt-10">
+    <div className="border rounded-lg p-4 shadow-lg mt-10">
       <h1 className="font-extrabold mb-2 text-2xl">PAGAMENTO</h1>
       <p className="text-gray-500 mb-10">
         Selecione o método de pagamento da compra
@@ -191,7 +190,7 @@ export default function Payment() {
           <button
             type="button"
             onClick={() => setOptionSelected(1)}
-            className={`h-20 items-center justify-center border-2 rounded-lg bg-white shadow-md w-1/2 flex gap-2 ${
+            className={`h-20 items-center justify-center border-2 rounded-lg  shadow-md w-1/2 flex gap-2 ${
               optionSelected === 1 ? "border-black" : "border-gray-300"
             }`}
           >
@@ -201,21 +200,21 @@ export default function Payment() {
           <button
             type="button"
             onClick={() => setOptionSelected(2)}
-            className={`h-20 items-center justify-center border-2 rounded-lg bg-white shadow-md w-1/2 flex gap-2 ${
+            className={`h-20 items-center justify-center border-2 rounded-lg  shadow-md w-1/2 flex gap-2 ${
               optionSelected === 2 ? "border-black" : "border-gray-300"
             }`}
           >
             <DollarSign />
             <h2>Pix</h2>
           </button>
-          </div>
+        </div>
 
         {optionSelected === 1 && (
           <div className="mt-10 gap-4">
             <Link href="/payment/new_card">
               <button
                 type="button"
-                className="h-20 items-center justify-center border-2 rounded-lg bg-white w-full hover:bg-gray-200 mb-4 flex gap-2"
+                className="h-20 items-center justify-center border-2 rounded-lg  w-full hover:bg-gray-200 mb-4 flex gap-2"
               >
                 <Plus />
                 <h2>Adicionar cartão</h2>
@@ -224,131 +223,172 @@ export default function Payment() {
             <div className="grid">
               {data?.map((card: CardAPI) => (
                 <div key={card.id} className="grid">
-                    
-                    <Dialog>
-                        <Card
-                        onClick={() => {
-                            setCardSelected(card.id);
-                        }}
-                        className={`cursor-pointer h-32 shadow-md px-4 rounded flex justify-between items-center mx-4 mb-4 ${
-                            cardSelected === card.id
-                            ? "bg-muted-foreground/30"
-                            : "bg-white"
-                        }`}
-                        >
-                        {cardType[card.card_type]}
-                        <h3>
-                            {card.nickname} - {card.code_last4}
-                        </h3>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                            <Button
-                                onClick={() => updateMenu(card.id)}
-                                onKeyDown={(e) => {
-                                if (e.key === "Enter") updateMenu(card.id);
-                                }}
-                                variant={"outline"}
-                                className="w-12 h-12"
-                            >
-                                <DotsHorizontalIcon className="w-16 h-16" />
-                            </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56">
-                            <DropdownMenuLabel>Ação</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuGroup>
-                                
-                                <DialogTrigger asChild>
-                                <DropdownMenuItem onClick={() => {setMenuOpen(card.id); setTransactionType(card.transaction_type); setFormData({
+                  <Dialog>
+                    <Card
+                      onClick={() => {
+                        setCardSelected(card.id);
+                      }}
+                      className={`cursor-pointer h-32 shadow-md px-4 rounded flex justify-between items-center mx-4 mb-4 ${
+                        cardSelected === card.id ? "bg-muted-foreground/30" : ""
+                      }`}
+                    >
+                      {cardType[card.card_type]}
+                      <h3>
+                        {card.nickname} - {card.code_last4}
+                      </h3>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            onClick={() => updateMenu(card.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") updateMenu(card.id);
+                            }}
+                            variant={"outline"}
+                            className="w-12 h-12"
+                          >
+                            <DotsHorizontalIcon className="w-16 h-16" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56">
+                          <DropdownMenuLabel>Ação</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuGroup>
+                            <DialogTrigger asChild>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setMenuOpen(card.id);
+                                  setTransactionType(card.transaction_type);
+                                  setFormData({
                                     ...formData,
                                     nickname: card.nickname,
-                                    name: card.name
-                                })}}>Editar</DropdownMenuItem>
-                                </DialogTrigger>
-                                <DropdownMenuItem
-                                onClick={() => deleteCard(card.id)}
-                                >
-                                Excluir
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                        </Card>
-                        
-                        <DialogContent className="sm:max-w-[520px]">
-                        <DialogHeader>
-                            <DialogTitle>ATUALIZAÇÃO DE CARTÃO</DialogTitle>
-                            <p className="text-sm">ATUALIZE OS DADOS DO SEU CARTÃO</p>
-                        </DialogHeader>
-                          <form className="grid gap-4 py-4">
-                            <div className="grid w-full items-center gap-4">
-                              <div className="flex justify-between gap-4 px-4">
-                                <button
-                                  type="button"
-                                  onClick={() => setTransactionType("Credit")}
-                                  className={`h-12 items-center justify-center border-2 rounded-lg bg-white shadow-md w-1/2 flex gap-2 ${
-                                    transactionType === "Credit"
-                                      ? "border-black"
-                                      : "border-gray-300"
-                                  }`}
-                                >
-                                  <h2>CRÉDITO</h2>
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setTransactionType("Debit")}
-                                  className={`h-12 items-center justify-center border-2 rounded-lg bg-white shadow-md w-1/2 flex gap-2 ${
-                                    transactionType === "Debit"
-                                      ? "border-black"
-                                      : "border-gray-300"
-                                  }`}
-                                >
-                                  <h2>DÉBITO</h2>
-                                </button>
-                              </div>
-                              <div className="flex flex-col space-y-1.5">
-                                <Label htmlFor="nickname">Apelido</Label>
-                                <Input id="nickname" name="nickname" placeholder="apelido" defaultValue={card.nickname} onChange={handleChange} className="col-span-3" />
-                              </div>
-                              <div className="flex flex-col space-y-1.5">
-                                <Label htmlFor="name">Nome</Label>
-                                <Input id="name" name="name" placeholder="nome" defaultValue={card.name} onChange={handleChange}  className="col-span-3" />
-                              </div>
-                              <div className="flex flex-col space-y-1.5">
-                                <Label htmlFor="code">Número do cartão</Label>
-                                <Input id="code" name="code" placeholder="código" defaultValue={card.code_last4} onChange={handleChange}  className="col-span-3" />
-                              </div>
-                              <div className="flex flex-col space-y-1.5">
-                                <div className="grid grid-cols-2 gap-4">
-                                  <Label htmlFor="expiration">Vencimento</Label>
-                                  <Label htmlFor="cvc">CVC</Label>
-                                </div>
-                                <div className="grid grid-cols-4 gap-2">
-                                  <Select onValueChange={handleSelectChange}>
-                                    <SelectTrigger id="month" name="month">
-                                      <SelectValue placeholder="Mês" />
-                                    </SelectTrigger>
-                                    <SelectContent position="popper">
-                                      {months.map((month) => (
-                                        <SelectItem key={month} value={month}>
-                                          {month}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
+                                    name: card.name,
+                                  });
+                                }}
+                              >
+                                Editar
+                              </DropdownMenuItem>
+                            </DialogTrigger>
+                            <DropdownMenuItem
+                              onClick={() => deleteCard(card.id)}
+                            >
+                              Excluir
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </Card>
 
-                                  <Input id="year" name="year" placeholder="Ano" onChange={handleChange}   />
-                                
-                                  <Input id="cvc" name="cvc" placeholder="CVC" onChange={handleChange}  />
-                                </div>
-                              </div>
+                    <DialogContent className="sm:max-w-[520px]">
+                      <DialogHeader>
+                        <DialogTitle>ATUALIZAÇÃO DE CARTÃO</DialogTitle>
+                        <p className="text-sm">
+                          ATUALIZE OS DADOS DO SEU CARTÃO
+                        </p>
+                      </DialogHeader>
+                      <form className="grid gap-4 py-4">
+                        <div className="grid w-full items-center gap-4">
+                          <div className="flex justify-between gap-4 px-4">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => setTransactionType("Credit")}
+                              className={`h-12 items-center justify-center border-2 rounded-lg  shadow-md w-1/2 flex gap-2 ${
+                                transactionType === "Credit"
+                                  ? "border-foreground"
+                                  : ""
+                              }`}
+                            >
+                              <h2>CRÉDITO</h2>
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => setTransactionType("Debit")}
+                              className={`h-12 items-center justify-center border-2 rounded-lg  shadow-md w-1/2 flex gap-2 ${
+                                transactionType === "Debit"
+                                  ? "border-foreground"
+                                  : ""
+                              }`}
+                            >
+                              <h2>DÉBITO</h2>
+                            </Button>
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <Label htmlFor="nickname">Apelido</Label>
+                            <Input
+                              id="nickname"
+                              name="nickname"
+                              placeholder="apelido"
+                              defaultValue={card.nickname}
+                              onChange={handleChange}
+                              className="col-span-3"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <Label htmlFor="name">Nome</Label>
+                            <Input
+                              id="name"
+                              name="name"
+                              placeholder="nome"
+                              defaultValue={card.name}
+                              onChange={handleChange}
+                              className="col-span-3"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <Label htmlFor="code">Número do cartão</Label>
+                            <Input
+                              id="code"
+                              name="code"
+                              placeholder="código"
+                              defaultValue={card.code_last4}
+                              onChange={handleChange}
+                              className="col-span-3"
+                            />
+                          </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <div className="grid grid-cols-2 gap-4">
+                              <Label htmlFor="expiration">Vencimento</Label>
+                              <Label htmlFor="cvc">CVC</Label>
                             </div>
-                            <Button type="button" onClick={updateCard}>Atualizar</Button>
-                          </form>
-                        </DialogContent>
-                    </Dialog>
+                            <div className="grid grid-cols-4 gap-2">
+                              <Select onValueChange={handleSelectChange}>
+                                <SelectTrigger id="month" name="month">
+                                  <SelectValue placeholder="Mês" />
+                                </SelectTrigger>
+                                <SelectContent position="popper">
+                                  {months.map((month) => (
+                                    <SelectItem key={month} value={month}>
+                                      {month}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+
+                              <Input
+                                id="year"
+                                name="year"
+                                placeholder="Ano"
+                                onChange={handleChange}
+                              />
+
+                              <Input
+                                id="cvc"
+                                name="cvc"
+                                placeholder="CVC"
+                                onChange={handleChange}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <Button type="button" onClick={updateCard}>
+                          Atualizar
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
                 </div>
-                ))}
+              ))}
             </div>
           </div>
         )}
