@@ -188,6 +188,7 @@ export default function Payment() {
       <form onSubmit={handleSubmit}>
         <div className="flex justify-between gap-4 px-4">
           <button
+            id="select-card"
             type="button"
             onClick={() => setOptionSelected(1)}
             className={`h-20 items-center justify-center border-2 rounded-lg  shadow-md w-1/2 flex gap-2 ${
@@ -213,6 +214,7 @@ export default function Payment() {
           <div className="mt-10 gap-4">
             <Link href="/payment/new_card">
               <button
+                id="button-add-card"
                 type="button"
                 className="h-20 items-center justify-center border-2 rounded-lg  w-full hover:ring mb-4 flex gap-2"
               >
