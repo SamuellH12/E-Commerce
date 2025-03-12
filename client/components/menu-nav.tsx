@@ -56,6 +56,14 @@ export const MenuNav = () => {
           >
             Carrinho de compras
           </Button>
+          <Button
+            variant="link"
+            onClick={() => {
+              router.push("/order-history");
+            }}
+          >
+            Histórico de pedidos
+          </Button>
 
           <ModeToggle />
         </div>
