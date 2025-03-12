@@ -72,7 +72,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
   });
 
   const navigateToOrderDetails = () => {
-    router.push(`/product-order-history?order_id=${order.order_id}`);
+    router.push(`/product-order-history/${order.order_id}`);
   };
 
   return (

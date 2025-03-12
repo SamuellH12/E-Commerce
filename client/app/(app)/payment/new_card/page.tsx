@@ -103,7 +103,7 @@ export default function NewCardPage() {
               <button
                 type="button"
                 onClick={() => setTransactionType("Credit")}
-                className={`h-12 items-center justify-center border-2 rounded-lg bg-white shadow-md w-1/2 flex gap-2 ${
+                className={`h-12 items-center justify-center border-2 rounded-lg  shadow-md w-1/2 flex gap-2 ${
                   transactionType === "Credit"
                     ? "border-black"
                     : "border-gray-300"
@@ -114,7 +114,7 @@ export default function NewCardPage() {
               <button
                 type="button"
                 onClick={() => setTransactionType("Debit")}
-                className={`h-12 items-center justify-center border-2 rounded-lg bg-white shadow-md w-1/2 flex gap-2 ${
+                className={`h-12 items-center justify-center border-2 rounded-lg  shadow-md w-1/2 flex gap-2 ${
                   transactionType === "Debit"
                     ? "border-black"
                     : "border-gray-300"

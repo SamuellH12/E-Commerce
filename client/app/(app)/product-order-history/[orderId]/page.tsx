@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import ProductOrderCard from "./components/product-order-card";
+import ProductOrderCard from "../components/product-order-card";
 import { useSearchParams, useRouter } from "next/navigation";
 import { axiosApi } from "@/lib/axios-client";
 import { useQuery } from "@tanstack/react-query";
@@ -39,15 +39,6 @@ const ProductOrderHistoryPage = () => {
             const productResponse = await axiosApi.get(
               `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
             );
-            // const productResponse = await axiosApi.get(
-            //   `/products/${item.product_id}`
-            // );
-            // const productResponse = await axiosApi.get(
-            //   `http://localhost:3000/products/${item.product_id}`
-            // );
-            // const productResponse = await axiosApi.get(
-            //   `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
-            // );
             return {
               ...item,
               product_name:
