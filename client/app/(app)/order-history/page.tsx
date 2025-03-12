@@ -87,6 +87,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import OrderCard from "./components/order-card";
 import axios from "axios";
+import { axiosApi } from "@/lib/axios-client";
 
 interface Order {
   order_id: number;
@@ -106,8 +107,10 @@ const OrderHistoryPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/order-history");
-        setOrders(response.data); // Acesse os dados através de response.data
+        // const response = await axiosApi('/order-history');
+        // const response = await axios.get("http://localhost:3000/order-history");
+        const response = await axios.get("https://e-commerce-api-fnhq.onrender.com/order-history");
+        //setOrders(response.data); // Acesse os dados através de response.data
         setRecentOrders(response.data.slice(0, 3)); // Atualize os pedidos recentes também
       } catch (err) {
         setError("Error loading orders.");
@@ -121,10 +124,14 @@ const OrderHistoryPage = () => {
 
   const handleViewOrderDetails = async (orderId: number) => {
     try {
+      //const response = await axiosApi(`/product-order-history?order_id=${orderId}`);
+      // const response = await axios.get(
+      //   `http://localhost:3000/product-order-history?order_id=${orderId}`
+      // );
       const response = await axios.get(
-        `http://localhost:3000/product-order-history?order_id=${orderId}`
+        `https://e-commerce-api-fnhq.onrender.com/product-order-history?order_id=${orderId}`
       );
-      console.log("Order Items:", response.data);
+      //console.log("Order Items:", response);
     } catch (err) {
       setError("Error loading order details.");
     }
@@ -139,7 +146,7 @@ const OrderHistoryPage = () => {
       <div className="flex justify-between items-center p-4 bg-gray-100 border-b border-gray-300">
         <button
           className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 transition duration-300"
-          onClick={() => router.push("/home")}
+          onClick={() => router.push("/")}
         >
           Main Menu
         </button>

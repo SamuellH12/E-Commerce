@@ -26,19 +26,33 @@ const ProductOrderHistoryPage = () => {
   const fetchOrderItems = async (orderId: number) => {
     try {
       // Busca direta dos itens do pedido
-      const response = await axiosApi.get(
-        `http://localhost:3000/product-order-history?order_id=${orderId}`
-      );
+      // const response = await axiosApi.get(
+      //   `/product-order-history?order_id=${orderId}`
+      // );
       
+      // const response = await axiosApi.get(
+      //   `http://localhost:3000/product-order-history?order_id=${orderId}`
+      // );
+      const response = await axiosApi.get(
+        `https://e-commerce-api-fnhq.onrender.com/product-order-history?order_id=${orderId}`
+      );
+      console.log(response);
       const orderItems = response.data;
 
       // Busca detalhes dos produtos em paralelo
       const itemsWithDetails = await Promise.all(
         orderItems.map(async (item: any) => {
           try {
+            // const productResponse = await axiosApi.get(
+            //   `/products/${item.product_id}`
+            // );
+            // const productResponse = await axiosApi.get(
+            //   `http://localhost:3000/products/${item.product_id}`
+            // );
             const productResponse = await axiosApi.get(
-              `http://localhost:3000/products/${item.product_id}`
+              `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
             );
+            console.log(productResponse);
             
             return {
               ...item,
@@ -77,7 +91,7 @@ const ProductOrderHistoryPage = () => {
       <div className="flex justify-between items-center p-4 bg-gray-100 border-b border-gray-300">
         <button
           className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
-          onClick={() => router.push("/home")}
+          onClick={() => router.push("/")}
         >
           Main Menu
         </button>

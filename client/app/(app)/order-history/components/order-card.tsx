@@ -34,9 +34,17 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
     const loadOrderItems = async () => {
       try {
         // Busca direta dos itens do pedido
+        // const orderResponse = await axiosApi.get(
+        //         `/product-order-history?order_id=${order.order_id}`
+        //       );
         const orderResponse = await axiosApi.get(
-          `http://localhost:3000/product-order-history?order_id=${order.order_id}`
-        );
+                `https://e-commerce-api-fnhq.onrender.com/product-order-history?order_id=${order.order_id}`
+              );
+        //console.log(orderResponse);
+        // const orderResponse = await axiosApi.get(
+        //   `http://localhost:3000/product-order-history?order_id=${order.order_id}`
+        // );
+
         
         const orderItems = orderResponse.data;
 
@@ -45,9 +53,16 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
         // Busca das informações dos produtos
         const productRequests = orderItems.map(async (item) => {
           try {
+            // const productResponse = await axiosApi.get(
+            //               '/products/${item.product_id}'
+            //             );
             const productResponse = await axiosApi.get(
-              `http://localhost:3000/products/${item.product_id}`
-            );
+                          `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
+                        );
+            // const productResponse = await axiosApi.get(
+            //   `http://localhost:3000/products/${item.product_id}`
+            // );
+            //console.log(productResponse);
             
             return {
               ...item,
