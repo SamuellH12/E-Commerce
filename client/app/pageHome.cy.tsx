@@ -1,5 +1,6 @@
 import { AppRootLayout } from "@/providers/app-root-layout";
 import { mount } from "cypress/react";
+import "./globals.css";
 import Home from "./page";
 
 describe("Home Component", () => {
