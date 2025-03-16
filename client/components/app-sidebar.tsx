@@ -25,7 +25,7 @@ const data = {
   navMain: [
     {
       title: "Produtos",
-      url: "#",
+      url: "/admin/products",
       icon: ShoppingBasketIcon,
       isActive: true,
     },
