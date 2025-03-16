@@ -19,7 +19,7 @@ export default function Page() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">
+                <BreadcrumbLink href="/admin">
                   Building Your Application
                 </BreadcrumbLink>
               </BreadcrumbItem>
