@@ -1,5 +1,4 @@
 "use client";
-import { MenuNav } from "@/components/menu-nav";
 import { AppRootLayout } from "@/providers/app-root-layout";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -25,10 +24,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AppRootLayout>
-          <MenuNav />
-          {children}
-        </AppRootLayout>
+        <AppRootLayout>{children}</AppRootLayout>
       </body>
     </html>
   );
