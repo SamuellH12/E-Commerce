@@ -138,6 +138,7 @@ Given(
 
     const response1 = await axios.post("http://localhost:3000/cards/new", {
       nickname: string,
+      transactionType: "Debit",
       name: "John Doe",
       code: "5197952644616116",
       expiration: `${ano}/${mes}`,
@@ -146,6 +147,7 @@ Given(
 
     const response2 = await axios.post("http://localhost:3000/cards/new", {
       nickname: string2,
+      transactionType: "Debit",
       name: "John Doe",
       code: "4485168778187659",
       expiration: `${ano}/${mes}`,
@@ -239,6 +241,7 @@ Then(
       default:
         response = await axios.post("http://localhost:3000/cards/new", {
           nickname: string,
+          transactionType: "Debit",
           name: "John Doe",
           code: "5197952644616116",
           expiration: `${ano}/${mes}`,
@@ -264,8 +267,8 @@ Then(
 );
 
 When(
-  "o usuário preenche o apelido {string}, o nome {string}, o código {string}, o vencimento {string} e o cvc {string}",
-  async function (string1, string2, string3, string4, string5) {
+  "o usuário preenche o apelido {string}, a transação {string}, o nome {string}, o código {string}, o vencimento {string} e o cvc {string}",
+  async function (string1, string2, string3, string4, string5, string6) {
     let response;
     let card;
 
@@ -273,16 +276,18 @@ When(
       case "Cadastrar":
         response = await axios.post("http://localhost:3000/cards/new", {
           nickname: string1,
-          name: string2,
-          code: string3,
-          expiration: string4,
-          cvc: string5,
+          transactionType: string2,
+          name: string3,
+          code: string4,
+          expiration: string5,
+          cvc: string6,
         });
 
         card = response.data;
         expect(card.nickname).to.equal(string1);
-        expect(card.name).to.equal(string2);
-        expect(card.code_last4).to.equal(string3.slice(-4));
+        expect(card.transaction_type).to.equal(string2);
+        expect(card.name).to.equal(string3);
+        expect(card.code_last4).to.equal(string4.slice(-4));
 
         this.id = response.data.id;
         break;
@@ -290,12 +295,14 @@ When(
       case "Atualizar":
         response = await axios.put(`http://localhost:3000/cards/${this.id}`, {
           nickname: string1,
-          name: string2,
-          code: string3,
-          expiration: string4,
-          cvc: string5,
+          transactionType: string2,
+          name: string3,
+          code: string4,
+          expiration: string5,
+          cvc: string6,
         });
 
+        this.id = response.data.id;
         this.nickname = string1;
         this.name = string2;
         this.code = string3;
@@ -308,8 +315,8 @@ When(
 );
 
 Then(
-  "o cartão é salvo na conta com o apelido {string}, o nome {string}, os quatro últimos dígitos {string} e o tipo {string}",
-  async function (string, string2, string3, string4) {
+  "o cartão é salvo na conta com o apelido {string}, a transação {string}, o nome {string}, os quatro últimos dígitos {string} e o tipo {string}",
+  async function (string, string2, string3, string4, string5) {
     // Write code here that turns the phrase above into concrete actions
 
     await axios.get("http://localhost:3000/cards").then((response) => {
@@ -317,9 +324,10 @@ Then(
       const card = cards.find((card) => card.id === this.id);
 
       expect(card.nickname).to.equal(string);
-      expect(card.name).to.equal(string2);
-      expect(card.code_last4).to.equal(string3);
-      expect(card.card_type).to.equal(string4);
+      expect(card.transaction_type).to.equal(string2);
+      expect(card.name).to.equal(string3);
+      expect(card.code_last4).to.equal(string4);
+      expect(card.card_type).to.equal(string5);
     });
 
     axios.delete(`http://localhost:3000/cards/${this.id}`);
