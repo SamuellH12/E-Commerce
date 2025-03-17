@@ -4,7 +4,7 @@ Feature: Histórico de Pedidos
   Para visualizar informações e realizar ações relacionadas a pedidos realizados
 
 
-  # Cenário de Serviço: Listar Itens Dentro de um Pedido
+#   Cenário de Serviço: Listar Itens Dentro de um Pedido
   Scenario: Listar todos os itens dentro de um pedido específico
     Given o usuário está na página "Histórico de Pedidos"
     When clica no pedido com ID "1"

@@ -5,12 +5,12 @@ import { spawn } from "child_process";
 import { parse } from "path";
 
 axios.defaults.validateStatus = status => status >= 200 && status <= 500;
-
+  
 const BASE_URL = process.env.BASE_URL;
 
 // COUPONS FEATURE
 
-Given("cleanup", async function () {
+Given("O banco de dados de cupons está limpo", async function () {
   let response = await axios.get("http://localhost:3000/coupons_test")
 
     for (const entry of response.data) {
@@ -65,7 +65,8 @@ When('requisitarem todos os cupons disponíveis', async function () {
   // expect(response.status).to.equal(200);  
 });
 
-When('requisitarem o cadastro de um cupom com o nome {string} e a porcentagem {string}%', async function (name, percentage) {
+When('requisitarem o cadastro de um cupom com o nome {string} e a porcentagem {string}%',
+   async function (name, percentage) {
   let body = "{ 'name': '"+name+"', 'percentage': "+percentage+" }"; 
   let parsedBody = JSON.parse(body.replace(/'/g, '"'));
   let response = await axios.post("http://localhost:3000/coupons_test", parsedBody);  
@@ -73,7 +74,8 @@ When('requisitarem o cadastro de um cupom com o nome {string} e a porcentagem {s
   // expect(response.status).to.equal(201);  
 });
 
-When('requisitarem a atualização de um cupom com o nome {string} e a porcentagem {string}%', async function (name, percentage) {
+When('requisitarem a atualização de um cupom com o nome {string} e a porcentagem {string}%',
+   async function (name, percentage) {
   let body = "{ 'name': '"+name+"', 'percentage': "+percentage+" }"; 
   let parsedBody = JSON.parse(body.replace(/'/g, '"'));
   let response = await axios.put("http://localhost:3000/coupons_test", parsedBody);  
