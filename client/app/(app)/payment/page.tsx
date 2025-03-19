@@ -39,6 +39,19 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { queryClient } from "@/providers/tanstack-query-provider";
+
+
 interface CardAPI {
   id: number;
   created_at: string;
@@ -84,6 +97,8 @@ export default function Payment() {
     year: "",
     cvc: "",
   });
+  const [deletingCard, setDeletingCard] = useState<number>();
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["cardsQuery"],
@@ -129,18 +144,11 @@ export default function Payment() {
     }
   }
 
-  async function deleteCard(id: number) {
-    const answer = window
-      .prompt("TEM CERTEZA QUE DESEJA REMOVER ESSE CARTÃO? (S/N)")
-      ?.toUpperCase();
+  async function deleteCard() {
+    await axiosApi(`/cards/${deletingCard}`, {
+      method: "DELETE",
+    });
 
-    if (answer === "S") {
-      const response = await axiosApi(`/cards/${id}`, {
-        method: "DELETE",
-      });
-      if (response.status === 200) window.alert("Cartão deletado com sucesso!");
-      location.reload();
-    }
     return;
   }
 
@@ -180,6 +188,27 @@ export default function Payment() {
 
   return (
     <div className="border rounded-lg p-4 shadow-lg mt-10">
+      <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Tem certeza que deseja deletar o cartão?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={() => { deleteCard().then(() => {
+              queryClient.invalidateQueries({queryKey: ["cardsQuery"]});
+            })}}>
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <h1 className="font-extrabold mb-2 text-2xl">PAGAMENTO</h1>
       <p className="text-gray-500 mb-10">
         Selecione o método de pagamento da compra
@@ -224,9 +253,10 @@ export default function Payment() {
             </Link>
             <div className="grid">
               {data?.map((card: CardAPI) => (
-                <div key={card.id} className="grid">
+                <div key={card.id} className="grid" data-name={card.nickname}>
                   <Dialog>
                     <Card
+                      id={`card-${card.id}`}
                       onClick={() => {
                         setCardSelected(card.id);
                       }}
@@ -241,6 +271,8 @@ export default function Payment() {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
+                            id={`card-update-${card.id}`}
+                            data-name={`update-${card.nickname}`}
                             onClick={() => updateMenu(card.id)}
                             onKeyDown={(e) => {
                               if (e.key === "Enter") updateMenu(card.id);
@@ -255,7 +287,6 @@ export default function Payment() {
                           <DropdownMenuLabel>Ação</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuGroup>
-                            <DialogTrigger asChild>
                               <DropdownMenuItem
                                 onClick={() => {
                                   setMenuOpen(card.id);
@@ -269,12 +300,13 @@ export default function Payment() {
                               >
                                 Editar
                               </DropdownMenuItem>
-                            </DialogTrigger>
-                            <DropdownMenuItem
-                              onClick={() => deleteCard(card.id)}
-                            >
-                              Excluir
-                            </DropdownMenuItem>
+                              
+                              <DropdownMenuItem
+                                data-name={`delete ${card.nickname}`}
+                                onClick={() => { setDeletingCard(card.id); setAlertOpen(true);}}
+                              >
+                                Excluir
+                              </DropdownMenuItem>
                           </DropdownMenuGroup>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -412,5 +444,5 @@ export default function Payment() {
         </div>
       </form>
     </div>
-  );
+    );
 }
