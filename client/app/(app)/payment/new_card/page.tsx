@@ -102,6 +102,7 @@ export default function NewCardPage() {
             <div className="flex justify-between gap-4 px-4">
               <button
                 type="button"
+                id="select-credit"
                 onClick={() => setTransactionType("Credit")}
                 className={`h-12 items-center justify-center border-2 rounded-lg  shadow-md w-1/2 flex gap-2 ${
                   transactionType === "Credit" ? "dark:border-gray-300 border-black" : ""
@@ -111,6 +112,7 @@ export default function NewCardPage() {
               </button>
               <button
                 type="button"
+                id="select-debit"
                 onClick={() => setTransactionType("Debit")}
                 className={`h-12 items-center justify-center border-2 rounded-lg  shadow-md w-1/2 flex gap-2 ${
                   transactionType === "Debit" ? "dark:border-gray-300 border-black" : ""
@@ -161,7 +163,7 @@ export default function NewCardPage() {
                   </SelectTrigger>
                   <SelectContent position="popper">
                     {months.map((month) => (
-                      <SelectItem key={month} value={month}>
+                      <SelectItem key={month} value={month} id={month}>
                         {month}
                       </SelectItem>
                     ))}
@@ -195,7 +197,7 @@ export default function NewCardPage() {
           >
             Cancel
           </Button>
-          <Button type="submit" className="w-3/4">
+          <Button id="cadastrar" type="submit" className="w-3/4">
             Cadastrar
           </Button>
         </CardFooter>
