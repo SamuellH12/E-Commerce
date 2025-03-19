@@ -1,9 +1,9 @@
-// // Arquivo: /product-order-history/page.tsx
 "use client";
-import { axiosApi } from "@/lib/axios-client";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React from "react";
 import ProductOrderCard from "../components/product-order-card";
+import { useSearchParams, useRouter, useParams } from "next/navigation";
+import { axiosApi } from "@/lib/axios-client";
+import { useQuery } from "@tanstack/react-query";
 
 interface OrderItem {
   id: string;
@@ -16,45 +16,37 @@ interface OrderItem {
 }
 
 const ProductOrderHistoryPage = () => {
-  const { orderId } = useParams();
-  console.log("order-id", orderId);
-  const [items, setItems] = useState<OrderItem[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const searchParams = useParams();
+  const order_id = searchParams?.orderId;
   const router = useRouter();
   const defaultImage =
     "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg";
 
-  const fetchOrderItems = async (orderId: number) => {
-    try {
-      // Busca direta dos itens do pedido
-      // const response = await axiosApi.get(
-      //   `/product-order-history?order_id=${orderId}`
-      // );
+  if (!order_id || isNaN(Number(order_id))) {
+    return <div>
+      <button
+          className="mb-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
+          onClick={() => router.push("/order-history")}
+        >
+          Back
+        </button>
+        <p>ID do pedido inválido</p>
+    </div>;
+  }
 
-      // const response = await axiosApi.get(
-      //   `http://localhost:3000/product-order-history?order_id=${orderId}`
-      // );
+  const { data: items, isLoading, isError, error } = useQuery<OrderItem[]>({
+    queryKey: ["orderItems", order_id],
+    queryFn: async () => {
       const response = await axiosApi.get(
-        `https://e-commerce-api-fnhq.onrender.com/product-order-history?order_id=${orderId}`
+        `/product-order-history?order_id=${order_id}`
       );
-      console.log(response);
       const orderItems = response.data;
-
-      // Busca detalhes dos produtos em paralelo
       const itemsWithDetails = await Promise.all(
         orderItems.map(async (item: any) => {
           try {
-            // const productResponse = await axiosApi.get(
-            //   `/products/${item.product_id}`
-            // );
-            // const productResponse = await axiosApi.get(
-            //   `http://localhost:3000/products/${item.product_id}`
-            // );
             const productResponse = await axiosApi.get(
-              `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
+              `/products/${item.product_id}`
             );
-            console.log(productResponse);
-
             return {
               ...item,
               product_name:
@@ -70,42 +62,63 @@ const ProductOrderHistoryPage = () => {
           }
         })
       );
+      return itemsWithDetails;
+    },
+  });
 
-      setItems(itemsWithDetails);
-    } catch (err) {
-      setError("Erro ao carregar detalhes do pedido");
-    }
-  };
-
-  useEffect(() => {
-    if (orderId && !isNaN(Number(orderId))) {
-      fetchOrderItems(Number(orderId));
-    }
-  }, [orderId]);
-
-  if (!orderId || isNaN(Number(orderId))) {
-    return <p>ID do pedido inválido</p>;
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <button
+          className="mb-6 px-4 py-2 text-sm font-medium text-white bg-secondary rounded-md hover:bg-primary hover:text-black transition duration-300"
+          onClick={() => router.back()}
+        >
+          ← Back
+        </button>
+  
+        <div className="flex items-center space-x-2">
+          <div className="w-6 h-6 border-4 border-gray border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-lg font-semibold text-gray-700">Loading...</p>
+        </div>
+      </div>
+    );
   }
+  
 
-  return (
-    <div>
-      {/* Conteúdo principal */}
-      <div className="p-4">
+  if (isError) {
+    return (
+      <div>
         <button
           className="mb-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
           onClick={() => router.push("/order-history")}
         >
           Back
         </button>
+         <p>
+        {(error as Error)?.message ||
+          "Erro ao carregar detalhes do pedido"}
+      </p>
+      </div>
+     
+    );
+  }
+
+  return (
+    <div>
+      <div className="p-4">
+        <button
+          className="mb-4 px-4 py-2 text-sm font-medium text-white bg-secondary rounded-md hover:bg-primary hover:text-black transition duration-300"
+          onClick={() => router.push("/order-history")}
+        >
+          ← Back
+        </button>
 
         <h1 className="text-2xl font-bold text-center mb-4">
-          Itens by Order #{orderId}
+          Itens by Order #{order_id}
         </h1>
 
-        {error && <p className="text-red-500 text-center">{error}</p>}
-
         <div className="grid gap-4">
-          {items.length > 0 ? (
+          {items && items.length > 0 ? (
             items.map((item) => (
               <ProductOrderCard
                 key={item.id}
