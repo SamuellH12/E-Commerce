@@ -286,20 +286,22 @@ export default function Payment() {
                           <DropdownMenuLabel>Ação</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuGroup>
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setMenuOpen(card.id);
-                                  setTransactionType(card.transaction_type);
-                                  setFormData({
-                                    ...formData,
-                                    nickname: card.nickname,
-                                    name: card.name,
-                                  });
-                                }}
-                              >
-                                Editar
-                              </DropdownMenuItem>
-                              
+                              <DialogTrigger asChild>
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    setMenuOpen(card.id);
+                                    setTransactionType(card.transaction_type);
+                                    setFormData({
+                                      ...formData,
+                                      nickname: card.nickname,
+                                      name: card.name,
+                                    });
+                                  }}
+                                  data-name={`update ${card.nickname}`}
+                                >
+                                  Editar
+                                </DropdownMenuItem>
+                              </DialogTrigger>
                               <DropdownMenuItem
                                 data-name={`delete ${card.nickname}`}
                                 onClick={() => { setDeletingCard(card.id); setAlertOpen(true);}}
@@ -322,6 +324,7 @@ export default function Payment() {
                         <div className="grid w-full items-center gap-4">
                           <div className="flex justify-between gap-4 px-4">
                             <Button
+                              id="dialog-credit"
                               type="button"
                               variant="outline"
                               onClick={() => setTransactionType("Credit")}
@@ -334,6 +337,7 @@ export default function Payment() {
                               <h2>CRÉDITO</h2>
                             </Button>
                             <Button
+                              id="dialog-debit"
                               type="button"
                               variant="outline"
                               onClick={() => setTransactionType("Debit")}
@@ -391,7 +395,7 @@ export default function Payment() {
                                 </SelectTrigger>
                                 <SelectContent position="popper">
                                   {months.map((month) => (
-                                    <SelectItem key={month} value={month}>
+                                    <SelectItem id={month} key={month} value={month}>
                                       {month}
                                     </SelectItem>
                                   ))}
@@ -414,7 +418,7 @@ export default function Payment() {
                             </div>
                           </div>
                         </div>
-                        <Button type="button" onClick={updateCard}>
+                        <Button id="dialog-update-card" type="button" onClick={updateCard}>
                           Atualizar
                         </Button>
                       </form>

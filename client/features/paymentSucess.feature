@@ -11,20 +11,19 @@ When o usuário preenche o apelido "Cartão de painho", a transação "Crédito"
 Then o cartão é salvo na conta com o apelido "Cartão de painho", a transação "Crédito", o nome "Wilson F Torres", o código "5112345678998766", o vencimento "08/32", o cvc "123" e o tipo "MasterCard"
 And o usuário está para página de "Pagamento"
 
-Scenario 3: Remoção de cartão cadastrado com sucesso
-Given o usuário está na página de "Pagamento"
-And o usuário tem os cartões de apelido "Cartão de painho" e "Cartão de mainha" cadastrados
-When o usuário seleciona a opção "Remover" o cartão "Cartão de painho"
-And o usuário está na página de "Pagamento"
-And o cartão de apelido "Cartão de painho" é removido da lista de cartões
-And o usuário tem os cartões de apelido "Cartão de mainha" cadastrados
-
-Scenario 4: Atualização de cartão cadastrado com sucesso
+Scenario 3: Atualização de cartão cadastrado com sucesso
 Given o usuário está na página de "Atualização de cartão"
-When o usuário seleciona a opção "Atualizar" o cartão "Cartão de painho"
-And o usuário preenche o apelido "Cartão de pai", a transação "Crédito", o nome "Wilson F Torres", o código "4556737586899855", o vencimento "03/30" e o cvc "123"
-Then o cartão é salvo na conta com o apelido "Cartão de pai", a transação "Crédito", o nome "Wilson F Torres", o código "4556737586899855", o vencimento "03/30", o cvc "123" e o tipo "VISA"
+When o usuário seleciona a opção "Atualizar" o cartão "Cartãoo de teste de painho"
+And o usuário preenche o apelido "Cartãoo de teste de painho atualizado", a transação "Crédito", o nome "Wilson F Torres", o código "4556737586899855", o vencimento "03/30" e o cvc "123"
+Then o cartão é salvo na conta com o apelido "Cartãoo de teste de painho atualizado", a transação "Crédito", o nome "Wilson F Torres", o código "4556737586899855", o vencimento "03/30", o cvc "123" e o tipo "VISA"
 And o usuário está para página de "Atualização de cartão"
+
+Scenario 4: Remoção de cartão cadastrado com sucesso
+Given o usuário está na página de "Pagamento"
+And o usuário tem o cartão de apelido "Cartão de teste de painho atualizado" cadastrado
+When o usuário seleciona a opção "Remover" o cartão "Cartão de painho"
+Then o usuário está na página de "Pagamento"
+And o usuário não tem o cartão "Cartão de teste de painho" cadastrado
 
 Scenario 5: algoritmo de validação dos cartões cadastrados
 Given o usuário está na página "Cadastro de cartão"
