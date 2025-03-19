@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "name": "Livro de Testes",
+    "price": 29.99
+  },
+  {
+    "id": 2,
+    "name": "Fone de Ouvido",
+    "price": 199.99
+  }
+]

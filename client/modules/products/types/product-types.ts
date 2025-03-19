@@ -3,7 +3,6 @@ export type ProductType = {
   category_id?: string;
   created_at: Date;
   description?: string;
-
   image_url: string;
   is_active: boolean;
   name: string;

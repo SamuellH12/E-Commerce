@@ -28,7 +28,8 @@ interface OrderCardProps {
 const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
   const router = useRouter();
   const [items, setItems] = useState<OrderItem[]>([]);
-  const defaultImage = "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg";
+  const defaultImage =
+    "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg";
 
   useEffect(() => {
     const loadOrderItems = async () => {
@@ -38,14 +39,13 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
         //         `/product-order-history?order_id=${order.order_id}`
         //       );
         const orderResponse = await axiosApi.get(
-                `https://e-commerce-api-fnhq.onrender.com/product-order-history?order_id=${order.order_id}`
-              );
+          `https://e-commerce-api-fnhq.onrender.com/product-order-history?order_id=${order.order_id}`
+        );
         //console.log(orderResponse);
         // const orderResponse = await axiosApi.get(
         //   `http://localhost:3000/product-order-history?order_id=${order.order_id}`
         // );
 
-        
         const orderItems = orderResponse.data;
 
         if (!Array.isArray(orderItems)) return;
@@ -57,31 +57,29 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
             //               '/products/${item.product_id}'
             //             );
             const productResponse = await axiosApi.get(
-                          `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
-                        );
+              `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
+            );
             // const productResponse = await axiosApi.get(
             //   `http://localhost:3000/products/${item.product_id}`
             // );
             //console.log(productResponse);
-            
+
             return {
               ...item,
               product_name: productResponse.data.name,
-              image_url: productResponse.data.image_url
+              image_url: productResponse.data.image_url,
             };
-            
           } catch (error) {
             return {
               ...item,
               product_name: "Produto não disponível",
-              image_url: defaultImage
+              image_url: defaultImage,
             };
           }
         });
 
         const completeItems = await Promise.all(productRequests);
         setItems(completeItems.slice(0, 4));
-        
       } catch (err) {
         console.error("Erro ao carregar itens:", err);
       }
@@ -91,7 +89,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
   }, [order.order_id]);
 
   const navigateToOrderDetails = () => {
-    router.push(`/product-order-history?order_id=${order.order_id}`);
+    router.push(`/product-order-history/${order.order_id}`);
   };
 
   return (
