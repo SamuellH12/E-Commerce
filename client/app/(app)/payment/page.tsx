@@ -193,8 +193,7 @@ export default function Payment() {
           <AlertDialogHeader>
             <AlertDialogTitle>Tem certeza que deseja deletar o cartão?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              Essa ação não pode ser desfeita. Isso irá deletar permanentemente sua conta e remover seus dados de nossos servidores.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -203,7 +202,7 @@ export default function Payment() {
             </AlertDialogCancel>
             <AlertDialogAction onClick={() => { deleteCard().then(() => {
               queryClient.invalidateQueries({queryKey: ["cardsQuery"]});
-            })}}>
+            })}} id="delete-card">
               Confirmar
             </AlertDialogAction>
           </AlertDialogFooter>
