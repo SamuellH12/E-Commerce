@@ -35,24 +35,15 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
     queryKey: ["orderItems", order.order_id],
     queryFn: async () => {
       const orderResponse = await axiosApi.get(
-        `https://e-commerce-api-fnhq.onrender.com/product-order-history?order_id=${order.order_id}`
+        `/product-order-history?order_id=${order.order_id}`
       );
       const orderItems = orderResponse.data;
       if (!Array.isArray(orderItems)) return [];
       const productRequests = orderItems.map(async (item: OrderItem) => {
         try {
-          const productResponse = await axiosApi.get(
-            `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
-          );
-          // const productResponse = await axiosApi.get(
-            //               '/products/${item.product_id}'
-            //             );
-            // const productResponse = await axiosApi.get(
-            //               `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
-            //             );
-            // const productResponse = await axiosApi.get(
-            //   `http://localhost:3000/products/${item.product_id}`
-            // );
+            const productResponse = await axiosApi.get(
+              `/products/${item.product_id}`
+            );
           return {
             ...item,
             product_name: productResponse.data.name,

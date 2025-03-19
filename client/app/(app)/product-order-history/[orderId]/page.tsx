@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import ProductOrderCard from "../components/product-order-card";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { axiosApi } from "@/lib/axios-client";
 import { useQuery } from "@tanstack/react-query";
 
@@ -16,28 +16,36 @@ interface OrderItem {
 }
 
 const ProductOrderHistoryPage = () => {
-  const searchParams = useSearchParams();
-  const order_id = searchParams.get("order_id");
+  const searchParams = useParams();
+  const order_id = searchParams?.orderId;
   const router = useRouter();
   const defaultImage =
     "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg";
 
   if (!order_id || isNaN(Number(order_id))) {
-    return <p>ID do pedido inválido</p>;
+    return <div>
+      <button
+          className="mb-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
+          onClick={() => router.push("/order-history")}
+        >
+          Back
+        </button>
+        <p>ID do pedido inválido</p>
+    </div>;
   }
 
   const { data: items, isLoading, isError, error } = useQuery<OrderItem[]>({
     queryKey: ["orderItems", order_id],
     queryFn: async () => {
       const response = await axiosApi.get(
-        `https://e-commerce-api-fnhq.onrender.com/product-order-history?order_id=${order_id}`
+        `/product-order-history?order_id=${order_id}`
       );
       const orderItems = response.data;
       const itemsWithDetails = await Promise.all(
         orderItems.map(async (item: any) => {
           try {
             const productResponse = await axiosApi.get(
-              `https://e-commerce-api-fnhq.onrender.com/products/${item.product_id}`
+              `/products/${item.product_id}`
             );
             return {
               ...item,
@@ -59,15 +67,39 @@ const ProductOrderHistoryPage = () => {
   });
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <button
+          className="mb-6 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
+          onClick={() => router.back()}
+        >
+          ← Back
+        </button>
+  
+        <div className="flex items-center space-x-2">
+          <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-lg font-semibold text-gray-700">Loading...</p>
+        </div>
+      </div>
+    );
   }
+  
 
   if (isError) {
     return (
-      <p>
+      <div>
+        <button
+          className="mb-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
+          onClick={() => router.push("/order-history")}
+        >
+          Back
+        </button>
+         <p>
         {(error as Error)?.message ||
           "Erro ao carregar detalhes do pedido"}
       </p>
+      </div>
+     
     );
   }
 
@@ -78,7 +110,7 @@ const ProductOrderHistoryPage = () => {
           className="mb-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
           onClick={() => router.push("/order-history")}
         >
-          Back
+          ← Back
         </button>
 
         <h1 className="text-2xl font-bold text-center mb-4">
