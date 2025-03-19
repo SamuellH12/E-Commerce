@@ -42,7 +42,24 @@ const OrderHistoryPage = () => {
     }
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <button
+          className="mb-6 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
+          onClick={() => router.back()}
+        >
+          ← Back
+        </button>
+  
+        <div className="flex items-center space-x-2">
+          <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-lg font-semibold text-gray-700">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+  
   if (isError)
     return <p>{error instanceof Error ? error.message : "Error loading orders."}</p>;
 
