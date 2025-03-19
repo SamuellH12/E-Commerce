@@ -25,7 +25,7 @@ export function MenuBarDropdown() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Portfolio</DropdownMenuLabel>
+        <DropdownMenuLabel>E-commerce</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {appRoutes.map((route) => (
@@ -40,7 +40,7 @@ export function MenuBarDropdown() {
           ))}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>Theme</DropdownMenuLabel>
+        <DropdownMenuLabel>Tema</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem onClick={() => setTheme("light")}>
