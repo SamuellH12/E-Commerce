@@ -67,18 +67,18 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
   };
 
   return (
-    <div className="bg-white border border-gray-300 p-4 m-2 rounded-lg shadow-sm hover:shadow-md transition duration-300 ease-in-out cursor-pointer">
+    <div className="border border-300 p-4 m-2 rounded-lg shadow-sm hover:shadow-md transition duration-300 ease-in-out cursor-pointer">
       <div className="flex justify-between">
         {/* Order details */}
         <div>
-          <h3 className="mb-2 text-lg font-medium text-gray-800">
+          <h3 className="mb-2 text-lg font-medium text-800">
             Order #{order.order_id}
           </h3>
-          <div className="flex items-center mb-1 text-sm text-gray-600">
+          <div className="flex items-center mb-1 text-sm text-600">
             <p className="mr-2">Order placed: {order.order_data}</p>
             <p>Destination: {order.destination}</p>
           </div>
-          <p className="mb-2 text-sm text-gray-600">
+          <p className="mb-2 text-sm text-600">
             Status:{" "}
             <strong
               className={`font-bold ${
@@ -88,11 +88,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
               {order.status}
             </strong>
           </p>
-          <p className="mb-2 text-base font-bold text-black">
+          <p className="mb-2 text-base font-bold">
             Total Value: $ {parseFloat(order.total_value.toString()).toFixed(2)}
           </p>
           <button
-            className="mt-1 px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out"
+            className="mt-1 px-3 py-1 text-sm font-medium bg-secondary rounded-md hover:bg-primary hover:text-black transition duration-300 ease-in-out"
             onClick={navigateToOrderDetails}
           >
             See details
@@ -100,20 +100,20 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
         </div>
 
         {/* Product images */}
-        <div className="flex gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {isLoading || isError || !items || items.length === 0 ? (
             <img
               src={defaultImage}
               alt="Default image"
-              className="w-20 h-20 object-cover rounded-md"
+              className="w-20 h-20 object-cover rounded-md col-span-2 mx-auto"
             />
           ) : (
-            items.map((item, index) => (
+            items.slice(0, 4).map((item, index) => (
               <img
                 key={index}
                 src={item.image_url}
                 alt={item.product_name}
-                className="w-20 h-20 object-cover rounded-md"
+                className="w-20 h-20 object-cover rounded-md mx-auto"
               />
             ))
           )}

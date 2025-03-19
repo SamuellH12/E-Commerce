@@ -17,6 +17,7 @@ interface Order {
 const OrderHistoryPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [showAll, setShowAll] = React.useState(false);
   const router = useRouter();
 
   const { data, isLoading, isError, error } = useQuery<Order[]>({
@@ -45,15 +46,9 @@ const OrderHistoryPage = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
-        <button
-          className="mb-6 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
-          onClick={() => router.back()}
-        >
-          ← Back
-        </button>
   
         <div className="flex items-center space-x-2">
-          <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-6 h-6 border-4 border-gray border-t-transparent rounded-full animate-spin"></div>
           <p className="text-lg font-semibold text-gray-700">Loading...</p>
         </div>
       </div>
@@ -82,12 +77,17 @@ const OrderHistoryPage = () => {
         ) : (
           <p className="text-center text-gray-600 mt-4">No recent orders available.</p>
         )}
+        {!showAll && (
         <button
-          className="mt-4 px-6 py-3 text-lg font-medium text-white bg-green-600 rounded hover:bg-green-700 transition duration-300 block mx-auto w-full max-w-[200px]"
-          onClick={() => setRecentOrders(orders)}
+          className="border border-300 mt-4 px-6 py-3 text-lg font-medium text-black bg-primary  rounded hover:bg-secondary hover:text-white transition duration-300 block mx-auto w-full max-w-[200px]"
+          onClick={() => {
+            setRecentOrders(orders);
+            setShowAll(true);
+          }} // Atualiza o estado para mostrar todos os pedidos
         >
           View All Orders
         </button>
+      )}
         {orders.length === 0 && (
           <p className="text-center text-gray-600 mt-4">
             You haven't placed any orders yet.
@@ -99,3 +99,5 @@ const OrderHistoryPage = () => {
 };
 
 export default OrderHistoryPage;
+
+
