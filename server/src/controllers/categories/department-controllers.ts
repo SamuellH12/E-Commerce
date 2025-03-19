@@ -39,7 +39,7 @@ export async function createDepartment(req: Request, res: Response) {
       .select();
     
     if(error) res.status(500).json(error);
-    else res.status(201).json(data[0]);
+    else res.json(data[0]);
 }
 
 
@@ -57,7 +57,7 @@ export async function updateDepartment(req: Request, res: Response) {
     
     if(error) res.status(500).json(error);
     else if(data.length === 0) res.status(404).json("not found");
-    else res.status(201).json(data[0]);
+    else res.json(data[0]);
 }
 
 
