@@ -1,6 +1,11 @@
 "use client";
 
-import { Frame, Map, PieChart, ShoppingBasketIcon, Tag } from "lucide-react";
+import {
+  ChartBarStacked,
+  Component,
+  ShoppingBasketIcon,
+  Tag,
+} from "lucide-react";
 import * as React from "react";
 
 import { NavHeader } from "@/components/nav-header";
@@ -35,22 +40,16 @@ const data = {
       url: "#",
       icon: Tag,
     },
-  ],
-  projects: [
+
     {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
+      title: "Categorias",
+      url: "/admin/categories",
+      icon: ChartBarStacked,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      title: "Departamentos",
+      url: "/admin/departments",
+      icon: Component,
     },
   ],
 };
