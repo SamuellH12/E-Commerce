@@ -21,6 +21,7 @@ export default function Home() {
     },
   });
 
+
   const productQueries = useQueries({
     queries: departmentList.map((dep) => ({
       queryKey: ["productsByDepartment", dep.id],
