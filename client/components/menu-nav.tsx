@@ -6,6 +6,7 @@ import { ModeToggle } from "./mode-toggle";
 import { Button } from "./ui/button";
 
 export const appRoutes = [
+  { label: "Início", href: "/" },
   { label: "Pagamentos", href: "/payment" },
   { label: "Cupons", href: "/coupons" },
   { label: "Carrinho de compras", href: "/shop-cart" },

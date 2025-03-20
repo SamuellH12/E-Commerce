@@ -5,11 +5,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ProductType } from "@/modules/products/types/product-types";
 import { ShoppingBasket, ShoppingCart } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Suspense } from "react";
 
 export function ProductCard({ product }: { product?: ProductType }) {
+  const router = useRouter();
   return (
-    <Card className="p-0 cursor-pointer  hover:border-foreground h-[368px]">
+    <Card
+      className="p-0 cursor-pointer  hover:border-foreground h-[368px]"
+      onClick={() => router.push(`/product/${product?.id}`)}
+    >
       <CardHeader className="p-0">
         <div className="w-full h-[180px]  flex justify-center items-center  rounded-t-lg bg-white ">
           <div className="rounded-t-lg ">

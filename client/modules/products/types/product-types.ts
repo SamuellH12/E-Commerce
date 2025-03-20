@@ -9,4 +9,7 @@ export type ProductType = {
   price: number;
   stock_quantity: number;
   updated_at: Date;
+  rating: number;
+  reviewCount: number;
+  discount: number;
 };
