@@ -35,6 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { axiosApi } from "@/lib/axios-client";
+import { cn } from "@/lib/utils";
 import { ProductType } from "@/modules/products/types/product-types";
 import { useQuery } from "@tanstack/react-query";
 import { DialogEditProduct } from "./product-edit-dialog";
@@ -77,7 +78,12 @@ export function DataTableProducts() {
       accessorKey: "is_active",
       header: "Status",
       cell: ({ row }) => (
-        <div className="capitalize">
+        <div
+          className={cn("capitalize", {
+            "text-green-500 dark:text-green-400": row.getValue("is_active"),
+            "text-red-500 dark:text-red-400": !row.getValue("is_active"),
+          })}
+        >
           {row.getValue("is_active") ? "Ativo" : "Inativo"}
         </div>
       ),
@@ -115,20 +121,20 @@ export function DataTableProducts() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(payment.id)}
-              >
-                Copy payment ID
-              </DropdownMenuItem>
+
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Ver detalhes do produto</DropdownMenuItem>
+
               <DropdownMenuItem
+                className="cursor-pointer"
                 onClick={() => {
                   setProduct(row.original);
                   setOpen(true);
                 }}
               >
-                Editar Produto
+                Editar
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-yellow-500 dark:text-yellow-400 cursor-pointer">
+                Desativar
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -174,7 +180,14 @@ export function DataTableProducts() {
     <>
       <DialogEditProduct open={open} setOpen={setOpen} item={product} />
       <div className="w-full">
-        <div className="flex items-center py-4">
+        <div className="flex items-center justify-between py-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Produtos</h1>
+            <p className="text-muted-foreground">
+              Gerencie seus produtos aqui. Você pode adicionar, editar ou
+              desativar produtos
+            </p>
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
