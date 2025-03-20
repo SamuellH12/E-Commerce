@@ -36,27 +36,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { PlusCircle } from "lucide-react";
+import React from "react";
 
-function Content({
-  item,
-  setOpen,
-}: {
-  item?: ProductType;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-}) {
-  const defaultValues = {
-    id: item?.id ?? "",
-    name: item?.name,
-    description: item?.description,
-    price: item?.price,
-    stock_quantity: item?.stock_quantity,
-    image_url: item?.image_url,
-    category_id: item?.category_id?.toString(),
-  };
-
+function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
   const form = useForm<z.infer<typeof productEditSchema>>({
     resolver: zodResolver(productEditSchema),
-    defaultValues: defaultValues,
+    defaultValues: { id: "new" },
   });
 
   const { toast } = useToast();
@@ -73,28 +60,31 @@ function Content({
 
   const mutate = useMutation({
     mutationFn: async (values: any) => {
-      const response = await axiosApi.put(`/products/${values.id}`, values);
+      const response = await axiosApi.post(`/products/new`, values);
       return response.data;
     },
   });
 
+  console.log("categories: ", categories.data);
+
   async function onSubmit(values: z.infer<typeof productEditSchema>) {
     console.log("resposta: ", values);
     mutate.mutate(
-      { ...values, category_id: +values.category_id },
+      { ...values, category_id: +values.category_id, id: undefined },
       {
         onSuccess: () => {
           setOpen(false);
           toast({
-            title: "Produto atualizado",
-            description: "O produto foi atualizado com sucesso",
+            title: "Produto criado",
+            description: "O produto foi criado com sucesso",
             variant: "default",
           });
         },
         onError: () => {
+          form.reset(values);
           toast({
-            title: "Erro ao atualizar produto",
-            description: "Ocorreu um erro ao atualizar o produto",
+            title: "Erro ao criar produto",
+            description: "Ocorreu um erro ao criar o produto",
             variant: "destructive",
           });
         },
@@ -107,7 +97,7 @@ function Content({
       <div className="flex flex-col space-y-2 max-h-[80vh] overflow-auto px-0.5 pr-4">
         <Form {...form}>
           <form
-            id="product-edit-form"
+            id="product-create-form"
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-6"
           >
@@ -146,7 +136,11 @@ function Content({
                 <FormItem>
                   <FormLabel>Quantidade</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(+e.target.value)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -222,7 +216,7 @@ function Content({
         </Form>
       </div>
       <DialogFooter>
-        <Button type="submit" className="w-full" form="product-edit-form">
+        <Button type="submit" className="w-full" form="product-create-form">
           Salvar
         </Button>
       </DialogFooter>
@@ -230,23 +224,21 @@ function Content({
   );
 }
 
-export function DialogEditProduct({
-  open,
-  setOpen,
-  item,
-}: {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  item?: ProductType;
-}) {
+export function DialogCreateProduct() {
+  const [open, setOpen] = React.useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger>
+        <Button type="button" className="w-full gap-2">
+          <PlusCircle /> Adicionar Produto
+        </Button>
+      </DialogTrigger>
       <DialogContent className="pr-0">
         <DialogHeader className="pr-4">
-          <DialogTitle> Editar Produto</DialogTitle>
+          <DialogTitle> Adicionar Produto</DialogTitle>
         </DialogHeader>
 
-        <Content item={item} setOpen={setOpen} />
+        <Content setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   );

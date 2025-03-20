@@ -39,6 +39,7 @@ import { cn } from "@/lib/utils";
 import { ProductType } from "@/modules/products/types/product-types";
 import { useQuery } from "@tanstack/react-query";
 import { DialogEditProduct } from "./product-edit-dialog";
+import { DialogCreateProduct } from "./product-create-dialog";
 
 export function DataTableProducts() {
   const [product, setProduct] = React.useState<ProductType>();
@@ -188,32 +189,7 @@ export function DataTableProducts() {
               desativar produtos
             </p>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Columns <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <DialogCreateProduct />
         </div>
         <div className="rounded-md border">
           <Table>
