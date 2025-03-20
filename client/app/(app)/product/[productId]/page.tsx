@@ -148,12 +148,11 @@ export default function ProductPage() {
           </div>
 
           {/* Add to Cart */}
-          <div className="flex flex-col space-y-3 sm:flex-row sm:space-x-3 sm:space-y-0">
-            <Button className="flex-1" size="lg">
-              <ShoppingCart className="mr-2 h-5 w-5" />
-              Adicionar ao carrinho
-            </Button>
-          </div>
+
+          <Button className="flex-1 w-full" size="lg">
+            <ShoppingCart className="mr-2 h-5 w-5" />
+            Adicionar ao carrinho
+          </Button>
 
           {/* Product Status */}
           <div className="text-sm">
