@@ -17,6 +17,7 @@ import { axiosApi } from "@/lib/axios-client";
 import { ProductType } from "@/modules/products/types/product-types";
 import { ItemsCarousel } from "@/modules/home/components/items-carousel";
 import { ProductCard } from "@/modules/home/components/product-card";
+import { Spinner } from "@/components/spinner";
 
 export default function ProductPage() {
   const { productId } = useParams();
@@ -42,29 +43,6 @@ export default function ProductPage() {
     }
   );
 
-  const product = {
-    name: "Classic Cotton T-Shirt",
-    price: 29.99,
-    discount: 39.99,
-    description:
-      "A comfortable and versatile cotton t-shirt that's perfect for everyday wear. Made from 100% organic cotton for breathability and durability.",
-    colors: [
-      { id: "black", name: "Black", hex: "#000000" },
-      { id: "white", name: "White", hex: "#ffffff" },
-      { id: "navy", name: "Navy", hex: "#000080" },
-    ],
-    sizes: ["xs", "s", "m", "l", "xl"],
-    images: [
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-    ],
-    rating: 3,
-    reviewCount: 128,
-    inStock: true,
-  };
-
   const incrementQuantity = () => {
     setQuantity(quantity + 1);
   };
@@ -74,6 +52,20 @@ export default function ProductPage() {
       setQuantity(quantity - 1);
     }
   };
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[80vh]">
+        <Spinner />
+      </div>
+    );
+  }
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center h-[80vh]">
+        <span className="text-xl font-bold">Produto não encontrado</span>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
