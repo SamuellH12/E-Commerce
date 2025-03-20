@@ -80,7 +80,7 @@ export default function ProductPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Product Images */}
         <div className="space-y-4">
-          <div className="relative aspect-square overflow-hidden rounded-lg border">
+          <div className="relative aspect-square bg-white overflow-hidden rounded-lg border">
             <Image
               src={data?.image_url || "/placeholder.svg"}
               alt={data?.name || ""}

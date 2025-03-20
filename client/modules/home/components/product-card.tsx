@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProductType } from "@/modules/products/types/product-types";
-import { ShoppingBasket, ShoppingCart } from "lucide-react";
+import { Eye, ShoppingBasket, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
@@ -35,11 +35,15 @@ export function ProductCard({ product }: { product?: ProductType }) {
         <span className="text-xl font-bold">{`R$${product?.price.toFixed(
           2
         )}`}</span>
-        <Button className="gap-2" variant="secondary">
+        <Button
+          className="gap-2"
+          variant="secondary"
+          onClick={() => router.push(`/product/${product?.id}`)}
+        >
           Adicionar ao carrinho <ShoppingCart />
         </Button>
         <Button className="gap-2">
-          Comprar <ShoppingBasket />
+          Ver produto <ShoppingBasket />
         </Button>
       </CardContent>
     </Card>
