@@ -7,4 +7,5 @@ export const productEditSchema = z.object({
   price: z.number(),
   stock_quantity: z.number(),
   image_url: z.string(),
+  category_id: z.string(),
 });

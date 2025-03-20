@@ -3,6 +3,7 @@
 import { PropsWithChildren } from "react";
 import { TanstackQueryClientProvider } from "./tanstack-query-provider";
 import { ThemeProvider } from "./theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 export function AppRootLayout({ children }: PropsWithChildren) {
   return (
@@ -13,6 +14,7 @@ export function AppRootLayout({ children }: PropsWithChildren) {
       disableTransitionOnChange
     >
       <TanstackQueryClientProvider>{children}</TanstackQueryClientProvider>
+      <Toaster />
     </ThemeProvider>
   );
 }

@@ -24,6 +24,18 @@ import { Textarea } from "@/components/ui/textarea";
 import CurrencyInput from "@/utils/currency-input";
 import { z } from "zod";
 import { productEditSchema } from "../schemas/product-edit-schema";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { axiosApi } from "@/lib/axios-client";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 
 function Content({ item }: { item?: ProductType }) {
   const defaultValues = {
@@ -33,6 +45,7 @@ function Content({ item }: { item?: ProductType }) {
     price: item?.price,
     stock_quantity: item?.stock_quantity,
     image_url: item?.image_url,
+    category_id: item?.category_id?.toString(),
   };
 
   const form = useForm<z.infer<typeof productEditSchema>>({
@@ -40,8 +53,48 @@ function Content({ item }: { item?: ProductType }) {
     defaultValues: defaultValues,
   });
 
+  const { toast } = useToast();
+  const categories = useQuery({
+    queryKey: ["categories"],
+    queryFn: async (): Promise<{ value: string; label: string }[]> => {
+      const response = await axiosApi("/category");
+      return response.data.map((category: { id: number; name: string }) => ({
+        value: category.id.toString(),
+        label: category.name,
+      }));
+    },
+  });
+
+  const mutate = useMutation({
+    mutationFn: async (values: any) => {
+      const response = await axiosApi.put(`/products/${values.id}`, values);
+      return response.data;
+    },
+  });
+
+  console.log("categories: ", categories.data);
+
   async function onSubmit(values: z.infer<typeof productEditSchema>) {
     console.log("resposta: ", values);
+    mutate.mutate(
+      { ...values, category_id: +values.category_id },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Produto atualizado",
+            description: "O produto foi atualizado com sucesso",
+            variant: "default",
+          });
+        },
+        onError: () => {
+          toast({
+            title: "Erro ao atualizar produto",
+            description: "Ocorreu um erro ao atualizar o produto",
+            variant: "destructive",
+          });
+        },
+      }
+    );
   }
 
   return (
@@ -94,14 +147,49 @@ function Content({ item }: { item?: ProductType }) {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="category_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Categoria</FormLabel>
+                  <FormControl>
+                    <Select
+                      {...field}
+                      value={field.value}
+                      onValueChange={(value: string) => field.onChange(value)}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecione uma categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Categorias</SelectLabel>
+                          {categories.data?.map((category) => (
+                            <SelectItem
+                              key={category.value}
+                              value={category.value.toString()}
+                            >
+                              {category.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="image_url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Quantidade</FormLabel>
+                  <FormLabel>Imagem</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
