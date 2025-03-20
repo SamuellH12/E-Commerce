@@ -126,13 +126,13 @@ export default function ProductPage() {
               </span>
             )}
             {data?.discount && (
-              <Badge className="bg-destructive">
+              <Badge className="bg-destructive dark:bg-red-500">
                 Economize R${(data?.discount - data?.price).toFixed(2)}
               </Badge>
             )}
           </div>
 
-          <p className="text-muted-foreground">{data?.description}</p>
+          <p className="text-muted-foreground ">{data?.description}</p>
 
           <Separator />
 
