@@ -39,7 +39,7 @@ export async function createDepartment(req: Request, res: Response) {
       .select();
     
     if(error) res.status(500).json(error);
-    else res.status(201).json(data[0]);
+    else res.json(data[0]);
 }
 
 
@@ -57,7 +57,7 @@ export async function updateDepartment(req: Request, res: Response) {
     
     if(error) res.status(500).json(error);
     else if(data.length === 0) res.status(404).json("not found");
-    else res.status(201).json(data[0]);
+    else res.json(data[0]);
 }
 
 
@@ -69,4 +69,31 @@ export async function deleteDepartment(req: Request, res: Response) {
     
     if(error) res.status(500).json(error);
     else res.json("Department with ID " + req.params.departmentId + " deleted");
+}
+
+export async function getProductsFromDepartment(req: Request, res: Response) {
+    const { data : categories, error : categoryError } = await supabase
+        .from('categories')
+        .select("id")
+        .eq('department_id', +req.params.departmentId);
+    
+    if(categoryError){
+        res.status(500).json(categoryError);
+        return;
+    } 
+
+    const categoryIds = categories.map(category => category.id);
+
+    if (categoryIds.length === 0) {
+        res.json([]);
+        return;
+    }
+
+    const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .in('category_id', categoryIds);
+
+    if (error) res.status(500).json(error);
+    else res.json(data);
 }

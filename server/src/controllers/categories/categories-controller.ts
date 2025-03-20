@@ -17,7 +17,7 @@ export async function createCategory(req: Request, res: Response) {
       .select();
     
     if(error) res.status(500).json(error);
-    else res.status(201).json(data[0]);
+    else res.json(data[0]);
 }
 
 
@@ -41,7 +41,7 @@ export async function updateCategory(req: Request, res: Response) {
         .select()
     
     if(error) res.status(500).json(error);
-    else res.status(201).json(data[0]);
+    else res.json(data[0]);
 }
 
 
@@ -64,7 +64,7 @@ export async function getCategory(req: Request, res: Response) {
     
     if(error) res.status(500).json(error);
     else if(data.length === 0) res.status(404).json("not found");
-    else res.status(201).json(data[0]);
+    else res.json(data[0]);
 }
 
 
@@ -75,5 +75,5 @@ export async function getProductsFromCategory(req: Request, res: Response) {
         .eq('category_id', +req.params.categoryId);
     
     if(error) res.status(500).json(error);
-    else res.status(201).json(data);
+    else res.json(data);
 }
