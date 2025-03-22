@@ -108,7 +108,7 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input placeholder="Produto 0" data-cy="product-name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -122,7 +122,7 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                 <FormItem>
                   <FormLabel>Preço</FormLabel>
                   <FormControl>
-                    <CurrencyInput {...field} />
+                    <CurrencyInput {...field}  data-cy='product-price'/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -188,7 +188,7 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                 <FormItem>
                   <FormLabel>Imagem</FormLabel>
                   <FormControl>
-                    <Input type="text" {...field} />
+                    <Input type="text" {...field}  data-cy='product-image'/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -205,6 +205,7 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                     <Textarea
                       placeholder="descrição"
                       className="min-h-40"
+                      data-cy="product-description"
                       {...field}
                     />
                   </FormControl>
@@ -229,7 +230,7 @@ export function DialogCreateProduct() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <Button type="button" className="w-full gap-2">
+        <Button type="button" className="w-full gap-2" data-cy="create-product-button">
           <PlusCircle /> Adicionar Produto
         </Button>
       </DialogTrigger>
