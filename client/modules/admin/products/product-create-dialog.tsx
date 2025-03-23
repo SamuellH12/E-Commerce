@@ -100,8 +100,6 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
         ...values,
         category_id: +values.category_id,
         id: undefined,
-        discount: +values.price,
-        price: +values.price - +values.discount,
       },
       {
         onSuccess: () => {
@@ -153,43 +151,44 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                 </FormItem>
               )}
             />
-
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Preço</FormLabel>
-                  <FormControl>
-                    <CurrencyInput
-                      {...field}
-                      data-cy="product-price"
-                      value={field.value}
-                      onChange={(value) => field.onChange(value)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="discount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Desconto</FormLabel>
-                  <FormControl>
-                    <CurrencyInput
-                      {...field}
-                      data-cy="product-discount"
-                      value={field.value}
-                      onChange={(value) => field.onChange(value)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex gap-6">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Preço</FormLabel>
+                    <FormControl>
+                      <CurrencyInput
+                        {...field}
+                        data-cy="product-price"
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="discount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Desconto</FormLabel>
+                    <FormControl>
+                      <CurrencyInput
+                        {...field}
+                        data-cy="product-discount"
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
@@ -219,6 +218,7 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                   <FormLabel>Quantidade</FormLabel>
                   <FormControl>
                     <Input
+                      data-cy="product-quantity"
                       type="number"
                       {...field}
                       onChange={(e) => field.onChange(+e.target.value)}

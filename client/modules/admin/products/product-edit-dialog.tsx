@@ -36,6 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 
 function Content({
   item,
@@ -52,6 +53,8 @@ function Content({
     stock_quantity: item?.stock_quantity ?? 0,
     image_url: item?.image_url ?? "",
     category_id: item?.category_id?.toString() ?? "",
+    is_active: item?.is_active ?? true,
+    discount: item?.discount ?? 0,
   };
 
   const form = useForm<z.infer<typeof productEditSchema>>({
@@ -107,7 +110,7 @@ function Content({
       <div className="flex flex-col space-y-2 max-h-[80vh] overflow-auto px-0.5 pr-4">
         <Form {...form}>
           <form
-            id="product-edit-form"
+            id="product-create-form"
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-6"
           >
@@ -119,30 +122,74 @@ function Content({
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="John Doe"
-                      {...field}
+                      placeholder="Produto 0"
                       data-cy="product-name"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <div className="flex gap-6">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Preço</FormLabel>
+                    <FormControl>
+                      <CurrencyInput
+                        {...field}
+                        data-cy="product-price"
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="discount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Desconto</FormLabel>
+                    <FormControl>
+                      <CurrencyInput
+                        {...field}
+                        data-cy="product-discount"
+                        value={field.value}
+                        onChange={(value) => field.onChange(value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
-              name="price"
+              name="is_active"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Preço</FormLabel>
+                  <FormLabel>Disponibilidade</FormLabel>
                   <FormControl>
-                    <CurrencyInput {...field} data-cy="product-price" />
+                    <div>
+                      <Switch
+                        data-state={field.value ? "checked" : "unchecked"}
+                        data-cy="product-availability"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="stock_quantity"
@@ -151,10 +198,10 @@ function Content({
                   <FormLabel>Quantidade</FormLabel>
                   <FormControl>
                     <Input
+                      data-cy="product-quantity"
                       type="number"
                       {...field}
-                      value={field.value ?? 0}
-                      data-cy="product-quantity"
+                      onChange={(e) => field.onChange(+e.target.value)}
                     />
                   </FormControl>
                   <FormMessage />
@@ -172,10 +219,12 @@ function Content({
                     <Select
                       {...field}
                       value={field.value}
-                      data-cy="product-category"
                       onValueChange={(value: string) => field.onChange(value)}
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger
+                        className="w-full"
+                        data-cy="product-category"
+                      >
                         <SelectValue placeholder="Selecione uma categoria" />
                       </SelectTrigger>
                       <SelectContent>
@@ -183,6 +232,8 @@ function Content({
                           <SelectLabel>Categorias</SelectLabel>
                           {categories.data?.map((category) => (
                             <SelectItem
+                              data-cy="product-category-name"
+                              data-cy-value={category.label}
                               key={category.value}
                               value={category.value.toString()}
                             >
@@ -204,7 +255,7 @@ function Content({
                 <FormItem>
                   <FormLabel>Imagem</FormLabel>
                   <FormControl>
-                    <Input type="text" {...field} />
+                    <Input type="text" {...field} data-cy="product-image" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -219,9 +270,9 @@ function Content({
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
                     <Textarea
-                      data-cy="product-description"
                       placeholder="descrição"
                       className="min-h-40"
+                      data-cy="product-description"
                       {...field}
                     />
                   </FormControl>
@@ -233,7 +284,12 @@ function Content({
         </Form>
       </div>
       <DialogFooter>
-        <Button type="submit" className="w-full" form="product-edit-form">
+        <Button
+          type="submit"
+          className="w-full"
+          form="product-create-form"
+          data-cy="submit-button"
+        >
           Salvar
         </Button>
       </DialogFooter>
