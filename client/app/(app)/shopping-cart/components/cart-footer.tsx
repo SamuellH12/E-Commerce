@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import styles from './shopping-cart.module.css';
 import CartItem from "./cart-Interface"
+import { axiosApi } from '@/lib/axios-client';
 
 interface ShoppingCartFooterProp {
     cartProducts: CartItem[];
@@ -19,7 +20,7 @@ const ShoppingCartFooter: React.FC<ShoppingCartFooterProp> = ({ cartProducts, se
     // Handle confirm update
     const emptyCart = async () => {
         try {
-            const response = await axios.delete(`http://localhost:3000/shopping-cart/`);
+            const response = await axiosApi.delete(`/shopping-cart/`);
 
             // Update state
             updateCart()
@@ -31,7 +32,7 @@ const ShoppingCartFooter: React.FC<ShoppingCartFooterProp> = ({ cartProducts, se
 
     const checkout = async () => {
         try {
-            setError(await axios.post(`http://localhost:3000/shopping-cart/`));
+            setError(await axiosApi.post(`/shopping-cart/`));
             
             // Update state
             updateCart()

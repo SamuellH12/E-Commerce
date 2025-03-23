@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './shopping-cart.module.css';
 import CartItem from './cart-Interface';
+import { axiosApi } from '@/lib/axios-client';
 
 interface ShoppingCartItemProps {
   product: CartItem;
@@ -32,7 +33,7 @@ const ShoppingCartItem: React.FC<ShoppingCartItemProps> = ({ product, setError, 
     }
 
     try {
-      await axios.put(`http://localhost:3000/shopping-cart/`, { id: id, amount: newAmount });
+      await axiosApi.put(`/shopping-cart/`, { id: id, amount: newAmount });
 
       // Update state
       setManaging(null)
@@ -45,7 +46,7 @@ const ShoppingCartItem: React.FC<ShoppingCartItemProps> = ({ product, setError, 
 
   const confirmRemove = async () => {
     try {
-      await axios.delete(`http://localhost:3000/shopping-cart/id`);
+      await axiosApi.delete(`/shopping-cart/id`);
 
       // Update state
       setManaging(null);
