@@ -5,7 +5,13 @@ import { MenuBarDropdown } from "./menu-bar-dropdown";
 import { ModeToggle } from "./mode-toggle";
 import { Button } from "./ui/button";
 
-const appRoutes = {};
+export const appRoutes = [
+  { label: "Início", href: "/" },
+  { label: "Pagamentos", href: "/payment" },
+  { label: "Cupons", href: "/coupons" },
+  { label: "Carrinho de compras", href: "/shop-cart" },
+  { label: "Histórico de pedidos", href: "/order-history" },
+];
 
 export const MenuNav = () => {
   const router = useRouter();
@@ -32,38 +38,17 @@ export const MenuNav = () => {
           </div>
         </div>
         <div className="flex-1  hidden lg:flex justify-end space-x-4">
-          <Button
-            variant="link"
-            onClick={() => {
-              router.push("/payment");
-            }}
-          >
-            Pagamentos
-          </Button>
-          <Button
-            variant="link"
-            onClick={() => {
-              router.push("/coupons");
-            }}
-          >
-            Cupons
-          </Button>
-          <Button
-            variant="link"
-            onClick={() => {
-              router.push("/shopping-cart");
-            }}
-          >
-            Carrinho de compras
-          </Button>
-          <Button
-            variant="link"
-            onClick={() => {
-              router.push("/order-history");
-            }}
-          >
-            Histórico de pedidos
-          </Button>
+          {appRoutes.map((route) => (
+            <Button
+              key={route.href}
+              variant="link"
+              onClick={() => {
+                router.push(route.href);
+              }}
+            >
+              {route.label}
+            </Button>
+          ))}
 
           <ModeToggle />
         </div>
