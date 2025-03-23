@@ -51,7 +51,7 @@ export const MenuNav = () => {
           <Button
             variant="link"
             onClick={() => {
-              router.push("/shop-cart");
+              router.push("/shopping-cart");
             }}
           >
             Carrinho de compras
