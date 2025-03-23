@@ -10,8 +10,9 @@ Given('o usuário está na página de {string}', (pagina: string) => {
   if (pagina === "Gerenciamento de Itens") {
     
     cy.visit('/admin/products');
-  
+    
   }
+  cy.wait(4000)
 });
 
 When('ele insere o nome {string}, descrição {string}, preço {string}, categoria {string}, disponibilidade {string}', 
