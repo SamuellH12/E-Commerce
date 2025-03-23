@@ -6,6 +6,8 @@ export const productEditSchema = z.object({
   description: z.string().min(10),
   price: z.number(),
   stock_quantity: z.number(),
+  discount: z.number(),
   image_url: z.string(),
+  is_active: z.boolean(),
   category_id: z.string(),
 });

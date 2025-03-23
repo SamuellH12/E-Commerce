@@ -46,12 +46,12 @@ function Content({
 }) {
   const defaultValues = {
     id: item?.id ?? "",
-    name: item?.name,
-    description: item?.description,
-    price: item?.price,
-    stock_quantity: item?.stock_quantity,
-    image_url: item?.image_url,
-    category_id: item?.category_id?.toString(),
+    name: item?.name ?? "",
+    description: item?.description ?? "",
+    price: item?.price ?? 0,
+    stock_quantity: item?.stock_quantity ?? 0,
+    image_url: item?.image_url ?? "",
+    category_id: item?.category_id?.toString() ?? "",
   };
 
   const form = useForm<z.infer<typeof productEditSchema>>({
@@ -118,7 +118,11 @@ function Content({
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input
+                      placeholder="John Doe"
+                      {...field}
+                      data-cy="product-name"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -132,7 +136,7 @@ function Content({
                 <FormItem>
                   <FormLabel>Preço</FormLabel>
                   <FormControl>
-                    <CurrencyInput {...field} />
+                    <CurrencyInput {...field} data-cy="product-price" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -146,7 +150,12 @@ function Content({
                 <FormItem>
                   <FormLabel>Quantidade</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      {...field}
+                      value={field.value ?? 0}
+                      data-cy="product-quantity"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -163,6 +172,7 @@ function Content({
                     <Select
                       {...field}
                       value={field.value}
+                      data-cy="product-category"
                       onValueChange={(value: string) => field.onChange(value)}
                     >
                       <SelectTrigger className="w-full">
@@ -209,6 +219,7 @@ function Content({
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
                     <Textarea
+                      data-cy="product-description"
                       placeholder="descrição"
                       className="min-h-40"
                       {...field}
