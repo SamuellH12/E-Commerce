@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "supabase-gen": "node supabase-gen.mjs",
-    "cypress": "npx cypress open"
+    "cypress": "npx cypress open",
+    "cypress:snippets": "cypress-cucumber-preprocessor:snippets"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.2",
