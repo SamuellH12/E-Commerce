@@ -25,15 +25,15 @@ Given("o usuário está na página de {string}", (pagina: string) => {
 });
 
 When(
-  `ele insere o nome {string}, descrição {string},  preço {string}, categoria {string}, disponibilidade {string}, desconto {string}, im	agem {string}`,
+  `ele insere o nome {string}, descrição {string},  preço {string}, categoria {string}, disponibilidade {string}, desconto: {string}, imagem {string}`,
   (
     nome: string,
     descricao: string,
     preco: string,
     categoria: string,
     disponibilidade: string,
-    imagem: string,
-    desconto: string
+    desconto: string,
+    imagem: string
   ) => {
     cy.get("[data-cy=create-product-button]").click();
 
