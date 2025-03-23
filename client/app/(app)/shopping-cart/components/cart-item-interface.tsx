@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface CartItem {
     products: {
         id: string;
@@ -11,5 +9,4 @@ interface CartItem {
     };
     amount: number;
 }
-
 export default CartItem;
