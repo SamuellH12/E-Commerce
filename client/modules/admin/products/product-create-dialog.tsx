@@ -43,7 +43,15 @@ import React from "react";
 function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
   const form = useForm<z.infer<typeof productEditSchema>>({
     resolver: zodResolver(productEditSchema),
-    defaultValues: { id: "new" },
+    defaultValues: {
+      id: "new",
+      name: "",
+      description: "",
+      price: 0,
+      stock_quantity: 0,
+      image_url: "",
+      category_id: "",
+    },
   });
 
   const { toast } = useToast();
@@ -108,7 +116,11 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input placeholder="Produto 0" data-cy="product-name" {...field} />
+                    <Input
+                      placeholder="Produto 0"
+                      data-cy="product-name"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -122,7 +134,7 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                 <FormItem>
                   <FormLabel>Preço</FormLabel>
                   <FormControl>
-                    <CurrencyInput {...field}  data-cy='product-price'/>
+                    <CurrencyInput {...field} data-cy="product-price" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -188,7 +200,7 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                 <FormItem>
                   <FormLabel>Imagem</FormLabel>
                   <FormControl>
-                    <Input type="text" {...field}  data-cy='product-image'/>
+                    <Input type="text" {...field} data-cy="product-image" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -225,15 +237,15 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
   );
 }
 
-export function DialogCreateProduct() {
-  const [open, setOpen] = React.useState(false);
+export function DialogCreateProduct({
+  setOpen,
+  open,
+}: {
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  open: boolean;
+}) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
-        <Button type="button" className="w-full gap-2" data-cy="create-product-button">
-          <PlusCircle /> Adicionar Produto
-        </Button>
-      </DialogTrigger>
       <DialogContent className="pr-0">
         <DialogHeader className="pr-4">
           <DialogTitle> Adicionar Produto</DialogTitle>

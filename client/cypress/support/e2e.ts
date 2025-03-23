@@ -14,8 +14,8 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands';
-import 'cypress-file-upload';
+import "./commands";
+import "cypress-file-upload";
 
 declare global {
   namespace Cypress {
@@ -35,20 +35,9 @@ declare global {
 }
 
 // Add custom command for selecting elements by data-cy attribute
-Cypress.Commands.add('dataCy', (value: string): Cypress.Chainable<JQuery<HTMLElement>> => {
-  return cy.get(`[data-cy=${value}]`);
-});
-Cypress.on("uncaught:exception", (err) => {
-  // Cypress and React Hydrating the document don't get along
-  // for some unknown reason. Hopefully, we figure out why eventually
-  // so we can remove this.
-  // https://github.com/remix-run/remix/issues/4822#issuecomment-1679195650
-  // https://github.com/cypress-io/cypress/issues/27204
-  if (
-    /hydrat/i.test(err.message) ||
-    /Minified React error #418/.test(err.message) ||
-    /Minified React error #423/.test(err.message)
-  ) {
-    return false
+Cypress.Commands.add(
+  "dataCy",
+  (value: string): Cypress.Chainable<JQuery<HTMLElement>> => {
+    return cy.get(`[data-cy=${value}]`);
   }
-});
+);
