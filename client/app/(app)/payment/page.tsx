@@ -186,6 +186,39 @@ export default function Payment() {
     window.alert("FINALIZANDO COMPRA!");
   }
 
+  function BotoesAtualizarRemover({ card }: { card: CardAPI }) {
+    return (
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>Ação</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
+                onClick={() => {
+                  setMenuOpen(card.id);
+                  setTransactionType(card.transaction_type);
+                  setFormData({
+                    ...formData,
+                    nickname: card.nickname,
+                    name: card.name,
+                  });
+                }}
+                data-name={`update ${card.nickname}`}
+              >
+                Editar
+              </DropdownMenuItem>
+            </DialogTrigger>
+            <DropdownMenuItem
+              data-name={`delete ${card.nickname}`}
+              onClick={() => { setDeletingCard(card.id); setAlertOpen(true);}}
+            >
+              Excluir
+            </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    )
+  }
+
   return (
     <div className="border rounded-lg p-4 shadow-lg mt-10">
       <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
@@ -282,34 +315,7 @@ export default function Payment() {
                             <DotsHorizontalIcon className="w-16 h-16" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56">
-                          <DropdownMenuLabel>Ação</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuGroup>
-                              <DialogTrigger asChild>
-                                <DropdownMenuItem
-                                  onClick={() => {
-                                    setMenuOpen(card.id);
-                                    setTransactionType(card.transaction_type);
-                                    setFormData({
-                                      ...formData,
-                                      nickname: card.nickname,
-                                      name: card.name,
-                                    });
-                                  }}
-                                  data-name={`update ${card.nickname}`}
-                                >
-                                  Editar
-                                </DropdownMenuItem>
-                              </DialogTrigger>
-                              <DropdownMenuItem
-                                data-name={`delete ${card.nickname}`}
-                                onClick={() => { setDeletingCard(card.id); setAlertOpen(true);}}
-                              >
-                                Excluir
-                              </DropdownMenuItem>
-                          </DropdownMenuGroup>
-                        </DropdownMenuContent>
+                        <BotoesAtualizarRemover card={card}/>
                       </DropdownMenu>
                     </Card>
 
