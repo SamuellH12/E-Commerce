@@ -39,6 +39,8 @@ import { useToast } from "@/hooks/use-toast";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { PlusCircle } from "lucide-react";
 import React from "react";
+import { Switch } from "@/components/ui/switch";
+import { queryClient } from "@/providers/tanstack-query-provider";
 
 function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
   const form = useForm<z.infer<typeof productEditSchema>>({
@@ -47,10 +49,11 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
       id: "new",
       name: "",
       description: "",
-      price: 0,
+      price: undefined,
       stock_quantity: 0,
       image_url: "",
       category_id: "",
+      is_active: true,
     },
   });
 
@@ -71,17 +74,41 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
       const response = await axiosApi.post(`/products/new`, values);
       return response.data;
     },
+    onSuccess: () => {
+      setOpen(false);
+      queryClient.invalidateQueries({
+        queryKey: ["products-query"],
+      });
+      toast({
+        title: "Produto criado",
+        description: "O produto foi criado com sucesso",
+        variant: "default",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erro ao criar produto",
+        description: "Ocorreu um erro ao criar o produto",
+        variant: "destructive",
+      });
+    },
   });
 
-  console.log("categories: ", categories.data);
-
   async function onSubmit(values: z.infer<typeof productEditSchema>) {
-    console.log("resposta: ", values);
     mutate.mutate(
-      { ...values, category_id: +values.category_id, id: undefined },
+      {
+        ...values,
+        category_id: +values.category_id,
+        id: undefined,
+        discount: +values.price,
+        price: +values.price - +values.discount,
+      },
       {
         onSuccess: () => {
           setOpen(false);
+          queryClient.invalidateQueries({
+            queryKey: ["products-query"],
+          });
           toast({
             title: "Produto criado",
             description: "O produto foi criado com sucesso",
@@ -134,13 +161,56 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                 <FormItem>
                   <FormLabel>Preço</FormLabel>
                   <FormControl>
-                    <CurrencyInput {...field} data-cy="product-price" />
+                    <CurrencyInput
+                      {...field}
+                      data-cy="product-price"
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="discount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Desconto</FormLabel>
+                  <FormControl>
+                    <CurrencyInput
+                      {...field}
+                      data-cy="product-discount"
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="is_active"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Disponibilidade</FormLabel>
+                  <FormControl>
+                    <div>
+                      <Switch
+                        data-state={field.value ? "checked" : "unchecked"}
+                        data-cy="product-availability"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="stock_quantity"
@@ -171,7 +241,10 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                       value={field.value}
                       onValueChange={(value: string) => field.onChange(value)}
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger
+                        className="w-full"
+                        data-cy="product-category"
+                      >
                         <SelectValue placeholder="Selecione uma categoria" />
                       </SelectTrigger>
                       <SelectContent>
@@ -179,6 +252,8 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                           <SelectLabel>Categorias</SelectLabel>
                           {categories.data?.map((category) => (
                             <SelectItem
+                              data-cy="product-category-name"
+                              data-cy-value={category.label}
                               key={category.value}
                               value={category.value.toString()}
                             >
@@ -229,7 +304,12 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
         </Form>
       </div>
       <DialogFooter>
-        <Button type="submit" className="w-full" form="product-create-form">
+        <Button
+          type="submit"
+          className="w-full"
+          form="product-create-form"
+          data-cy="submit-button"
+        >
           Salvar
         </Button>
       </DialogFooter>

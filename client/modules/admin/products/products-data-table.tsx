@@ -220,7 +220,7 @@ export function DataTableProducts() {
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody>
+            <TableBody data-cy="products-table">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow
