@@ -12,6 +12,7 @@ import {
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
+import { appRoutes } from "./menu-nav";
 
 export function MenuBarDropdown() {
   const router = useRouter();
@@ -24,43 +25,32 @@ export function MenuBarDropdown() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Portfolio</DropdownMenuLabel>
+        <DropdownMenuLabel>E-commerce</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => {
-              router.push("/");
-            }}
-          >
-            Home
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              router.push("/projects");
-            }}
-          >
-            Projects
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              router.push("/about-me");
-            }}
-          >
-            About me
-          </DropdownMenuItem>
+          {appRoutes.map((route) => (
+            <DropdownMenuItem
+              key={route.href}
+              onClick={() => {
+                router.push(route.href);
+              }}
+            >
+              {route.label}
+            </DropdownMenuItem>
+          ))}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>Theme</DropdownMenuLabel>
+        <DropdownMenuLabel>Tema</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
+          Claro
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
+          Escuro
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
+          Sistema
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

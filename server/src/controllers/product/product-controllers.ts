@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import supabase from "../../supabase/supabase";
 
 export async function getAllProducts(req: Request, res: Response) {
-  const { data, error } = await supabase.from("products").select("*");
+  const { data, error } = await supabase.from("products").select("*, categories(id, name)");
 
   if (error) {
     res.status(400).json(error);
@@ -14,7 +14,7 @@ export async function getAllProducts(req: Request, res: Response) {
 export async function getProduct(req: Request, res: Response) {
   const id: string = req.params.productId;
 
-  const { error, data } = await supabase.from("products").select().eq("id", id);
+  const { error, data } = await supabase.from("products").select("*, categories(id, name)").eq("id", id);
 
   if (error) {
     res.status(400).json(error);
@@ -38,7 +38,7 @@ export async function createProduct(req: Request, res: Response) {
 }
 export async function updateProduct(req: Request, res: Response) {
   const id: string = req.params.productId;
-
+  console.log(req.body);
   const { error, data } = await supabase
     .from("products")
     .update({ ...req.body })

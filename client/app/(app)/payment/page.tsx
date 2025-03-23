@@ -39,6 +39,19 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { queryClient } from "@/providers/tanstack-query-provider";
+
+
 interface CardAPI {
   id: number;
   created_at: string;
@@ -84,6 +97,8 @@ export default function Payment() {
     year: "",
     cvc: "",
   });
+  const [deletingCard, setDeletingCard] = useState<number>();
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["cardsQuery"],
@@ -129,18 +144,11 @@ export default function Payment() {
     }
   }
 
-  async function deleteCard(id: number) {
-    const answer = window
-      .prompt("TEM CERTEZA QUE DESEJA REMOVER ESSE CARTÃO? (S/N)")
-      ?.toUpperCase();
+  async function deleteCard() {
+    await axiosApi(`/cards/${deletingCard}`, {
+      method: "DELETE",
+    });
 
-    if (answer === "S") {
-      const response = await axiosApi(`/cards/${id}`, {
-        method: "DELETE",
-      });
-      if (response.status === 200) window.alert("Cartão deletado com sucesso!");
-      location.reload();
-    }
     return;
   }
 
@@ -178,8 +186,61 @@ export default function Payment() {
     window.alert("FINALIZANDO COMPRA!");
   }
 
+  function BotoesAtualizarRemover({ card }: { card: CardAPI }) {
+    return (
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>Ação</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
+                onClick={() => {
+                  setMenuOpen(card.id);
+                  setTransactionType(card.transaction_type);
+                  setFormData({
+                    ...formData,
+                    nickname: card.nickname,
+                    name: card.name,
+                  });
+                }}
+                data-name={`update ${card.nickname}`}
+              >
+                Editar
+              </DropdownMenuItem>
+            </DialogTrigger>
+            <DropdownMenuItem
+              data-name={`delete ${card.nickname}`}
+              onClick={() => { setDeletingCard(card.id); setAlertOpen(true);}}
+            >
+              Excluir
+            </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    )
+  }
+
   return (
     <div className="border rounded-lg p-4 shadow-lg mt-10">
+      <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Tem certeza que deseja deletar o cartão?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Essa ação não pode ser desfeita. Isso irá deletar permanentemente sua conta e remover seus dados de nossos servidores.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={() => { deleteCard().then(() => {
+              queryClient.invalidateQueries({queryKey: ["cardsQuery"]});
+            })}} id="delete-card">
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <h1 className="font-extrabold mb-2 text-2xl">PAGAMENTO</h1>
       <p className="text-gray-500 mb-10">
         Selecione o método de pagamento da compra
@@ -224,9 +285,10 @@ export default function Payment() {
             </Link>
             <div className="grid">
               {data?.map((card: CardAPI) => (
-                <div key={card.id} className="grid">
+                <div key={card.id} className="grid" data-name={card.nickname}>
                   <Dialog>
                     <Card
+                      id={`card-${card.id}`}
                       onClick={() => {
                         setCardSelected(card.id);
                       }}
@@ -241,6 +303,8 @@ export default function Payment() {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
+                            id={`card-update-${card.id}`}
+                            data-name={`update-${card.nickname}`}
                             onClick={() => updateMenu(card.id)}
                             onKeyDown={(e) => {
                               if (e.key === "Enter") updateMenu(card.id);
@@ -251,32 +315,7 @@ export default function Payment() {
                             <DotsHorizontalIcon className="w-16 h-16" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56">
-                          <DropdownMenuLabel>Ação</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuGroup>
-                            <DialogTrigger asChild>
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setMenuOpen(card.id);
-                                  setTransactionType(card.transaction_type);
-                                  setFormData({
-                                    ...formData,
-                                    nickname: card.nickname,
-                                    name: card.name,
-                                  });
-                                }}
-                              >
-                                Editar
-                              </DropdownMenuItem>
-                            </DialogTrigger>
-                            <DropdownMenuItem
-                              onClick={() => deleteCard(card.id)}
-                            >
-                              Excluir
-                            </DropdownMenuItem>
-                          </DropdownMenuGroup>
-                        </DropdownMenuContent>
+                        <BotoesAtualizarRemover card={card}/>
                       </DropdownMenu>
                     </Card>
 
@@ -291,6 +330,7 @@ export default function Payment() {
                         <div className="grid w-full items-center gap-4">
                           <div className="flex justify-between gap-4 px-4">
                             <Button
+                              id="dialog-credit"
                               type="button"
                               variant="outline"
                               onClick={() => setTransactionType("Credit")}
@@ -303,6 +343,7 @@ export default function Payment() {
                               <h2>CRÉDITO</h2>
                             </Button>
                             <Button
+                              id="dialog-debit"
                               type="button"
                               variant="outline"
                               onClick={() => setTransactionType("Debit")}
@@ -360,7 +401,7 @@ export default function Payment() {
                                 </SelectTrigger>
                                 <SelectContent position="popper">
                                   {months.map((month) => (
-                                    <SelectItem key={month} value={month}>
+                                    <SelectItem id={month} key={month} value={month}>
                                       {month}
                                     </SelectItem>
                                   ))}
@@ -383,7 +424,7 @@ export default function Payment() {
                             </div>
                           </div>
                         </div>
-                        <Button type="button" onClick={updateCard}>
+                        <Button id="dialog-update-card" type="button" onClick={updateCard}>
                           Atualizar
                         </Button>
                       </form>
@@ -412,5 +453,5 @@ export default function Payment() {
         </div>
       </form>
     </div>
-  );
+    );
 }
