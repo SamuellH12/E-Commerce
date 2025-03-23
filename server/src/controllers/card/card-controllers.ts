@@ -4,9 +4,14 @@ import type { CardType } from "./schema/card-schemas";
 import { cardTypeValidation, encryptData } from "./utils/card-utils";
 
 export async function getAllCards(req: Request, res: Response) {
-	const { data, error } = await supabase.from("cards").select("*");
+	const { data, error } = await supabase
+		.from("cards")
+		.select("id, nickname, name, code_last4, card_type, transaction_type")
+		.order("id", { ascending: false });
 
 	if (error) res.status(500).json(error);
+
+	console.log(data);
 
 	res.json(data);
 }
