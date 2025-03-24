@@ -84,8 +84,7 @@ export default function CarrinhoDeCompras() {
         <ShoppingBag className="h-6 w-6" />
         <h1 className="text-2xl font-bold">Meu Carrinho</h1>
       </div>
-
-      {cartProducts.length === 0 ? (
+      {cartProducts.length === 0 && !isLoading ? (
         <div className="text-center py-12">
           <h2 className="text-xl font-medium mb-4">Seu carrinho está vazio</h2>
           <p className="text-muted-foreground mb-6">
