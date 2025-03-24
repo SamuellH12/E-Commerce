@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { axiosApi } from "@/lib/axios-client";
-import SelecionarCartao from "./selecionarCartao";
+import SelecionarCartao, { CardAPI, CardSelectedType, cardType } from "./selecionarCartao";
 import AdicionarCartao from "./adicionarCartao";
 
 export default function CarrinhoDeCompras() {

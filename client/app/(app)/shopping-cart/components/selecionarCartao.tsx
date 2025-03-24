@@ -74,7 +74,7 @@ enum CardType {
     Visa = "VISA",
 }
 
-const cardType: Record<CardType, JSX.Element> = {
+export const cardType: Record<CardType, JSX.Element> = {
   MasterCard: (
     <Image
       src={mastercard}
@@ -87,7 +87,7 @@ const cardType: Record<CardType, JSX.Element> = {
   ),
 };
 
-interface CardAPI {
+export interface CardAPI {
     id: number;
     nickname: string;
     name: string;
@@ -96,9 +96,23 @@ interface CardAPI {
     transaction_type: string;
 }
 
+export interface CardSelectedType {
+    id_user: number;
+    id_card: number;
+}
+
 export default function SelecionarCartao() {
-    const [cardSelected, setCardSelected] = useState(0);
+    const [cardSelected, setCardSelected] = useState<number>(0);
     const [dialogSelecionarAberto, setDialogSelecionarAberto] = useState(false);
+
+
+    const { data:lastCardSelected, isLoading:isLoadinglastCardSelected } = useQuery({
+        queryKey: ["selected-card"],
+        queryFn: async (): Promise<CardAPI> => {
+        const response = await axiosApi.get('/cards/card-selected');
+        return response.data;
+        },
+    });
 
     const { data:cards, isLoading } = useQuery({
         queryKey: ["cardsQuery"],
@@ -108,74 +122,129 @@ export default function SelecionarCartao() {
         },
     });
 
+    const { toast } = useToast();
+    const mutate = useMutation({
+        mutationFn: async (values: CardSelectedType) => {
+            const response = await axiosApi.post('/cards/card-selected', values);
+            return response.data;
+        }
+    });
+
+    async function selectCard() {
+        console.log("salve");
+
+        const requestBody = {
+            id_user: 2,
+            id_card: cardSelected,
+        }
+
+        mutate.mutate(
+            requestBody,
+            {
+            onSuccess: () => {
+                toast({
+                    title: "Cartão atulizado",
+                    description: "O cartão foi atulizado com sucesso",
+                    variant: "default",
+                });
+            },
+            onError: () => {
+                toast({
+                    title: "Erro ao atulizar cartão",
+                    description: "Ocorreu um erro ao atulizar o cartão",
+                    variant: "destructive",
+                });
+            },
+            }
+        );
+    }
+
     if (isLoading || !cards) return "Carregando...";
 
     return (
-        <Dialog
-            open={dialogSelecionarAberto}
-            onOpenChange={setDialogSelecionarAberto}
-        >
-            <DialogTrigger asChild>
-            <Button
-                variant="outline"
-                className="w-full flex items-center justify-center gap-2"
-            >
-                <CreditCard className="h-4 w-4" />
-                Selecionar Cartão
-            </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md h-2/3 overflow-auto">
-            <DialogHeader>
-                <DialogTitle>Selecionar Cartão</DialogTitle>
-                <DialogDescription>
-                Escolha um cartão para pagamento
-                </DialogDescription>
-            </DialogHeader>
-            <div className="py-4">
-                <RadioGroup>
-                    {cards.map((card) => (
-                        <div
-                        key={card.id}
-                        className="flex items-center space-x-2 border rounded-md p-3"
-                        >
-                        <RadioGroupItem
-                            value={card.id.toString()}
-                            id={`cartao-${card.id}`}
-                        />
-                        <Label
-                            htmlFor={`cartao-${card.id}`}
-                            className="cursor-pointer flex space-x-6 items-center justify-items-center"
-                            onClick={() => setCardSelected(card.id)}
-                        >
-                            <div className="font-medium ">
-                                {cardType[card.card_type]}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                                <strong>{card.nickname}</strong>
-                                <h4>{card.name}</h4>
-                                <h4>**** **** **** {card.code_last4}</h4>
-                            </div>
-                        </Label>
+        <div className="space-y-2">
+            <div>
+                {isLoadinglastCardSelected || !lastCardSelected ? "Carregando..." : (
+                    <div
+                    className="flex items-center space-x-2 border rounded-md p-3 h-min"
+                    >
+                        <div className="font-medium ">
+                            {cardType[lastCardSelected.card_type]}
                         </div>
-                    ))}
-                </RadioGroup>
+                        <div className="text-sm text-muted-foreground">
+                            <strong>{lastCardSelected.nickname}</strong>
+                            <h4>{lastCardSelected.name}</h4>
+                            <h4>**** **** **** {lastCardSelected.code_last4}</h4>
+                        </div>
+                    </div>
+                )}
             </div>
-            <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-between sm:space-x-2">
+            <Dialog
+                open={dialogSelecionarAberto}
+                onOpenChange={setDialogSelecionarAberto}
+            >
+                <DialogTrigger asChild>
                 <Button
-                type="button"
-                variant="outline"
-                onClick={() => setDialogSelecionarAberto(false)}
+                    variant="outline"
+                    className="w-full flex items-center justify-center gap-2"
                 >
-                    Cancelar
+                    <CreditCard className="h-4 w-4" />
+                    Selecionar Cartão
                 </Button>
-                <Button
-                type="button"
-                onClick={() => setDialogSelecionarAberto(false)}
-                >
-                    Confirmar
-                </Button>
-            </DialogFooter>
-            </DialogContent>
-        </Dialog>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md h-2/3 overflow-auto">
+                <DialogHeader>
+                    <DialogTitle>Selecionar Cartão</DialogTitle>
+                    <DialogDescription>
+                    Escolha um cartão para pagamento
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="py-4">
+                    <RadioGroup>
+                        {cards.map((card) => (
+                            <div
+                            key={card.id}
+                            className="flex items-center space-x-2 border rounded-md p-3"
+                            >
+                            <RadioGroupItem
+                                value={card.id.toString()}
+                                id={`cartao-${card.id}`}
+                            />
+                            <Label
+                                htmlFor={`cartao-${card.id}`}
+                                className="cursor-pointer flex space-x-6 items-center justify-items-center"
+                                onClick={() => setCardSelected(card.id)}
+                            >
+                                <div className="font-medium ">
+                                    {cardType[card.card_type]}
+                                </div>
+                                <div className="text-sm text-muted-foreground">
+                                    <strong>{card.nickname}</strong>
+                                    <h4>{card.name}</h4>
+                                    <h4>**** **** **** {card.code_last4}</h4>
+                                </div>
+                            </Label>
+                            </div>
+                        ))}
+                    </RadioGroup>
+                </div>
+                <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-between sm:space-x-2">
+                    <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setDialogSelecionarAberto(false)}
+                    >
+                        Cancelar
+                    </Button>
+                    <Button
+                    type="button"
+                    onClick={selectCard}
+                    >
+                        Confirmar
+                    </Button>
+                </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </div>
     );
 }
