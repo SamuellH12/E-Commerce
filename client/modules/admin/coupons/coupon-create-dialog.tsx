@@ -76,8 +76,8 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
         queryKey: ["coupons-query"],
       });
       toast({
-        title: "Produto criado",
-        description: "O produto foi criado com sucesso",
+        title: "Cupom criado",
+        description: "O cupom foi criado com sucesso",
         variant: "default",
       });
     },
@@ -157,7 +157,7 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
                       <Input
                         type="number"
                         {...field}
-                        data-cy="coupons-percentage"
+                        data-cy="coupon-percentage"
                         value={field.value}
                         onChange={(e) => field.onChange(+e.target.value)}
                         />
