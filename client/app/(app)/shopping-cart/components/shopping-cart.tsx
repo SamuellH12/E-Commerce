@@ -1,20 +1,54 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import CartItem from "./cart-item-interface";
-import { axiosApi } from "@/lib/axios-client";
 import ShoppingCartItem from "./shopping-cart-card";
 import { useQueries, useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/providers/tanstack-query-provider";
 
+import type React from "react";
+
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  CreditCard,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Trash2,
+  PlusIcon,
+} from "lucide-react";
+import placeholder from "../../../public/placeholder.png";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { axiosApi } from "@/lib/axios-client";
+import SelecionarCartao, { CardAPI, CardSelectedType, cardType } from "./selecionarCartao";
+import AdicionarCartao from "./adicionarCartao";
+
 export default function CarrinhoDeCompras() {
+  const [metodoPagamento, setMetodoPagamento] = useState<"cartao" | "pix">("cartao");
+
   const {
     data: cartProducts = [],
     isLoading,
@@ -68,6 +102,52 @@ export default function CarrinhoDeCompras() {
       });
     },
   });
+
+  const finalizarCompraMutate = useMutation({
+    mutationFn: async (values:any) => {
+      const response = await axiosApi.post('/order-history', values);
+      return response.data;
+    },
+  });
+
+  const postProdutoComprado = useMutation({
+    mutationFn: async (values:any) => {
+      await axiosApi.post('/product-order-history', values);
+    },
+  });
+
+  function finalizarCompra() {
+    const diamesano = new Date().toISOString().slice(0, 10);
+
+    const requestBody = {
+      order_data: diamesano,
+      destination: "Rua dos Bobos, 0",
+      status: "pending",
+      total_value: total.toFixed(2),
+    };
+
+    finalizarCompraMutate.mutate(requestBody, {
+      onSuccess: (data:any) => {
+        console.log(data);
+
+        cartProducts.map((cartItem) => {
+          const productOrderHistory = {
+            order_id: data.order_id,
+            product_id: cartItem.products.id,
+            price_paid: cartItem.products.price,
+            amount: cartItem.amount,
+          };
+          postProdutoComprado.mutate(productOrderHistory);
+        });
+
+
+        emptyCartMutate.mutate();
+        queryClient.invalidateQueries({
+          queryKey: ["shopping-cart-products"],
+        });
+      }
+    });
+  }
 
   // Cálculos do carrinho
   const subtotal =
@@ -146,6 +226,101 @@ export default function CarrinhoDeCompras() {
                       Frete grátis para compras acima de R$ 300,00
                     </div>
                   )}
+
+                  <div className="mt-4 space-y-3">
+                    <Tabs
+                      defaultValue="cartao"
+                      className="w-full"
+                      onValueChange={(value) =>
+                        setMetodoPagamento(value as "cartao" | "pix")
+                      }
+                    >
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="cartao">Cartão</TabsTrigger>
+                        <TabsTrigger value="pix">PIX</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="cartao" className="space-y-3 mt-3">
+
+                        <SelecionarCartao />
+
+                        <AdicionarCartao />
+
+                      </TabsContent>
+                      <TabsContent value="pix" className="space-y-4 mt-3">
+                        <div className="border rounded-md p-4 text-center">
+                          <div className="mb-4">
+                            <Image
+                              src="/placeholder.svg?height=150&width=150"
+                              alt="QR Code PIX"
+                              width={150}
+                              height={150}
+                              className="mx-auto"
+                            />
+                          </div>
+                          <div className="text-sm text-muted-foreground mb-2">
+                            Escaneie o QR Code acima com o aplicativo do seu
+                            banco
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            <div className="flex items-center justify-between bg-muted/50 p-2 rounded-md">
+                              <span className="text-sm font-medium">
+                                Código PIX:
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-muted-foreground truncate max-w-[150px]">
+                                  00020126580014br.gov.bcb.pix0136a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6
+                                </span>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="lucide lucide-copy"
+                                  >
+                                    <rect
+                                      width="14"
+                                      height="14"
+                                      x="8"
+                                      y="8"
+                                      rx="2"
+                                      ry="2"
+                                    />
+                                    <path d="M4 16c0-1.1.9-2 2-2h2" />
+                                    <path d="M4 12c0-1.1.9-2 2-2h2" />
+                                    <path d="M4 8c0-1.1.9-2 2-2h2" />
+                                  </svg>
+                                </Button>
+                              </div>
+                            </div>
+                            <Button variant="outline" className="w-full">
+                              Copiar Código PIX
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          <p>
+                            • O pagamento via PIX é processado instantaneamente
+                          </p>
+                          <p>
+                            • Após o pagamento, você receberá a confirmação por
+                            e-mail
+                          </p>
+                          <p>• O código PIX expira em 30 minutos</p>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </div>
+
                   <Separator />
                   <div className="flex justify-between font-bold">
                     <span>Total</span>
@@ -154,7 +329,7 @@ export default function CarrinhoDeCompras() {
                 </div>
               </CardContent>
               <CardFooter className="p-6">
-                <Button className="w-full">Finalizar Compra</Button>
+                <Button className="w-full" onClick={finalizarCompra}>Finalizar Compra</Button>
               </CardFooter>
             </Card>
           </div>
