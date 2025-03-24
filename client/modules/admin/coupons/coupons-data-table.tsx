@@ -217,10 +217,10 @@ export function DataTableCoupons() {
       <div className="w-full">
         <div className="flex items-center justify-between py-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Produtos</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Cupons</h1>
             <p className="text-muted-foreground">
-              Gerencie seus produtos aqui. Você pode adicionar, editar ou
-              desativar produtos
+              Gerencie seus cupons aqui. Você pode adicionar, editar ou
+              desativar cupons
             </p>
           </div>
           <Button
