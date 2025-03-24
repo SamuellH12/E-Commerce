@@ -25,6 +25,8 @@ Given("o usuário está na página de {string}", (pagina: string) => {
     cy.visit("/payment");
   } else if (pagina === "Cadastro de cartão") {
     cy.visit("/payment/new_card");
+  } else if (pagina === "Cupons") {
+    cy.visit("/admin/coupons");
   }
   cy.wait(2000);
 });
