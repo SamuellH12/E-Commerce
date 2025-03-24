@@ -17,13 +17,22 @@ export async function getAllCards(req: Request, res: Response) {
 }
 
 export async function getCardSelected(req: Request, res: Response) {
-	const { data, error } = await supabase.from("card-selected").select();
+	const { data: cards, error: errorCards } = await supabase
+		.from("cards")
+		.select("id, nickname, name, code_last4, card_type, transaction_type")
+		.order("id", { ascending: false });
 
-	if (error) res.status(500).json(error);
+	const { data: cardSelected, error: errorCardSelected } = await supabase
+		.from("card-selected")
+		.select("*")
+		.eq("id_user", 2);
 
-	console.log(data);
+	if (errorCards) res.status(500).json(errorCards);
+	if (errorCardSelected) res.status(500).json(errorCardSelected);
 
-	res.json(data?.[0] ?? null);
+	cards?.find((card) => {
+		if (card.id === cardSelected?.[0].id_card) res.json(card ?? null);
+	});
 }
 
 export async function createCard(req: Request, res: Response) {
