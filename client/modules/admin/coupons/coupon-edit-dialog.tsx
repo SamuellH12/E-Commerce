@@ -38,6 +38,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 
+import { queryClient } from "@/providers/tanstack-query-provider";
+
 function Content({
   item,
   setOpen,
@@ -61,11 +63,8 @@ function Content({
   const mutate = useMutation({
     mutationFn: async (values: any) => {
       
-      console.log("HERE! (Mutate)")
       const response = await axiosApi.put(`/coupons`, values);
-      console.log("HERE! (pos mutate)")
 
-      console.log(response.data)
       return response.data;
     },
   });
@@ -76,6 +75,9 @@ function Content({
       {
         onSuccess: () => {
           setOpen(false);
+          queryClient.invalidateQueries({
+            queryKey: ["coupons-query"],
+          });
           toast({
             title: "Cupom atualizado",
             description: "O cupom foi atualizado com sucesso",
@@ -130,7 +132,7 @@ function Content({
                         <Input
                           type="number"
                           {...field}
-                          data-cy="coupons-percentage"
+                          data-cy="coupon-percentage"
                           value={field.value}
                           onChange={(e) => field.onChange(+e.target.value)}
                           />
@@ -150,7 +152,7 @@ function Content({
                           type="date"
                           {...field}
                           data-cy="coupon-expiration-date"
-                          value={field.value ? field.value.toISOString().split('T')[0] : ''}
+                          value={field.value ? new Date(field.value).toISOString().split('T')[0] : undefined}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(e.target.value ? new Date(e.target.value) : undefined)}
                         />
                       </FormControl>

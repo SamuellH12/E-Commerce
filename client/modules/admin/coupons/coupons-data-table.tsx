@@ -144,7 +144,7 @@ export function DataTableCoupons() {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button variant="ghost" className="h-8 w-8 p-0" data-cy="dropdown-menu-trigger">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal />
               </Button>
@@ -160,6 +160,7 @@ export function DataTableCoupons() {
                   setCoupon(row.original);
                   setOpen(true);
                 }}
+                data-cy="edit-coupon-button"
               >
                 Editar
               </DropdownMenuItem>
@@ -167,6 +168,7 @@ export function DataTableCoupons() {
                 onClick={() => {
                   deleteCoupon.mutate(row.original.codename);
                 }}
+                data-cy="delete-coupon-button"
               >
                 Deletar
               </DropdownMenuItem>
