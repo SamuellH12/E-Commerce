@@ -16,6 +16,16 @@ export async function getAllCards(req: Request, res: Response) {
 	res.json(data);
 }
 
+export async function getCardSelected(req: Request, res: Response) {
+	const { data, error } = await supabase.from("card-selected").select();
+
+	if (error) res.status(500).json(error);
+
+	console.log(data);
+
+	res.json(data?.[0] ?? null);
+}
+
 export async function createCard(req: Request, res: Response) {
 	const card: CardType = req.body;
 
