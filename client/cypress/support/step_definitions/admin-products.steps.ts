@@ -1,4 +1,9 @@
-import { Given, When, Then, After } from "@badeball/cypress-cucumber-preprocessor";
+import {
+  Given,
+  When,
+  Then,
+  After,
+} from "@badeball/cypress-cucumber-preprocessor";
 
 Given(
   "o usuário {string} com e-mail {string} está logado no sistema com acesso de {string}",
@@ -51,19 +56,17 @@ When(
 
 Then("o sistema deve validar os dados inseridos", () => {
   cy.get("[data-cy=submit-button]").click();
+  //   cy.intercept("POST", `${Cypress.env("apiUrl")}/new`).as("createProduct");
+  //   cy.wait("@createProduct").then((interception: any) => {
+  //     console.log("interception", interception);
+  //     Cypress.env("lastCreatedProductId", interception.response.body.id);
+  //   });
   cy.get("[data-cy=form-errors]").should("not.exist");
 });
 
 Then(
   `o item {string} deve ser exibido na lista de itens cadastrados`,
   (item: string) => {
-    cy.get("[data-cy=products-table]")
-      .contains(item)
-      .parents("tr")
-      .invoke("attr", "data-id")
-      .then((id) => {
-        Cypress.env("lastCreatedProductId", id);
-      });
     cy.get("[data-cy=products-table]").should("contain", item);
   }
 );

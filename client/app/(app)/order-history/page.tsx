@@ -21,7 +21,12 @@ const OrderHistoryPage = () => {
   const router = useRouter();
 
   const { data, isLoading, isError, error } = useQuery<Order[]>({
-    oonerro,
+    queryKey: ["orders"],
+
+    queryFn: async () => {
+      const response = await axiosApi.get(`/order-history`);
+      return response.data;
+    },
   });
 
   useEffect(() => {

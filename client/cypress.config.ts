@@ -32,4 +32,7 @@ export default defineConfig({
       bundler: "webpack",
     },
   },
+  env: {
+    apiUrl: "http://localhost:3000",
+  },
 });
