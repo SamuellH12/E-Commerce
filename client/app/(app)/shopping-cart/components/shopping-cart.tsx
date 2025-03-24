@@ -44,11 +44,18 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { axiosApi } from "@/lib/axios-client";
-import SelecionarCartao, { CardAPI, CardSelectedType, cardType } from "./selecionarCartao";
+import SelecionarCartao, {
+  CardAPI,
+  CardSelectedType,
+  cardType,
+} from "./selecionarCartao";
 import AdicionarCartao from "./adicionarCartao";
+import CartItem from "./cart-item-interface";
 
 export default function CarrinhoDeCompras() {
-  const [metodoPagamento, setMetodoPagamento] = useState<"cartao" | "pix">("cartao");
+  const [metodoPagamento, setMetodoPagamento] = useState<"cartao" | "pix">(
+    "cartao"
+  );
   const [couponName, setCouponName] = useState<string>("");
   const [discount, setDiscount] = useState<number>(0);
 
@@ -111,15 +118,15 @@ export default function CarrinhoDeCompras() {
   });
 
   const finalizarCompraMutate = useMutation({
-    mutationFn: async (values:any) => {
-      const response = await axiosApi.post('/order-history', values);
+    mutationFn: async (values: any) => {
+      const response = await axiosApi.post("/order-history", values);
       return response.data;
     },
   });
 
   const postProdutoComprado = useMutation({
-    mutationFn: async (values:any) => {
-      await axiosApi.post('/product-order-history', values);
+    mutationFn: async (values: any) => {
+      await axiosApi.post("/product-order-history", values);
     },
   });
 
@@ -134,7 +141,7 @@ export default function CarrinhoDeCompras() {
     };
 
     finalizarCompraMutate.mutate(requestBody, {
-      onSuccess: (data:any) => {
+      onSuccess: (data: any) => {
         console.log(data);
 
         cartProducts.map((cartItem) => {
@@ -147,12 +154,11 @@ export default function CarrinhoDeCompras() {
           postProdutoComprado.mutate(productOrderHistory);
         });
 
-
         emptyCartMutate.mutate();
         queryClient.invalidateQueries({
           queryKey: ["shopping-cart-products"],
         });
-      }
+      },
     });
   }
 
@@ -167,8 +173,8 @@ export default function CarrinhoDeCompras() {
 
   function couponTest() {
     console.log(cupons);
-    
-    const cupom = cupons.find((c) => c.codename === couponName);
+
+    const cupom = cupons.find((c: any) => c.codename === couponName);
     if (cupom) {
       setDiscount(cupom.percentage);
     } else {
@@ -182,8 +188,8 @@ export default function CarrinhoDeCompras() {
       0
     ) ?? 0;
   const frete = subtotal > 300 ? 0 : 19.9;
-  const total = (subtotal - subtotal*(discount/100)) + frete;
-  const discount_ammount = subtotal*(discount/100);
+  const total = subtotal - subtotal * (discount / 100) + frete;
+  const discount_ammount = subtotal * (discount / 100);
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -266,11 +272,9 @@ export default function CarrinhoDeCompras() {
                         <TabsTrigger value="pix">PIX</TabsTrigger>
                       </TabsList>
                       <TabsContent value="cartao" className="space-y-3 mt-3">
-
                         <SelecionarCartao />
 
                         <AdicionarCartao />
-
                       </TabsContent>
                       <TabsContent value="pix" className="space-y-4 mt-3">
                         <div className="border rounded-md p-4 text-center">
@@ -348,28 +352,31 @@ export default function CarrinhoDeCompras() {
                   </div>
 
                   <div className="flex items-center gap-2 mt-4">
-                    <Input className="w-full" placeholder="Cupom de desconto" onChange={handleChange}/>
-                    <Button variant="outline"
-                      onClick={couponTest} 
-                    >Aplicar</Button>
+                    <Input
+                      className="w-full"
+                      placeholder="Cupom de desconto"
+                      onChange={handleChange}
+                    />
+                    <Button variant="outline" onClick={couponTest}>
+                      Aplicar
+                    </Button>
                   </div>
 
-                  
                   {discount != 0 && (
                     <div className="text-sm text-green-600">
                       Cupom Válido! + {discount}% de desconto
                     </div>
                   )}
-                  {discount == 0 && couponName != ""  && (
-                    <div className="text-sm text-red-600">
-                      Cupom Inválido!
-                      </div>
-                    )}
+                  {discount == 0 && couponName != "" && (
+                    <div className="text-sm text-red-600">Cupom Inválido!</div>
+                  )}
 
                   <Separator />
                   <div className="flex justify-between font-bold">
                     <span>Desconto</span>
-                    <span>R$ {discount_ammount.toFixed(2).replace(".", ",")}</span>
+                    <span>
+                      R$ {discount_ammount.toFixed(2).replace(".", ",")}
+                    </span>
                   </div>
                   <div className="flex justify-between font-bold">
                     <span>Total</span>
@@ -378,7 +385,9 @@ export default function CarrinhoDeCompras() {
                 </div>
               </CardContent>
               <CardFooter className="p-6">
-                <Button className="w-full" onClick={finalizarCompra}>Finalizar Compra</Button>
+                <Button className="w-full" onClick={finalizarCompra}>
+                  Finalizar Compra
+                </Button>
               </CardFooter>
             </Card>
           </div>
