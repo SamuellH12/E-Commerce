@@ -152,7 +152,7 @@ function Content({
                           type="date"
                           {...field}
                           data-cy="coupon-expiration-date"
-                          value={field.value ? field.value.toISOString().split('T')[0] : ''}
+                          value={field.value ? new Date(field.value).toISOString().split('T')[0] : undefined}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.onChange(e.target.value ? new Date(e.target.value) : undefined)}
                         />
                       </FormControl>
