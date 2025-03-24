@@ -115,6 +115,7 @@ export default function AdicionarCartao() {
           description: "O cartão foi criado com sucesso",
           variant: "default",
         });
+        setDialogAdicionarAberto(false);
       },
       onError: () => {
         toast({
