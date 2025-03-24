@@ -92,3 +92,19 @@ export async function updateCard(req: Request, res: Response) {
 
 	res.json(data?.[0] ?? null);
 }
+
+export async function putCardSelected(req: Request, res: Response) {
+	const cardSelected = req.body;
+
+	const { data, error } = await supabase
+		.from("card-selected")
+		.update({
+			id_card: cardSelected.id_card,
+		})
+		.eq("id_user", cardSelected.id_user)
+		.select();
+
+	if (error) res.status(500).json(error);
+
+	res.json(data?.[0] ?? null);
+}

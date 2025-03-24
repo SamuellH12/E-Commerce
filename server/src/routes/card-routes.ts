@@ -5,6 +5,7 @@ import {
 	getAllCards,
 	getCardSelected,
 	updateCard,
+	putCardSelected,
 } from "../controllers/card/card-controllers";
 import {
 	parseCardSchema,
@@ -20,5 +21,6 @@ cardRouter.get("/card-selected", getCardSelected);
 cardRouter.post("/new", parseCardSchema, validateCard, createCard);
 cardRouter.delete("/:id", deleteCard);
 cardRouter.put("/:id", parseCardSchema, validateCard, updateCard);
+cardRouter.post("/card-selected", putCardSelected);
 
 export { cardRouter };
