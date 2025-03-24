@@ -1,8 +1,8 @@
 export type CouponType = {
-    id: string;
+    id: number;
     created_at: Date;
     codename: string;
-    percertage: number;
+    percentage: number;
     expiration_date?: Date;
   };
   

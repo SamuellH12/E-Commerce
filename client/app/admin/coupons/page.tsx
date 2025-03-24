@@ -25,17 +25,15 @@ export default function Page() {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>Cupons</BreadcrumbPage>
+                <BreadcrumbPage>Produtos</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
       </header>
-
       <section className="container">
         <DataTableCoupons />
       </section>
-
     </>
   );
 }
