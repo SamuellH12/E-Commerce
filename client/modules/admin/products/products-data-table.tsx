@@ -115,7 +115,7 @@ export function DataTableProducts() {
 
         return (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild data-cy="product-actions">
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal />
@@ -127,6 +127,7 @@ export function DataTableProducts() {
               <DropdownMenuSeparator />
 
               <DropdownMenuItem
+                data-cy="edit-product-button"
                 className="cursor-pointer"
                 onClick={() => {
                   setProduct(row.original);
@@ -226,6 +227,8 @@ export function DataTableProducts() {
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
+                    data-cy-product-name={row.getValue("name")}
+                    data-id={row.original.id}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>

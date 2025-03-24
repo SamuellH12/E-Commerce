@@ -21,11 +21,7 @@ const OrderHistoryPage = () => {
   const router = useRouter();
 
   const { data, isLoading, isError, error } = useQuery<Order[]>({
-    queryKey: ["orders"],
-    queryFn: async () => {
-      const response = await axiosApi.get(`/order-history`);
-      return response.data;
-    },
+    oonerro,
   });
 
   useEffect(() => {
@@ -37,7 +33,9 @@ const OrderHistoryPage = () => {
 
   const handleViewOrderDetails = async (orderId: number) => {
     try {
-      const response = await axiosApi.get(`/product-order-history?order_id=${orderId}`);
+      const response = await axiosApi.get(
+        `/product-order-history?order_id=${orderId}`
+      );
     } catch (err) {
       console.error("Error loading order details.");
     }
@@ -46,7 +44,6 @@ const OrderHistoryPage = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
-  
         <div className="flex items-center space-x-2">
           <div className="w-6 h-6 border-4 border-gray border-t-transparent rounded-full animate-spin"></div>
           <p className="text-lg font-semibold text-gray-700">Loading...</p>
@@ -54,9 +51,11 @@ const OrderHistoryPage = () => {
       </div>
     );
   }
-  
+
   if (isError)
-    return <p>{error instanceof Error ? error.message : "Error loading orders."}</p>;
+    return (
+      <p>{error instanceof Error ? error.message : "Error loading orders."}</p>
+    );
 
   return (
     <div className="container">
@@ -75,19 +74,21 @@ const OrderHistoryPage = () => {
             ) : null
           )
         ) : (
-          <p className="text-center text-gray-600 mt-4">No recent orders available.</p>
+          <p className="text-center text-gray-600 mt-4">
+            No recent orders available.
+          </p>
         )}
         {!showAll && (
-        <button
-          className="border border-300 mt-4 px-6 py-3 text-lg font-medium text-black bg-primary  rounded hover:bg-secondary hover:text-white transition duration-300 block mx-auto w-full max-w-[200px]"
-          onClick={() => {
-            setRecentOrders(orders);
-            setShowAll(true);
-          }} // Atualiza o estado para mostrar todos os pedidos
-        >
-          View All Orders
-        </button>
-      )}
+          <button
+            className="border border-300 mt-4 px-6 py-3 text-lg font-medium text-black bg-primary  rounded hover:bg-secondary hover:text-white transition duration-300 block mx-auto w-full max-w-[200px]"
+            onClick={() => {
+              setRecentOrders(orders);
+              setShowAll(true);
+            }} // Atualiza o estado para mostrar todos os pedidos
+          >
+            View All Orders
+          </button>
+        )}
         {orders.length === 0 && (
           <p className="text-center text-gray-600 mt-4">
             You haven't placed any orders yet.
@@ -99,5 +100,3 @@ const OrderHistoryPage = () => {
 };
 
 export default OrderHistoryPage;
-
-

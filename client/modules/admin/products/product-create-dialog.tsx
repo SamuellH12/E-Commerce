@@ -99,6 +99,7 @@ function Content({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
       {
         ...values,
         category_id: +values.category_id,
+        discount: +values.discount + values.price,
         id: undefined,
       },
       {
