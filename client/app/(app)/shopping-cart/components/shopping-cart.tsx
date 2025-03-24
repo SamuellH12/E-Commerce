@@ -7,6 +7,7 @@ import { queryClient } from "@/providers/tanstack-query-provider";
 import type React from "react";
 
 import { useState } from "react";
+import axios, { Axios } from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -48,6 +49,12 @@ import AdicionarCartao from "./adicionarCartao";
 
 export default function CarrinhoDeCompras() {
   const [metodoPagamento, setMetodoPagamento] = useState<"cartao" | "pix">("cartao");
+  const [couponName, setCouponName] = useState<string>("");
+  const [discount, setDiscount] = useState<number>(0);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCouponName(e.target.value);
+  };
 
   const {
     data: cartProducts = [],
@@ -150,13 +157,33 @@ export default function CarrinhoDeCompras() {
   }
 
   // Cálculos do carrinho
+  const { data: cupons = [] } = useQuery({
+    queryKey: ["cupom"],
+    queryFn: async () => {
+      const response = await axiosApi(`/coupons`);
+      return response.data;
+    },
+  });
+
+  function couponTest() {
+    console.log(cupons);
+    
+    const cupom = cupons.find((c) => c.codename === couponName);
+    if (cupom) {
+      setDiscount(cupom.percentage);
+    } else {
+      setDiscount(0);
+    }
+  }
+
   const subtotal =
     cartProducts?.reduce(
       (total, product) => total + product.products.price * product.amount,
       0
     ) ?? 0;
   const frete = subtotal > 300 ? 0 : 19.9;
-  const total = subtotal + frete;
+  const total = (subtotal - subtotal*(discount/100)) + frete;
+  const discount_ammount = subtotal*(discount/100);
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -321,7 +348,30 @@ export default function CarrinhoDeCompras() {
                     </Tabs>
                   </div>
 
+                  <div className="flex items-center gap-2 mt-4">
+                    <Input className="w-full" placeholder="Cupom de desconto" onChange={handleChange}/>
+                    <Button variant="outline"
+                      onClick={couponTest} 
+                    >Aplicar</Button>
+                  </div>
+
+                  
+                  {discount != 0 && (
+                    <div className="text-sm text-green-600">
+                      Cupom Válido! + {discount}% de desconto
+                    </div>
+                  )}
+                  {discount == 0 && couponName != ""  && (
+                    <div className="text-sm text-red-600">
+                      Cupom Inválido!
+                      </div>
+                    )}
+
                   <Separator />
+                  <div className="flex justify-between font-bold">
+                    <span>Desconto</span>
+                    <span>R$ {discount_ammount.toFixed(2).replace(".", ",")}</span>
+                  </div>
                   <div className="flex justify-between font-bold">
                     <span>Total</span>
                     <span>R$ {total.toFixed(2).replace(".", ",")}</span>
