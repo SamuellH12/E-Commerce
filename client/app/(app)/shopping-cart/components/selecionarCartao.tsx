@@ -147,6 +147,9 @@ export default function SelecionarCartao() {
                     description: "O cartão foi atulizado com sucesso",
                     variant: "default",
                 });
+                queryClient.invalidateQueries({
+                    queryKey: ["selected-card"],
+                });
             },
             onError: () => {
                 toast({

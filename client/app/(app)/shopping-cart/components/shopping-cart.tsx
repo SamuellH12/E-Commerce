@@ -103,6 +103,52 @@ export default function CarrinhoDeCompras() {
     },
   });
 
+  const finalizarCompraMutate = useMutation({
+    mutationFn: async (values:any) => {
+      const response = await axiosApi.post('/order-history', values);
+      return response.data;
+    },
+  });
+
+  const postProdutoComprado = useMutation({
+    mutationFn: async (values:any) => {
+      await axiosApi.post('/product-order-history', values);
+    },
+  });
+
+  function finalizarCompra() {
+    const diamesano = new Date().toISOString().slice(0, 10);
+
+    const requestBody = {
+      order_data: diamesano,
+      destination: "Rua dos Bobos, 0",
+      status: "pending",
+      total_value: total.toFixed(2),
+    };
+
+    finalizarCompraMutate.mutate(requestBody, {
+      onSuccess: (data:any) => {
+        console.log(data);
+
+        cartProducts.map((cartItem) => {
+          const productOrderHistory = {
+            order_id: data.order_id,
+            product_id: cartItem.products.id,
+            price_paid: cartItem.products.price,
+            amount: cartItem.amount,
+          };
+          postProdutoComprado.mutate(productOrderHistory);
+        });
+
+
+        emptyCartMutate.mutate();
+        queryClient.invalidateQueries({
+          queryKey: ["shopping-cart-products"],
+        });
+      }
+    });
+  }
+
   // Cálculos do carrinho
   const subtotal =
     cartProducts?.reduce(
@@ -283,7 +329,7 @@ export default function CarrinhoDeCompras() {
                 </div>
               </CardContent>
               <CardFooter className="p-6">
-                <Button className="w-full">Finalizar Compra</Button>
+                <Button className="w-full" onClick={finalizarCompra}>Finalizar Compra</Button>
               </CardFooter>
             </Card>
           </div>
