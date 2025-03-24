@@ -33,22 +33,22 @@ export default function ProductPage() {
   const [selectedColor, setSelectedColor] = useState("black");
   const [selectedSize, setSelectedSize] = useState("m");
 
+  const { data: onCart, isLoading: onCartLoading } = useQuery({
+    queryKey: ["onCartQuery"],
+    queryFn: async (): Promise<ProductType[]> => {
+      const response = await axiosApi.get(`/shopping-cart/${productId}`);
+      return response.data;
+    },
+  });
+
   const addCartMutate = useMutation({
     mutationFn: async () => {
       axiosApi.post(`/shopping-cart/add`, { id: productId, amount: quantity });
     },
     onSuccess: async () => {
       queryClient.invalidateQueries({
-        queryKey: ["onCartQuery"],
+        queryKey: ["onCartQuery", "productQuery"],
       });
-    },
-  });
-
-  const { data: onCart, isLoading: onCartLoading } = useQuery({
-    queryKey: ["onCartQuery"],
-    queryFn: async (): Promise<ProductType[]> => {
-      const response = await axiosApi.get(`/shopping-cart/${productId}`);
-      return response.data;
     },
   });
 
@@ -149,7 +149,7 @@ export default function ProductPage() {
           <Separator />
 
           {/* Quantity and Add to Cart */}
-          {!onCart ? (
+          {!onCart || onCartLoading ? (
             <>
               <div>
                 <h2 className="mb-2 text-lg font-medium">Quantidade</h2>
@@ -176,7 +176,7 @@ export default function ProductPage() {
               <Button
                 className="flex-1 w-full"
                 size="lg"
-                disabled={onCartLoading}
+                disabled={onCartLoading || addCartMutate.isPending}
                 onClick={() => addCartMutate.mutate()}
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />

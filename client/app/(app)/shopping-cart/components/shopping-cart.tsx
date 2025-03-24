@@ -30,9 +30,9 @@ export default function CarrinhoDeCompras() {
   // Função para remover um produto do carrinho
   const removeItemMutate = useMutation({
     mutationFn: async (productId: string) => {
-      axiosApi.delete(`/shopping-cart/${productId}`);
+      await axiosApi.delete(`/shopping-cart/${productId}`);
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["shopping-cart-products"],
       });
@@ -48,9 +48,9 @@ export default function CarrinhoDeCompras() {
       productId: string;
       amount: number;
     }) => {
-      axiosApi.put(`/shopping-cart/`, { id: productId, amount: amount });
+      await axiosApi.put(`/shopping-cart/`, { id: productId, amount: amount });
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["shopping-cart-products"],
       });
@@ -60,7 +60,7 @@ export default function CarrinhoDeCompras() {
   // Função para limpar o carrinho
   const emptyCartMutate = useMutation({
     mutationFn: async () => {
-      axiosApi.delete(`/shopping-cart/`);
+      await axiosApi.delete(`/shopping-cart/`);
     },
     onSuccess: async () => {
       queryClient.invalidateQueries({
