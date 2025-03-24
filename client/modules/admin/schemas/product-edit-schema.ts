@@ -13,10 +13,10 @@ export const productEditSchema = z
     category_id: z.string(),
   })
   .superRefine((values, ctx) => {
-    if (values.price > values.discount) {
+    if (values.price < values.discount) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "O preço não pode ser maior que o desconto",
+        message: "O preço não pode ser menor que o desconto",
         path: ["price"],
       });
     }

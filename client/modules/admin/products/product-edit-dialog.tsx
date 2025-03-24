@@ -54,7 +54,7 @@ function Content({
     image_url: item?.image_url ?? "",
     category_id: item?.category_id?.toString() ?? "",
     is_active: item?.is_active ?? true,
-    discount: item?.discount ?? 0,
+    discount: item?.discount && item?.discount ? item.discount - item.price : 0,
   };
 
   const form = useForm<z.infer<typeof productEditSchema>>({
@@ -84,7 +84,11 @@ function Content({
   async function onSubmit(values: z.infer<typeof productEditSchema>) {
     console.log("resposta: ", values);
     mutate.mutate(
-      { ...values, category_id: +values.category_id },
+      {
+        ...values,
+        category_id: +values.category_id,
+        discount: +values.discount + values.price,
+      },
       {
         onSuccess: () => {
           setOpen(false);

@@ -1,4 +1,4 @@
-import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { Given, When, Then, After } from "@badeball/cypress-cucumber-preprocessor";
 
 Given(
   "o usuário {string} com e-mail {string} está logado no sistema com acesso de {string}",
@@ -57,9 +57,51 @@ Then("o sistema deve validar os dados inseridos", () => {
 Then(
   `o item {string} deve ser exibido na lista de itens cadastrados`,
   (item: string) => {
+    cy.get("[data-cy=products-table]")
+      .contains(item)
+      .parents("tr")
+      .invoke("attr", "data-id")
+      .then((id) => {
+        Cypress.env("lastCreatedProductId", id);
+      });
     cy.get("[data-cy=products-table]").should("contain", item);
   }
 );
 Then("o sistema deve exibir a mensagem {string}", (mensagem: string) => {
   cy.get("[data-cy=toast]").should("contain", mensagem);
+});
+
+Given(
+  `o item com o nome {string} está registrado no sistema`,
+  (name: string) => {
+    cy.get("[data-cy=products-table]").should("contain", name);
+    cy.get("[data-cy=products-table]")
+      .find("[data-cy=product-actions]")
+      .click();
+    cy.get("[data-cy=products-table]")
+      .find("[data-cy=product-actions] [data-cy=edit-product-button]")
+      .click();
+    // [Given] Sets up the initial state of the system.
+  }
+);
+
+When(`ele altera o preço para {string}`, (price: string) => {
+  cy.get("[data-cy=product-price]").clear().type(price);
+});
+
+Then(`o sistema deve registrar a data e hora da atualização`, () => {
+  // [Then] Describes the expected outcome or result of the scenario.
+});
+
+// Cleanup after each scenario
+After({ tags: "@product-cleanup" }, () => {
+  const productId = Cypress.env("lastCreatedProductId");
+  if (productId) {
+    cy.request({
+      method: "DELETE",
+      url: `${Cypress.env("apiUrl")}/products/${productId}`,
+      failOnStatusCode: false,
+    });
+    Cypress.env("lastCreatedProductId", null);
+  }
 });
