@@ -106,6 +106,7 @@ Then("o usuário vai para página de {string}", (pagina: string) => {
 Then(
 	"o usuário tem o cartão de apelido {string} cadastrado",
 	(apelido: string) => {
+		cy.visit("/payment");
 		cy.get("#select-card").click();
 		cy.get(`[data-name="${apelido}"] button`).click();
 	},

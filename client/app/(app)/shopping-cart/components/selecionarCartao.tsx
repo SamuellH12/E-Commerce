@@ -109,8 +109,8 @@ export default function SelecionarCartao() {
     const { data:lastCardSelected, isLoading:isLoadinglastCardSelected } = useQuery({
         queryKey: ["selected-card"],
         queryFn: async (): Promise<CardAPI> => {
-        const response = await axiosApi.get('/cards/card-selected');
-        return response.data;
+            const response = await axiosApi.get('/cards/card-selected');
+            return response.data;
         },
     });
 
@@ -150,6 +150,7 @@ export default function SelecionarCartao() {
                 queryClient.invalidateQueries({
                     queryKey: ["selected-card"],
                 });
+                setDialogSelecionarAberto(false);
             },
             onError: () => {
                 toast({
