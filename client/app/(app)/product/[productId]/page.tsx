@@ -25,7 +25,7 @@ export default function ProductPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["productQuery"],
     queryFn: async (): Promise<ProductType> => {
-      const response = await axiosApi(`/products/${productId}`);
+      const response = await axiosApi.get(`/products/${productId}`);
       return response.data;
     },
   });
@@ -35,7 +35,7 @@ export default function ProductPage() {
 
   const { data: onCart, isLoading: onCartLoading } = useQuery({
     queryKey: ["onCartQuery"],
-    queryFn: async (): Promise<ProductType[]> => {
+    queryFn: async (): Promise<ProductType> => {
       const response = await axiosApi.get(`/shopping-cart/${productId}`);
       return response.data;
     },
@@ -43,12 +43,16 @@ export default function ProductPage() {
 
   const addCartMutate = useMutation({
     mutationFn: async () => {
-      axiosApi.post(`/shopping-cart/add`, { id: productId, amount: quantity });
-    },
-    onSuccess: async () => {
-      queryClient.invalidateQueries({
-        queryKey: ["onCartQuery", "productQuery"],
-      });
+      await axiosApi
+        .post(`/shopping-cart/add`, {
+          id: productId,
+          amount: quantity,
+        })
+        .then(() => {
+          queryClient.invalidateQueries({
+            queryKey: ["onCartQuery"],
+          });
+        });
     },
   });
 
@@ -57,7 +61,6 @@ export default function ProductPage() {
       queryKey: ["productsQuery"],
       queryFn: async (): Promise<ProductType[]> => {
         const response = await axiosApi("/products");
-
         return response.data;
       },
     }

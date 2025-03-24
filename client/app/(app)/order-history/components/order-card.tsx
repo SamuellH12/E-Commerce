@@ -1,8 +1,9 @@
 "use client";
 import { axiosApi } from "@/lib/axios-client";
 import { useRouter } from "next/navigation";
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import type React from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/providers/tanstack-query-provider";
 
 interface Order {
   order_id: number;
@@ -24,6 +25,7 @@ interface OrderItem {
 interface OrderCardProps {
   order: Order;
   onViewDetails: (orderId: number) => void;
+  onCancelOrder?: (orderId: number) => Promise<void>;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
@@ -31,7 +33,21 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
   const defaultImage =
     "https://www.shutterstock.com/image-vector/no-image-available-picture-coming-600nw-2057829641.jpg";
 
-  const { data: items, isLoading, isError } = useQuery<OrderItem[]>({
+  const cancelMutate = useMutation({
+    mutationFn: async () => {
+      await axiosApi.delete(`/cancel-order/${order.order_id}`).then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["orderItems", order.order_id],
+        });
+      });
+    },
+  });
+
+  const {
+    data: items,
+    isLoading,
+    isError,
+  } = useQuery<OrderItem[]>({
     queryKey: ["orderItems", order.order_id],
     queryFn: async () => {
       const orderResponse = await axiosApi.get(
@@ -41,9 +57,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
       if (!Array.isArray(orderItems)) return [];
       const productRequests = orderItems.map(async (item: OrderItem) => {
         try {
-            const productResponse = await axiosApi.get(
-              `/products/${item.product_id}`
-            );
+          const productResponse = await axiosApi.get(
+            `/products/${item.product_id}`
+          );
           return {
             ...item,
             product_name: productResponse.data.name,
@@ -66,6 +82,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
     router.push(`/product-order-history/${order.order_id}`);
   };
 
+  const canCancel = order.status === "pending" || order.status === "processing";
+
   return (
     <div className="border border-300 p-4 m-2 rounded-lg shadow-sm hover:shadow-md transition duration-300 ease-in-out cursor-pointer">
       <div className="flex justify-between">
@@ -78,18 +96,28 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
             <p className="mr-2">Order placed: {order.order_data}</p>
             <p>Destination: {order.destination}</p>
           </div>
-          <p className="mb-2 text-sm text-600">
-            Status:{" "}
+          <div className="mb-2 text-sm text-600 flex items-center">
+            <span>Status: </span>
             <strong
-              className={`font-bold ${
+              className={`font-bold ml-1 ${
                 order.status === "delivered" ? "text-green-600" : "text-red-600"
               }`}
             >
               {order.status}
             </strong>
-          </p>
+
+            {canCancel && (
+              <button
+                onClick={() => cancelMutate.mutate}
+                className="ml-2 px-2 py-0.5 text-xs font-medium bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300 ease-in-out"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
           <p className="mb-2 text-base font-bold">
-            Total Value: $ {parseFloat(order.total_value.toString()).toFixed(2)}
+            Total Value: ${" "}
+            {Number.parseFloat(order.total_value.toString()).toFixed(2)}
           </p>
           <button
             className="mt-1 px-3 py-1 text-sm font-medium bg-secondary rounded-md hover:bg-primary hover:text-black transition duration-300 ease-in-out"
@@ -108,14 +136,16 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
               className="w-20 h-20 object-cover rounded-md col-span-2 mx-auto"
             />
           ) : (
-            items.slice(0, 4).map((item, index) => (
-              <img
-                key={index}
-                src={item.image_url}
-                alt={item.product_name}
-                className="w-20 h-20 object-cover rounded-md mx-auto"
-              />
-            ))
+            items
+              .slice(0, 4)
+              .map((item, index) => (
+                <img
+                  key={index}
+                  src={item.image_url}
+                  alt={item.product_name}
+                  className="w-20 h-20 object-cover rounded-md col-span-2 mx-auto"
+                />
+              ))
           )}
         </div>
       </div>

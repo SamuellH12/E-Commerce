@@ -29,13 +29,12 @@ export async function getCartProduct(req: Request, res: Response) {
         amount
       `
     )
-    .eq("id", id)
-    .single();
+    .eq("id", id);
 
   if (error) {
     res.status(400).json(error);
   } else {
-    res.json(data);
+    res.json(data?.[0] ?? null);
   }
 }
 
