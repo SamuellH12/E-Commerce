@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, MoreHorizontal } from "lucide-react";
+import { ChevronDown, MoreHorizontal, PlusCircle } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,7 @@ import { DialogCreateProduct } from "./product-create-dialog";
 export function DataTableProducts() {
   const [product, setProduct] = React.useState<ProductType>();
   const [open, setOpen] = React.useState(false);
+  const [createOpen, setCreateOpen] = React.useState(false);
 
   const columns: ColumnDef<ProductType>[] = [
     {
@@ -114,7 +115,7 @@ export function DataTableProducts() {
 
         return (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild data-cy="product-actions">
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal />
@@ -126,6 +127,7 @@ export function DataTableProducts() {
               <DropdownMenuSeparator />
 
               <DropdownMenuItem
+                data-cy="edit-product-button"
                 className="cursor-pointer"
                 onClick={() => {
                   setProduct(row.original);
@@ -179,6 +181,7 @@ export function DataTableProducts() {
 
   return (
     <>
+      <DialogCreateProduct setOpen={setCreateOpen} open={createOpen} />
       <DialogEditProduct open={open} setOpen={setOpen} item={product} />
       <div className="w-full">
         <div className="flex items-center justify-between py-4">
@@ -189,7 +192,14 @@ export function DataTableProducts() {
               desativar produtos
             </p>
           </div>
-          <DialogCreateProduct />
+          <Button
+            type="button"
+            className="w-fit gap-2"
+            data-cy="create-product-button"
+            onClick={() => setCreateOpen(true)}
+          >
+            <PlusCircle /> Adicionar Produto
+          </Button>
         </div>
         <div className="rounded-md border">
           <Table>
@@ -211,12 +221,14 @@ export function DataTableProducts() {
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody>
+            <TableBody data-cy="products-table">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
+                    data-cy-product-name={row.getValue("name")}
+                    data-id={row.original.id}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>

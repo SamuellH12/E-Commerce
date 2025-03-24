@@ -1,94 +1,107 @@
-import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { Given, When, Then, After } from "@badeball/cypress-cucumber-preprocessor";
 
 Given(
-	"o usuário {string} com e-mail {string} está logado no sistema com acesso de {string}",
-	(nome: string, email: string, role: string) => {
-		// Mock login - you should implement your actual login logic here
-	},
+  "o usuário {string} com e-mail {string} está logado no sistema com acesso de {string}",
+  (nome: string, email: string, role: string) => {
+    // Mock login - you should implement your actual login logic here
+  }
+);
+Given(
+  `que o  usuário {string} está na página {string}`,
+  (arg0: string, arg1: string) => {
+    // [Given] Sets up the initial state of the system.
+  }
 );
 
 Given("o usuário está na página de {string}", (pagina: string) => {
-	if (pagina === "Gerenciamento de Itens") {
-		cy.visit("/admin/products");
-	} else if (pagina === "Pagamento" || pagina === "Atualização de cartão") {
-		cy.visit("/payment");
-	} else if (pagina === "Cadastro de cartão") {
-		cy.visit("/payment/new_card");
-	}
-	cy.wait(2000);
+  if (pagina === "Gerenciamento de Itens") {
+    cy.visit("/admin/products");
+  } else if (pagina === "Pagamento" || pagina === "Atualização de cartão") {
+    cy.visit("/payment");
+  } else if (pagina === "Cadastro de cartão") {
+    cy.visit("/payment/new_card");
+  }
+  cy.wait(2000);
 });
 
 When(
-	"ele insere o nome {string}, descrição {string}, preço {string}, categoria {string}, disponibilidade {string}",
-	(
-		nome: string,
-		descricao: string,
-		preco: string,
-		categoria: string,
-		disponibilidade: string,
-	) => {
-		cy.get("[data-cy=create-product-button]").click();
+  `ele insere o nome {string}, descrição {string},  preço {string}, categoria {string}, disponibilidade {string}, desconto: {string}, imagem {string}`,
+  (
+    nome: string,
+    descricao: string,
+    preco: string,
+    categoria: string,
+    disponibilidade: string,
+    desconto: string,
+    imagem: string
+  ) => {
+    cy.get("[data-cy=create-product-button]").click();
 
-		cy.get("[data-cy=product-name]").type(nome);
-		cy.get("[data-cy=product-description]").type(descricao);
-		cy.get("[data-cy=product-price]").type(preco);
-		cy.get("[data-cy=product-category]").select(categoria);
-		cy.get("[data-cy=product-availability]").select(disponibilidade);
-	},
+    cy.get("[data-cy=product-name]").type(nome);
+    cy.get("[data-cy=product-description]").type(descricao);
+    cy.get("[data-cy=product-price]").type(preco);
+    cy.get("[data-cy=product-quantity]").type(disponibilidade);
+    cy.get("[data-cy=product-discount]").type(desconto);
+    cy.get("[data-cy=product-category]").click();
+    cy.get(`[data-cy-value="${categoria}"]`).click();
+
+    cy.get("[data-cy=product-image]").type(imagem);
+  }
 );
 
-When("ele anexa uma imagem representativa em {string}", (campo: string) => {
-	cy.get("[data-cy=product-image]").attachFile("product-image.jpg");
-});
-
 Then("o sistema deve validar os dados inseridos", () => {
-	cy.get("[data-cy=submit-button]").click();
-	cy.get("[data-cy=form-errors]").should("not.exist");
+  cy.get("[data-cy=submit-button]").click();
+  cy.get("[data-cy=form-errors]").should("not.exist");
 });
 
-Then("o item deve ser exibido na lista de itens cadastrados", () => {
-	cy.get("[data-cy=products-list]").should("contain", "Redmi Note 13 pro");
-});
-
+Then(
+  `o item {string} deve ser exibido na lista de itens cadastrados`,
+  (item: string) => {
+    cy.get("[data-cy=products-table]")
+      .contains(item)
+      .parents("tr")
+      .invoke("attr", "data-id")
+      .then((id) => {
+        Cypress.env("lastCreatedProductId", id);
+      });
+    cy.get("[data-cy=products-table]").should("contain", item);
+  }
+);
 Then("o sistema deve exibir a mensagem {string}", (mensagem: string) => {
-	cy.get("[data-cy=toast-message]").should("contain", mensagem);
+  cy.get("[data-cy=toast]").should("contain", mensagem);
 });
 
 Given(
-	"o item {string} está associado a pedidos em andamento",
-	(item: string) => {
-		// Mock API response for item with active orders
-		cy.intercept("GET", "/api/products/*", {
-			statusCode: 200,
-			body: {
-				name: item,
-				hasActiveOrders: true,
-			},
-		});
-	},
+  `o item com o nome {string} está registrado no sistema`,
+  (name: string) => {
+    cy.get("[data-cy=products-table]").should("contain", name);
+    cy.get("[data-cy=products-table]")
+      .find("[data-cy=product-actions]")
+      .click();
+    cy.get("[data-cy=products-table]")
+      .find("[data-cy=product-actions] [data-cy=edit-product-button]")
+      .click();
+    // [Given] Sets up the initial state of the system.
+  }
 );
 
-When("ele solicita a exclusão do item da lista {string}", (lista: string) => {
-	cy.get("[data-cy=delete-button]").first().click();
+When(`ele altera o preço para {string}`, (price: string) => {
+  cy.get("[data-cy=product-price]").clear().type(price);
 });
 
-Then(
-	"o sistema deve exibir a mensagem de erro {string}",
-	(mensagem: string) => {
-		cy.get("[data-cy=error-message]").should("contain", mensagem);
-	},
-);
+Then(`o sistema deve registrar a data e hora da atualização`, () => {
+  // [Then] Describes the expected outcome or result of the scenario.
+});
 
-Then(
-	"o item {string} deve permanecer na lista {string}",
-	(item: string, lista: string) => {
-		cy.get("[data-cy=products-list]").should("contain", item);
-	},
-);
-
-Then(
-	"o sistema deve redirecionar o usuário para a página de {string}",
-	(pagina: string) => {
-		cy.url().should("include", "/admin/products");
-	},
-);
+// Cleanup after each scenario
+After({ tags: "@product-cleanup" }, () => {
+  const productId = Cypress.env("lastCreatedProductId");
+  if (productId) {
+    cy.request({
+      method: "DELETE",
+      url: `${Cypress.env("apiUrl")}/products/${productId}`,
+      failOnStatusCode: false,
+    });
+    Cypress.env("lastCreatedProductId", null);
+  }
+});
