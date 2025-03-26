@@ -11,12 +11,6 @@ Given(
     // Mock login - you should implement your actual login logic here
   }
 );
-Given(
-  `que o  usuário {string} está na página {string}`,
-  (arg0: string, arg1: string) => {
-    // [Given] Sets up the initial state of the system.
-  }
-);
 
 Given("o usuário está na página de {string}", (pagina: string) => {
   if (pagina === "Gerenciamento de Itens") {
@@ -53,16 +47,20 @@ When(
     cy.get(`[data-cy-value="${categoria}"]`).click();
 
     cy.get("[data-cy=product-image]").type(imagem);
+
+    cy.intercept("POST", `${Cypress.env("apiUrl")}/products/new`).as(
+      "createProduct"
+    );
+
+    console.log("sexo", Cypress.env("lastCreatedProductId"));
   }
 );
 
 Then("o sistema deve validar os dados inseridos", () => {
   cy.get("[data-cy=submit-button]").click();
-  //   cy.intercept("POST", `${Cypress.env("apiUrl")}/new`).as("createProduct");
-  //   cy.wait("@createProduct").then((interception: any) => {
-  //     console.log("interception", interception);
-  //     Cypress.env("lastCreatedProductId", interception.response.body.id);
-  //   });
+  cy.wait("@createProduct").then((interception) => {
+    Cypress.env("lastCreatedProductId", interception?.response?.body.id);
+  });
   cy.get("[data-cy=form-errors]").should("not.exist");
 });
 
@@ -74,6 +72,16 @@ Then(
 );
 Then("o sistema deve exibir a mensagem {string}", (mensagem: string) => {
   cy.get("[data-cy=toast]").should("contain", mensagem);
+  // @product-cleanup
+  // TODO: implement cleanup
+  console.log("lastCreatedProductId", Cypress.env("lastCreatedProductId"));
+
+  cy.request({
+    method: "DELETE",
+    url: `${Cypress.env("apiUrl")}/products/${Cypress.env(
+      "lastCreatedProductId"
+    )}`,
+  });
 });
 
 Given(
@@ -101,6 +109,7 @@ Then(`o sistema deve registrar a data e hora da atualização`, () => {
 // Cleanup after each scenario
 After({ tags: "@product-cleanup" }, () => {
   const productId = Cypress.env("lastCreatedProductId");
+  console.log("productId", productId);
   if (productId) {
     cy.request({
       method: "DELETE",
