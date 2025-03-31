@@ -166,7 +166,7 @@ export default function Categories() {
           {data?.map((cat) => (
             <Sheet key={cat.id}>
               <SheetTrigger asChild>
-                <Button variant="outline" onClick={() => setCatId(cat.id)}>
+                <Button variant="outline" onClick={() => setCatId(cat.id)} data-testid="category-item">
                   {" "}
                   {cat.name}
                 </Button>
@@ -191,6 +191,7 @@ export default function Categories() {
                       defaultValue={cat.name}
                       className="col-span-3"
                       onChange={handleChange}
+                      data-testid="department-name-input"
                     />
                   </div>
 
@@ -204,7 +205,7 @@ export default function Categories() {
                       defaultValue={"" + cat.department_id}
                       onValueChange={handleDepChange}
                     >
-                      <SelectTrigger className="w-[180px]">
+                      <SelectTrigger className="w-[180px]" data-testid="department-select">
                         {" "}
                         <SelectValue placeholder="Selecione o Departamento" />{" "}
                       </SelectTrigger>
@@ -217,6 +218,7 @@ export default function Categories() {
                               id={"" + dep.id}
                               value={"" + dep.id}
                               key={"" + dep.id}
+                              data-testid="department-option"
                             >
                               {" "}
                               {dep.name}{" "}
@@ -230,7 +232,7 @@ export default function Categories() {
 
                 <SheetFooter>
                   <SheetClose asChild>
-                    <Button type="button" onClick={updateCat}>
+                    <Button type="button" onClick={updateCat} data-testid="save-department-button">
                       Save changes
                     </Button>
                   </SheetClose>
@@ -239,6 +241,7 @@ export default function Categories() {
                       type="button"
                       variant="destructive"
                       onClick={deleteCat}
+                      data-testid="delete-department-button"
                     >
                       Delete
                     </Button>
@@ -250,7 +253,7 @@ export default function Categories() {
 
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline"> + </Button>
+              <Button variant="outline" data-testid="add-category-button"> + </Button>
             </SheetTrigger>
 
             <SheetContent side="top">
@@ -271,6 +274,7 @@ export default function Categories() {
                     id="name"
                     className="col-span-3"
                     onChange={handleChange}
+                    data-testid="department-name-input"
                   />
                 </div>
 
@@ -281,7 +285,7 @@ export default function Categories() {
                   </Label>
 
                   <Select onValueChange={handleDepChange}>
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="w-[180px]" data-testid="department-select">
                       {" "}
                       <SelectValue placeholder="Selecione o Departamento" />{" "}
                     </SelectTrigger>
@@ -294,6 +298,7 @@ export default function Categories() {
                             id={"" + dep.id}
                             value={"" + dep.id}
                             key={"" + dep.id}
+                            data-testid="department-option"
                           >
                             {" "}
                             {dep.name}{" "}
@@ -307,7 +312,7 @@ export default function Categories() {
 
               <SheetFooter>
                 <SheetClose asChild>
-                  <Button type="button" onClick={createCat}>
+                  <Button type="button" onClick={createCat} data-testid="save-department-button">
                     Save
                   </Button>
                 </SheetClose>

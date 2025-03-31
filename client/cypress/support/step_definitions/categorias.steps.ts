@@ -1,15 +1,45 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("o usuário está na página {string}", (page: string) => {
-  cy.visit(`/${page.toLowerCase()}`);
+
+Given('estou na página de categorias', () => {
+  cy.visit('/admin/categories');
+  cy.contains('h2', 'Categorias').should('be.visible');
 });
 
-When("o usuário tenta cadastrar a Categoria com nome {string}", (categoryName: string) => {
-  cy.get('[data-cy="add-category"]').click();
-  cy.get('[data-cy="category-name"]').type(categoryName);
-  cy.get('[data-cy="submit-category"]').click();
+When('seleciono o departamento {string}', (depName: string) => {
+  cy.get('[data-testid="department-select"]').click();
+  cy.contains('[data-testid="department-option"]', depName).click();  
 });
 
-Then("o sistema deve exibir a mensagem de sucesso", () => {
-  cy.contains("Categoria cadastrada com sucesso").should("be.visible");
+
+When('não seleciono um departamento', () => {
+  //  o campo já está vazio vazio
+});
+
+Then('a categoria {string} deve aparecer associada a {string}', (catName : string, depName : string) => {
+  cy.contains('[data-testid="category-item"]', catName).should('exist');
+  cy.contains('[data-testid="category-item"]', catName).click();
+  cy.get('[data-testid="department-select"]').find('span').should('contain.text', depName);;
+});
+
+Then('a categoria {string} não deve aparecer na lista', (catName : string) => {
+  cy.contains('[data-testid="category-item"]', catName).should('not.exist');
+});
+
+When('clico na categoria {string}', (catName : string) => {
+  cy.contains('[data-testid="category-item"]', catName).click();
+});
+
+When('clico para adicionar nova categoria', () => {
+  cy.get('[data-testid="add-category-button"]')
+    .should('be.visible')
+    .and('not.be.disabled')
+    .click();
+  
+  cy.get('[role="dialog"]').should('be.visible');
+  cy.contains('Criar Categoria').should('be.visible');
+});
+
+Given('existe a categoria {string}', (catName : string) => {
+  cy.contains('[data-testid="category-item"]', catName).should('exist');
 });
