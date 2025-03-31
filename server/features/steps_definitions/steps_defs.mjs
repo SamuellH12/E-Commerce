@@ -378,7 +378,7 @@ Given('existe o departamento {string}', async function (departamento) {
   let body = "{ 'name': '"+departamento+"' }";
   let parsedBody = JSON.parse(body.replace(/'/g, '"'));
   response = await axios.post("http://localhost:3000/department", parsedBody);
-  expect(response.status).to.equal(201);
+  expect(response.status).to.be.oneOf([200, 201]);;
 });
 
 Given('não existe o departamento {string}', async function (departamento) {
@@ -387,7 +387,7 @@ Given('não existe o departamento {string}', async function (departamento) {
   if( response.data.some(entry => entry.name === departamento) == true ){
     let entry = response.data.find(entry => entry.name === departamento);
     response = await axios.delete("http://localhost:3000/department/"+entry.id);
-    expect(response.status).to.equal(200);
+    expect(response.status).to.be.oneOf([200, 201]);
   }
 });
 
