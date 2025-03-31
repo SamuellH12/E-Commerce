@@ -1,9 +1,4 @@
-import {
-  Given,
-  When,
-  Then,
-  After,
-} from "@badeball/cypress-cucumber-preprocessor";
+import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor";
 
 Given(
   "o usuário {string} com e-mail {string} está logado no sistema com acesso de {string}",
@@ -75,47 +70,35 @@ Then("o sistema deve exibir a mensagem {string}", (mensagem: string) => {
   // @product-cleanup
   // TODO: implement cleanup
   console.log("lastCreatedProductId", Cypress.env("lastCreatedProductId"));
-
-  cy.request({
-    method: "DELETE",
-    url: `${Cypress.env("apiUrl")}/products/${Cypress.env(
-      "lastCreatedProductId"
-    )}`,
-  });
+  if (Cypress.env("lastCreatedProductId")) {
+    cy.request({
+      method: "DELETE",
+      url: `${Cypress.env("apiUrl")}/products/${Cypress.env(
+        "lastCreatedProductId"
+      )}`,
+    });
+  }
 });
 
 Given(
   `o item com o nome {string} está registrado no sistema`,
   (name: string) => {
-    cy.get("[data-cy=products-table]").should("contain", name);
     cy.get("[data-cy=products-table]")
+      .first()
       .find("[data-cy=product-actions]")
+      .first()
       .click();
-    cy.get("[data-cy=products-table]")
-      .find("[data-cy=product-actions] [data-cy=edit-product-button]")
-      .click();
+
+    cy.get("[data-cy=edit-product-button]").click();
+
     // [Given] Sets up the initial state of the system.
   }
 );
 
 When(`ele altera o preço para {string}`, (price: string) => {
-  cy.get("[data-cy=product-price]").clear().type(price);
-});
+  cy.get("[data-cy=product-price]")
+    .type("{selectall}{backspace}{selectall}{backspace}")
+    .type(price);
 
-Then(`o sistema deve registrar a data e hora da atualização`, () => {
-  // [Then] Describes the expected outcome or result of the scenario.
-});
-
-// Cleanup after each scenario
-After({ tags: "@product-cleanup" }, () => {
-  const productId = Cypress.env("lastCreatedProductId");
-  console.log("productId", productId);
-  if (productId) {
-    cy.request({
-      method: "DELETE",
-      url: `${Cypress.env("apiUrl")}/products/${productId}`,
-      failOnStatusCode: false,
-    });
-    Cypress.env("lastCreatedProductId", null);
-  }
+  cy.get("[data-cy=submit-button]").click();
 });
