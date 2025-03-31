@@ -135,7 +135,7 @@ export default function Departments() {
           {data?.map((dep) => (
             <Sheet key={dep.id}>
               <SheetTrigger asChild>
-                <Button variant="outline" onClick={() => setDepId(dep.id)}>
+                <Button variant="outline" onClick={() => setDepId(dep.id)} data-testid={`department-${dep.id}`}>
                   {" "}
                   {dep.name}{" "}
                 </Button>
@@ -164,7 +164,7 @@ export default function Departments() {
 
                 <SheetFooter>
                   <SheetClose asChild>
-                    <Button type="button" onClick={updateDep}>
+                    <Button type="button" onClick={updateDep} data-testid="save-department-button">
                       Save changes
                     </Button>
                   </SheetClose>
@@ -173,6 +173,7 @@ export default function Departments() {
                       type="button"
                       variant="destructive"
                       onClick={deleteDep}
+                      data-testid="delete-department-button"
                     >
                       Delete
                     </Button>
@@ -184,7 +185,7 @@ export default function Departments() {
 
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline"> + </Button>
+              <Button variant="outline" data-testid="add-department-button"> + </Button>
             </SheetTrigger>
 
             <SheetContent side="top">
@@ -205,13 +206,14 @@ export default function Departments() {
                     id="name"
                     className="col-span-3"
                     onChange={handleChange}
+                    data-testid="department-name-input"
                   />
                 </div>
               </div>
 
               <SheetFooter>
                 <SheetClose asChild>
-                  <Button type="button" onClick={createDep}>
+                  <Button type="button" onClick={createDep}  data-testid="save-department-button">
                     Save
                   </Button>
                 </SheetClose>
